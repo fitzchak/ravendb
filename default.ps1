@@ -91,6 +91,8 @@ task Init -depends Verify40, Clean {
 		$env:buildlabel = "13"
 	}
 	
+	$env:buildlabel = "970"
+	
 	exec { git update-index --assume-unchanged "$base_dir\CommonAssemblyInfo.cs" }
 	$commit = Get-Git-Commit
 	(Get-Content "$base_dir\CommonAssemblyInfo.cs") | 
@@ -402,7 +404,7 @@ task UploadStable -depends Stable, DoRelease, Upload
 
 task UploadUnstable -depends Unstable, DoRelease, Upload
 
-task CreateNugetPackageFineGrained {
+task CreateNugetPackageFineGrained -depends Compile {
 
 	Remove-Item $base_dir\RavenDB*.nupkg
 	
