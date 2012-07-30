@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 using System;
 using Xunit;
+using System.Linq;
 
 namespace Raven.Client.Tests
 {
@@ -34,6 +35,39 @@ namespace Raven.Client.Tests
 			{
 				var post = session.Load<Post>("posts/1");
 				Assert.NotNull(post);
+			}
+		}
+
+		[Fact]
+		public void CanQuery()
+		{
+			using (var session = Store.OpenSession())
+			{
+				var posts = session.Query<Post>()
+					.Customize(customization => customization.WaitForNonStaleResultsAsOfNow())
+					.ToList();
+
+				var post = posts.First();
+				Assert.NotEqual(DateTimeOffset.MinValue, post.PublishedAt);
+			}
+		}
+
+		[Fact]
+		public void CanDoRangeQuery()
+		{
+			using (var session = Store.OpenSession())
+			{
+				var now = DateTimeOffset.Now;
+				var fewDaysAgo = now.AddDays(-2);
+
+				var posts = session.Query<Post>()
+					.Customize(customization => customization.WaitForNonStaleResultsAsOfNow())
+					.Where(p => p.PublishedAt < now && p.PublishedAt > fewDaysAgo)
+					.ToList();
+
+				var post = posts.First();
+
+				Assert.NotEqual(DateTimeOffset.MinValue, post.PublishedAt);
 			}
 		}
 
