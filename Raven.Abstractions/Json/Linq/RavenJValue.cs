@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Raven.Abstractions.Extensions;
 using Raven.Json.Utilities;
 
 namespace Raven.Json.Linq
@@ -280,7 +281,7 @@ namespace Raven.Json.Linq
 			JsonConverter matchingConverter;
 			if (_value != null && ((matchingConverter = GetMatchingConverter(converters, _value.GetType())) != null))
 			{
-				matchingConverter.WriteJson(writer, _value, new JsonSerializer());
+				matchingConverter.WriteJson(writer, _value, JsonExtensions.CreateDefaultJsonSerializer());
 				return;
 			}
 

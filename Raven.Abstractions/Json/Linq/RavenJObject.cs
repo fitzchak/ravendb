@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Raven.Abstractions.Extensions;
 using Raven.Json.Utilities;
 using System.Linq;
 
@@ -118,7 +119,7 @@ namespace Raven.Json.Linq
 		/// <returns>A <see cref="RavenJObject"/> with the values of the specified object</returns>
 		public static new RavenJObject FromObject(object o)
 		{
-			return FromObject(o, new JsonSerializer());
+			return FromObject(o, JsonExtensions.CreateDefaultJsonSerializer());
 		}
 
 		/// <summary>

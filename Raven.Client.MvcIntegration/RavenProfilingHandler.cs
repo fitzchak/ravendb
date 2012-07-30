@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Routing;
 using Newtonsoft.Json;
 using Raven.Abstractions;
+using Raven.Abstractions.Extensions;
 using Raven.Client.Document;
 
 namespace Raven.Client.MvcIntegration
@@ -70,7 +71,7 @@ namespace Raven.Client.MvcIntegration
 
 			var results = items.ToList();
 
-			CreateJsonSerializer().Serialize(context.Response.Output, results);
+			JsonExtensions.CreateDefaultJsonSerializer().Serialize(context.Response.Output, results);
 
 			context.Response.Output.Flush();
 		}
@@ -101,16 +102,6 @@ namespace Raven.Client.MvcIntegration
 				context.Response.Output.Write(File.ReadAllText(file));
 			}
 			context.Response.Output.Flush();
-		}
-
-		private static JsonSerializer CreateJsonSerializer()
-		{
-			var jsonSerializer = new JsonSerializer();
-			foreach (var jsonConverter in Default.Converters)
-			{
-				jsonSerializer.Converters.Add(jsonConverter);
-			}
-			return jsonSerializer;
 		}
 
 		/// <summary>
