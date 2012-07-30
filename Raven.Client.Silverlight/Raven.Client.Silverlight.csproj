@@ -195,6 +195,9 @@
     <Compile Include="..\Raven.Abstractions\Json\RavenJsonConverter.cs">
       <Link>Imports\Json\RavenJsonConverter.cs</Link>
     </Compile>
+    <Compile Include="..\Raven.Abstractions\Json\RavenJsonTextReader.cs">
+      <Link>Imports\Json\RavenJsonTextReader.cs</Link>
+    </Compile>
     <Compile Include="..\Raven.Abstractions\Json\Utilities\MathUtils.cs">
       <Link>Imports\Json\Utilities\MathUtils.cs</Link>
     </Compile>

@@ -6,6 +6,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Raven.Abstractions.Extensions;
+using Raven.Abstractions.Json;
 using Raven.Json.Utilities;
 using System.Linq;
 
@@ -229,7 +230,7 @@ namespace Raven.Json.Linq
 		{
 			try
 			{
-				JsonReader jsonReader = new JsonTextReader(new StringReader(json));
+				JsonReader jsonReader = new RavenJsonTextReader(new StringReader(json));
 				return Load(jsonReader);
 			}
 			catch (Exception e)

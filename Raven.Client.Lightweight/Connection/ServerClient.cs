@@ -23,6 +23,7 @@ using Raven.Abstractions.Data;
 using Raven.Abstractions.Exceptions;
 using Raven.Abstractions.Extensions;
 using Raven.Abstractions.Indexing;
+using Raven.Abstractions.Json;
 using Raven.Client.Connection.Profiling;
 using Raven.Client.Document;
 using Raven.Client.Exceptions;
@@ -272,7 +273,7 @@ Failed to get in touch with any of the " + (1 + threadSafeCopy.Count) + " Raven 
 				if (httpWebResponse.StatusCode == HttpStatusCode.Conflict)
 				{
 					var conflicts = new StreamReader(httpWebResponse.GetResponseStreamWithHttpDecompression());
-					var conflictsDoc = RavenJObject.Load(new JsonTextReader(conflicts));
+					var conflictsDoc = RavenJObject.Load(new RavenJsonTextReader(conflicts));
 					var etag = httpWebResponse.GetResponseHeader("ETag");
 
 					throw CreateConcurrencyException(key, conflictsDoc, etag);
@@ -1261,7 +1262,7 @@ Failed to get in touch with any of the " + (1 + threadSafeCopy.Count) + " Raven 
 				if (httpWebResponse.StatusCode == HttpStatusCode.Conflict)
 				{
 					var conflicts = new StreamReader(httpWebResponse.GetResponseStreamWithHttpDecompression());
-					var conflictsDoc = RavenJObject.Load(new JsonTextReader(conflicts));
+					var conflictsDoc = RavenJObject.Load(new RavenJsonTextReader(conflicts));
 					var conflictIds = conflictsDoc.Value<RavenJArray>("Conflicts").Select(x => x.Value<string>()).ToArray();
 
 					throw new ConflictException("Conflict detected on " + key +
