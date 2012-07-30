@@ -69,6 +69,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Raven.Client.Lightweight.FS
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Raven.Tests.FSharp", "Raven.Tests.FSharp\Raven.Tests.FSharp.fsproj", "{295D9C7D-5F05-4B12-BB1E-8FB7A21E9071}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raven.Client.Tests", "Raven.Client.Tests\Raven.Client.Tests.csproj", "{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -279,6 +281,16 @@ Global
 		{295D9C7D-5F05-4B12-BB1E-8FB7A21E9071}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{295D9C7D-5F05-4B12-BB1E-8FB7A21E9071}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{295D9C7D-5F05-4B12-BB1E-8FB7A21E9071}.Release|x86.ActiveCfg = Release|Any CPU
+		{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FC4C0A0E-3734-43FB-A6D9-3720E166EF91}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
