@@ -91,7 +91,7 @@ task Init -depends Verify40, Clean {
 		$env:buildlabel = "13"
 	}
 	
-	$env:buildlabel = "970"
+	$env:buildlabel = "972"
 	
 	exec { git update-index --assume-unchanged "$base_dir\CommonAssemblyInfo.cs" }
 	$commit = Get-Git-Commit
