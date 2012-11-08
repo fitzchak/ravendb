@@ -29,6 +29,10 @@ namespace Raven.Database.Queries
 			IndexSearcher currentIndexSearcher;
 			using(database.IndexStorage.GetCurrentIndexSearcher(index, out currentIndexSearcher))
 			{
+				if (currentIndexSearcher == null)
+				{
+					throw new InvalidOperationException("Could not find current searcher, for index: " + index);
+				}
 				var termEnum = currentIndexSearcher.GetIndexReader().Terms(new Term(field, fromValue ?? string.Empty));
 				try
 				{
