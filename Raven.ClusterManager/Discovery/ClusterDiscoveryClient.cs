@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Raven.Abstractions;
 
 namespace Raven.ClusterManager.Discovery
 {
@@ -18,7 +17,7 @@ namespace Raven.ClusterManager.Discovery
 
 		public ClusterDiscoveryClient(Guid senderId, string clusterManagerUrl)
 		{
-			buffer = Encoding.UTF8.GetBytes(senderId.ToString() + Environment.NewLine + clusterManagerUrl);
+			buffer = Encoding.UTF8.GetBytes(senderId + Environment.NewLine + clusterManagerUrl);
 			udpClient = new UdpClient
 			{
 				ExclusiveAddressUse = false
@@ -29,9 +28,9 @@ namespace Raven.ClusterManager.Discovery
 		///<summary>
 		/// Publish the presence of this node
 		///</summary>
-		public async Task PublishMyPresenceAsync()
+		public Task PublishMyPresenceAsync()
 		{
-			await udpClient.SendAsync(buffer, buffer.Length, allHostsGroup);
+			return udpClient.SendAsync(buffer, buffer.Length, allHostsGroup);
 		}
 
 		void IDisposable.Dispose()
