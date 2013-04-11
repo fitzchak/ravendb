@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Owin.Hosting;
+using Microsoft.Owin.Hosting.Services;
 using Raven.Database.Server;
 
 namespace Raven.ClusterManager
@@ -11,15 +12,15 @@ namespace Raven.ClusterManager
 			const int port = 9020;
 			NonAdminHttp.EnsureCanListenToWhenInNonAdminContext(port);
 
-			var defaultServiceProvider = new Microsoft.Owin.Hosting.Services.DefaultServiceProvider();
-			defaultServiceProvider.AddInstance<IExampleSharedService>(new ExampleSharedService());
+			var serviceProvider = DefaultServices
+				.Create(defaultServiceProvider => defaultServiceProvider.AddInstance<IExampleSharedService>(new ExampleSharedService()));
 
-			using (WebApplication.Start<Startup>(defaultServiceProvider, port))
+			using (WebApplication.Start<Startup>(serviceProvider, port))
 			{
 				while (true)
 				{
 					Console.WriteLine("Available commands: q.");
-					var line = Console.ReadLine();
+					string line = Console.ReadLine();
 					if (line == "q")
 					{
 						break;
