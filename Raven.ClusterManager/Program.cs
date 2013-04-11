@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Owin.Hosting;
 using Microsoft.Owin.Hosting.Services;
+using Raven.Client;
+using Raven.Client.Document;
 using Raven.Database.Server;
 
 namespace Raven.ClusterManager
@@ -13,9 +15,14 @@ namespace Raven.ClusterManager
 			NonAdminHttp.EnsureCanListenToWhenInNonAdminContext(port);
 
 			var serviceProvider = DefaultServices
-				.Create(defaultServiceProvider => defaultServiceProvider.AddInstance<IExampleSharedService>(new ExampleSharedService()));
+				.Create(defaultServiceProvider =>
+				{
+					defaultServiceProvider.AddInstance<IExampleSharedService>(new ExampleSharedService());
+					defaultServiceProvider.AddInstance<IDocumentStore>(
+						new DocumentStore {ConnectionStringName = "RavenDB"}.Initialize());
+				});
 
-			using (WebApplication.Start<Startup>(serviceProvider, port))
+			using (WebApplication.Start<WebStartup>(serviceProvider, port))
 			{
 				while (true)
 				{
