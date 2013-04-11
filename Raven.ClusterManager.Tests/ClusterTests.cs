@@ -13,7 +13,7 @@ namespace Raven.ClusterManager.Tests
 		{
 			using (var store = new EmbeddableDocumentStore {RunInMemory = true}.Initialize())
 			{
-				// The nice thing about this test is that ir uses the complete OWIN pipeline without hitting network
+				// The nice thing about this test is that it uses the complete OWIN pipeline without hitting network
 				var testServer = TestServer.Create(builder => new WebStartup(new FakeExampleSharedService(), store));
 				var response = await testServer.HttpClient.PostAsync("http://localhost/api/servers/credentials/test?Server=x", null);
 				Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
