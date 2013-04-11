@@ -20,11 +20,18 @@ namespace Raven.ClusterManager
 {
 	public class Bootstrapper : DefaultNancyBootstrapper
 	{
+		private readonly IExampleSharedService exampleSharedService;
+
+		public Bootstrapper(IExampleSharedService exampleSharedService)
+		{
+			this.exampleSharedService = exampleSharedService;
+		}
+
 		protected override void ConfigureApplicationContainer(TinyIoCContainer container)
 		{
 			// Disable the AutoRegister since we're not using it
 			// base.ConfigureApplicationContainer(container);
-
+			container.Register(this.exampleSharedService);
 			var store = new DocumentStore
 			{
 				ConnectionStringName = "RavenDB",
