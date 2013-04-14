@@ -3,6 +3,19 @@
 'use strict';
 
 clusterManagerApp.controller('MainCtrl', function mainCtrl($scope, $http, $timeout) {
+    var statsHub = $.connection.stats;
+
+    statsHub.client.addServer = function (server) {
+        alert('server added');
+    };
+
+    statsHub.client.addDatabase = function (database) {
+        alert('db added');
+    };
+
+    $.connection.hub.start();
+
+
     $scope.startDiscovering = function () {
         $scope.isDiscovering = true;
         $http.get('/api/discovery/start').success(function () {

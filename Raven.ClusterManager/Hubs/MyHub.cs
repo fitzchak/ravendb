@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR;
 
-namespace Raven.ClusterManager
+namespace Raven.ClusterManager.Hubs
 {
 	public class MyHub : Hub
 	{

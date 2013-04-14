@@ -1,5 +1,6 @@
 ﻿/// <reference path="vendor/angular/angular.js" />
 /// <reference path="vendor/lodash/lodash.js" />
+/// <reference path="vendor/signalr/jquery.signalr.js" />
 /*global angular:false */
 'use strict';
 
