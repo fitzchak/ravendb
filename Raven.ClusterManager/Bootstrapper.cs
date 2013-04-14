@@ -12,7 +12,6 @@ using Nancy.TinyIoc;
 using Raven.Abstractions.Util;
 using Raven.Bundles.Replication.Tasks;
 using Raven.Client;
-using Raven.Client.Document;
 using Raven.ClusterManager.Models;
 using Raven.ClusterManager.Tasks;
 
@@ -20,16 +19,20 @@ namespace Raven.ClusterManager
 {
 	public class Bootstrapper : DefaultNancyBootstrapper
 	{
+		private readonly IExampleSharedService exampleSharedService;
+		private readonly IDocumentStore store;
+
+		public Bootstrapper(IExampleSharedService exampleSharedService, IDocumentStore store)
+		{
+			this.exampleSharedService = exampleSharedService;
+			this.store = store;
+		}
+
 		protected override void ConfigureApplicationContainer(TinyIoCContainer container)
 		{
 			// Disable the AutoRegister since we're not using it
 			// base.ConfigureApplicationContainer(container);
-
-			var store = new DocumentStore
-			{
-				ConnectionStringName = "RavenDB",
-			};
-			store.Initialize();
+			container.Register(this.exampleSharedService);
 
 			store.Conventions.RegisterIdConvention<ServerRecord>((s, commands, serverRecord) => "serverRecords/" + ReplicationTask.EscapeDestinationName(serverRecord.Url));
 			store.Conventions.RegisterIdConvention<DatabaseRecord>((s, commands, databaseRecord) => databaseRecord.ServerId + "/" + databaseRecord.Name);
@@ -37,7 +40,7 @@ namespace Raven.ClusterManager
 			store.Conventions.RegisterAsyncIdConvention<ServerRecord>((s, commands, serverRecord) => new CompletedTask<string>("serverRecords/" + ReplicationTask.EscapeDestinationName(serverRecord.Url)));
 			store.Conventions.RegisterAsyncIdConvention<DatabaseRecord>((s, commands, databaseRecord) => new CompletedTask<string>(databaseRecord.ServerId + "/" + databaseRecord.Name));
 
-			container.Register<IDocumentStore>(store);
+			container.Register(store);
 		}
 
 		protected override void ConfigureRequestContainer(TinyIoCContainer container, NancyContext context)

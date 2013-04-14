@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Owin.Hosting;
-using Raven.Database.Server;
+using Microsoft.Owin.Hosting.Services;
+using Raven.Client;
+using Raven.Client.Document;
 
 namespace Raven.ClusterManager
 {
@@ -8,15 +10,22 @@ namespace Raven.ClusterManager
 	{
 		public static void Main(string[] args)
 		{
-			const int port = 9020;
-			NonAdminHttp.EnsureCanListenToWhenInNonAdminContext(port);
+			const int port = 5020;
 
-			using (WebApplication.Start<Startup>(port))
+			var serviceProvider = DefaultServices
+				.Create(defaultServiceProvider =>
+				{
+					defaultServiceProvider.AddInstance<IExampleSharedService>(new ExampleSharedService());
+					defaultServiceProvider.AddInstance<IDocumentStore>(
+						new DocumentStore {ConnectionStringName = "RavenDB"}.Initialize());
+				});
+
+			using (WebApplication.Start<WebStartup>(serviceProvider, port))
 			{
 				while (true)
 				{
 					Console.WriteLine("Available commands: q.");
-					var line = Console.ReadLine();
+					string line = Console.ReadLine();
 					if (line == "q")
 					{
 						break;
