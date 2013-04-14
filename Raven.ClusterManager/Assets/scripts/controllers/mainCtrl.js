@@ -3,7 +3,7 @@
 'use strict';
 
 clusterManagerApp.controller('MainCtrl', function mainCtrl($scope, $http, $timeout) {
-    var statsHub = $.connection.stats;
+    var statsHub = $.connection.statsHub;
 
     statsHub.client.addServer = function (server) {
         alert('server added');

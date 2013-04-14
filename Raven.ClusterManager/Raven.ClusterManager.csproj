@@ -176,6 +176,8 @@
     <Content Include="Assets\views\main.html" />
     <Content Include="Assets\scripts\vendor\lodash\lodash.js" />
     <Content Include="Assets\scripts\vendor\lodash\lodash.min.js" />
+    <Content Include="Assets\scripts\vendor\signalr\jquery.signalr.js" />
+    <Content Include="Assets\scripts\vendor\signalr\jquery.signalr.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
