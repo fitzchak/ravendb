@@ -404,7 +404,7 @@ namespace Raven.Client.Embedded
 		}
 
 		/// <summary>
-		/// Creates a transformer with the specified name, based on an transfomer definition
+		/// Creates a transformer with the specified name, based on an transformer definition
 		/// </summary>
 		public string PutTransformer(string name, TransformerDefinition indexDef)
 		{
@@ -695,17 +695,6 @@ namespace Raven.Client.Embedded
 		}
 
 		/// <summary>
-		/// Promotes the transaction.
-		/// </summary>
-		/// <param name="fromTxId">From tx id.</param>
-		/// <returns></returns>
-		public byte[] PromoteTransaction(Guid fromTxId)
-		{
-			CurrentOperationContext.Headers.Value = OperationsHeaders;
-			return database.PromoteTransaction(fromTxId);
-		}
-
-		/// <summary>
 		/// Returns a new <see cref="IDatabaseCommands"/> using the specified credentials
 		/// </summary>
 		/// <param name="credentialsForSession">The credentials for session.</param>
@@ -733,23 +722,15 @@ namespace Raven.Client.Embedded
 		}
 
 		/// <summary>
-		/// It seems that we can't promote a transaction inside the same process
-		/// </summary>
-		public bool SupportsPromotableTransactions
-		{
-			get { return false; }
-		}
-
-		/// <summary>
 		/// Perform a set based update using the specified index, not allowing the operation
 		/// if the index is stale
 		/// </summary>
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patchRequests">The patch requests.</param>
-		public void UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests)
+		public Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests)
 		{
-			UpdateByIndex(indexName, queryToUpdate, patchRequests, false);
+			return UpdateByIndex(indexName, queryToUpdate, patchRequests, false);
 		}
 
 		/// <summary>
@@ -759,9 +740,9 @@ namespace Raven.Client.Embedded
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patch">The patch request to use (using JavaScript)</param>
-		public void UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch)
+		public Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch)
 		{
-			UpdateByIndex(indexName, queryToUpdate, patch, false);
+			return UpdateByIndex(indexName, queryToUpdate, patch, false);
 		}
 
 		/// <summary>
@@ -771,11 +752,12 @@ namespace Raven.Client.Embedded
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patchRequests">The patch requests.</param>
 		/// <param name="allowStale">if set to <c>true</c> [allow stale].</param>
-		public void UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests, bool allowStale)
+		public Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests, bool allowStale)
 		{
 			CurrentOperationContext.Headers.Value = OperationsHeaders;
 			var databaseBulkOperations = new DatabaseBulkOperations(database, TransactionInformation);
-			databaseBulkOperations.UpdateByIndex(indexName, queryToUpdate, patchRequests, allowStale);
+			var state = databaseBulkOperations.UpdateByIndex(indexName, queryToUpdate, patchRequests, allowStale);
+			return new Operation(0, state);
 		}
 
 		/// <summary>
@@ -785,11 +767,12 @@ namespace Raven.Client.Embedded
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patch">The patch request to use (using JavaScript)</param>
 		/// <param name="allowStale">if set to <c>true</c> [allow stale].</param>
-		public void UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch, bool allowStale)
+		public Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch, bool allowStale)
 		{
 			CurrentOperationContext.Headers.Value = OperationsHeaders;
 			var databaseBulkOperations = new DatabaseBulkOperations(database, RavenTransactionAccessor.GetTransactionInformation());
-			databaseBulkOperations.UpdateByIndex(indexName, queryToUpdate, patch, allowStale);
+			var state = databaseBulkOperations.UpdateByIndex(indexName, queryToUpdate, patch, allowStale);
+			return new Operation(0, state);
 		}
 
 		/// <summary>
@@ -798,9 +781,9 @@ namespace Raven.Client.Embedded
 		/// </summary>
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToDelete">The query to delete.</param>
-		public void DeleteByIndex(string indexName, IndexQuery queryToDelete)
+		public Operation DeleteByIndex(string indexName, IndexQuery queryToDelete)
 		{
-			DeleteByIndex(indexName, queryToDelete, false);
+			return DeleteByIndex(indexName, queryToDelete, false);
 		}
 
 		/// <summary>
@@ -809,11 +792,12 @@ namespace Raven.Client.Embedded
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToDelete">The query to delete.</param>
 		/// <param name="allowStale">if set to <c>true</c> [allow stale].</param>
-		public void DeleteByIndex(string indexName, IndexQuery queryToDelete, bool allowStale)
+		public Operation DeleteByIndex(string indexName, IndexQuery queryToDelete, bool allowStale)
 		{
 			CurrentOperationContext.Headers.Value = OperationsHeaders;
 			var databaseBulkOperations = new DatabaseBulkOperations(database, TransactionInformation);
-			databaseBulkOperations.DeleteByIndex(indexName, queryToDelete, allowStale);
+			var state = databaseBulkOperations.DeleteByIndex(indexName, queryToDelete, allowStale);
+			return new Operation(0, state);
 		}
 
 		/// <summary>
@@ -901,9 +885,9 @@ namespace Raven.Client.Embedded
 		/// </summary>
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patches">Array of patch requests</param>
-		public void Patch(string key, PatchRequest[] patches)
+		public RavenJObject Patch(string key, PatchRequest[] patches)
 		{
-			Patch(key, patches, null);
+			return Patch(key, patches, null);
 		}
 
 		/// <summary>
@@ -911,9 +895,9 @@ namespace Raven.Client.Embedded
 		/// </summary>
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patch">The patch request to use (using JavaScript)</param>
-		public void Patch(string key, ScriptedPatchRequest patch)
+		public RavenJObject Patch(string key, ScriptedPatchRequest patch)
 		{
-			Patch(key, patch, null);
+			return Patch(key, patch, null);
 		}
 
 		/// <summary>
@@ -922,17 +906,17 @@ namespace Raven.Client.Embedded
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patches">Array of patch requests</param>
 		/// <param name="etag">Require specific Etag [null to ignore]</param>
-		public void Patch(string key, PatchRequest[] patches, Etag etag)
+		public RavenJObject Patch(string key, PatchRequest[] patches, Etag etag)
 		{
-			Batch(new[]
-			      {
-				      new PatchCommandData
-				      {
-					      Key = key,
-					      Patches = patches,
-					      Etag = etag
-				      }
-			      });
+			var batchResults = Batch(new[]
+			{
+				new PatchCommandData
+				{
+					Key = key, Patches = patches, Etag = etag
+				}
+			});
+
+			return batchResults[0].AdditionalData;
 		}
 
 		/// <summary>
@@ -941,9 +925,9 @@ namespace Raven.Client.Embedded
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patch">The patch request to use (using JavaScript)</param>
 		/// <param name="etag">Require specific Etag [null to ignore]</param>
-		public void Patch(string key, ScriptedPatchRequest patch, Etag etag)
+		public RavenJObject Patch(string key, ScriptedPatchRequest patch, Etag etag)
 		{
-			Batch(new[]
+			var batchResults = Batch(new[]
 			      {
 				      new ScriptedPatchCommandData
 				      {
@@ -952,6 +936,7 @@ namespace Raven.Client.Embedded
 					      Etag = etag
 				      }
 			      });
+			return batchResults[0].AdditionalData;
 		}
 
 		/// <summary>

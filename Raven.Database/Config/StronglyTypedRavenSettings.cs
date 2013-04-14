@@ -37,6 +37,9 @@ namespace Raven.Database.Config
 			MaxIndexingRunLatency =
 				new TimeSpanSetting(settings["Raven/MaxIndexingRunLatency"], TimeSpan.FromMinutes(5),
 				                    TimeSpanArgumentType.FromParse);
+			MaxIndexWritesBeforeRecreate =
+				new IntegerSetting(settings["Raven/MaxIndexWritesBeforeRecreate"], 256 * 1024);
+
 			MaxNumberOfItemsToIndexInSingleBatch =
 				new IntegerSettingWithMin(settings["Raven/MaxNumberOfItemsToIndexInSingleBatch"],
 				                          defaultMaxNumberOfItemsToIndexInSingleBatch, 128);
@@ -111,7 +114,10 @@ namespace Raven.Database.Config
 			DisableClusterDiscovery = new BooleanSetting(settings["Raven/DisableClusterDiscovery"], false);
 
 			ClusterName = new StringSetting(settings["Raven/ClusterName"], (string)null);
-			ServerName = new StringSetting(settings["Raven/ServerName"], (string)null);		
+			ServerName = new StringSetting(settings["Raven/ServerName"], (string)null);
+
+			MaxStepsForScript = new IntegerSetting(settings["Raven/MaxStepsForScript"], 10*1000);
+			AdditionalStepsForScriptBasedOnDocumentSize = new IntegerSetting(settings["Raven/AdditionalStepsForScriptBasedOnDocumentSize"], 5);
 		}
 
 	    
@@ -219,5 +225,11 @@ namespace Raven.Database.Config
 		public TimeSpanSetting TimeToWaitBeforeMarkingIdleIndexAsAbandoned { get; private set; }
 
 		public TimeSpanSetting TimeToWaitBeforeRunningAbandonedIndexes { get; private set; }
+		
+		public IntegerSetting MaxStepsForScript { get; private set; }
+
+		public IntegerSetting AdditionalStepsForScriptBasedOnDocumentSize { get; private set; }
+
+		public IntegerSetting MaxIndexWritesBeforeRecreate { get; private set; }
 	}
 }

@@ -17,6 +17,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using Microsoft.Win32;
 using NDesk.Options;
 using NLog.Config;
 using Raven.Abstractions;
@@ -131,6 +132,8 @@ namespace Raven.Server
 				{"install", "Installs the RavenDB service", key => actionToTake= () => AdminRequired(InstallAndStart)},
 				{"user=", "Which user will be used", user=> theUser = user},
 				{"setup-perf-counters", "Setup the performance counters and the related permissions", key => actionToTake = ()=> AdminRequired(()=>SetupPerfCounters(theUser))},
+				{"allow-blank-password-use", "Allow to log on by using a Windows account that has a blank password", key => actionToTake = () => AdminRequired(() => SetLimitBlankPasswordUseRegValue(0))},
+				{"deny-blank-password-use", "Deny to log on by using a Windows account that has a blank password", key => actionToTake = () =>  AdminRequired(() => SetLimitBlankPasswordUseRegValue(1))},
 				{"service-name=", "The {0:service name} to use when installing or uninstalling the service, default to RavenDB", name => ProjectInstaller.SERVICE_NAME = name},
 				{"uninstall", "Uninstalls the RavenDB service", key => actionToTake= () => AdminRequired(EnsureStoppedAndUninstall)},
 				{"start", "Starts the RavenDB service", key => actionToTake= () => AdminRequired(StartService)},
@@ -259,6 +262,34 @@ namespace Raven.Server
 			Console.Write("User {0} has been added to Performance Monitoring Users group. Please {1} to take an effect.", user, actionToTake);
 		}
 
+		private static void SetLimitBlankPasswordUseRegValue(int value)
+		{
+			// value == 0 - disable a limit
+			// value == 1 - enable a limit
+
+			if (value != 0 && value != 1)
+				throw new ArgumentException("Allowed arguments for 'LimitBlankPasswordUse' registry value are only 0 or 1", "value");
+
+			const string registryKey = @"SYSTEM\CurrentControlSet\Control\Lsa";
+			const string policyName = "Limit local account use of blank passwords to console logon only";
+
+			var lsaKey = Registry.LocalMachine.OpenSubKey(registryKey, true);
+			if (lsaKey != null)
+			{
+				lsaKey.SetValue("LimitBlankPasswordUse", value, RegistryValueKind.DWord);
+
+				if (value == 0)
+					Console.WriteLine("You have just disabled the following security policy: '{0}' on the local machine.", policyName);
+				else
+					Console.WriteLine("You have just enabled the following security policy: '{0}' on the local machine.", policyName);
+			}
+			else
+			{
+				Console.WriteLine("Error: Could not find the registry key '{0}' in order to disable '{1}' policy.", registryKey,
+				                  policyName);
+			}
+		}
+
 		private static void ProtectConfiguration(string file)
 		{
 			if (string.Equals(Path.GetExtension(file), ".config", StringComparison.OrdinalIgnoreCase))
@@ -348,6 +379,14 @@ Configuration options:
 		{
 			try
 			{
+				for (var i = 0; i < cmdLineArgs.Length; i++)
+				{
+					if (cmdLineArgs[i].Contains(" "))
+					{
+						cmdLineArgs[i] = "\"" + cmdLineArgs[i] + "\"";
+					}
+				}
+
 				var process = Process.Start(new ProcessStartInfo
 				{
 					Arguments = string.Join(" ", cmdLineArgs),
@@ -594,7 +633,7 @@ Enjoy...
 		static void SetRecoveryOptions(string serviceName)
 		{
 			int exitCode;
-			var arguments = string.Format("failure {0} reset= 500 actions= restart/60000", serviceName);
+			var arguments = string.Format("failure \"{0}\" reset= 500 actions= restart/60000", serviceName);
 			using (var process = new Process())
 			{
 				var startInfo = process.StartInfo;

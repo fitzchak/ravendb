@@ -4,9 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security;
 using Raven.Abstractions.Data;
@@ -24,17 +23,16 @@ using Raven.Client.Document.Async;
 #if SILVERLIGHT
 using System.Net.Browser;
 using Raven.Client.Silverlight.Connection;
+using Raven.Client.Util;
+
 #elif NETFX_CORE
 using System.Collections.Concurrent;
 using Raven.Client.Util;
 using Raven.Client.WinRT.Connection;
 #else
-using Raven.Client.Listeners;
 using Raven.Client.Document.DTC;
-using System.Security.Cryptography;
-using System.Collections.Concurrent;
 using Raven.Client.Util;
-using Raven.Abstractions.Connection;
+
 #endif
 
 
@@ -87,6 +85,9 @@ namespace Raven.Client.Document
 		{
 			get { return true; }
 		}
+
+		public ReplicationBehavior Replication { get; private set; }
+
 		///<summary>
 		/// Get the <see cref="HttpJsonRequestFactory"/> for the stores
 		///</summary>
@@ -145,6 +146,7 @@ namespace Raven.Client.Document
 		/// </summary>
 		public DocumentStore()
 		{
+			Replication = new ReplicationBehavior(this);
 #if !SILVERLIGHT && !NETFX_CORE
 			Credentials = CredentialCache.DefaultNetworkCredentials;
 #endif
@@ -483,7 +485,7 @@ namespace Raven.Client.Document
 			if (EnlistInDistributedTransactions == false)
 				return;
 
-			var pendingTransactionRecovery = new PendingTransactionRecovery();
+			var pendingTransactionRecovery = new PendingTransactionRecovery(this);
 			pendingTransactionRecovery.Execute(ResourceManagerId, DatabaseCommands);
 		}
 #endif
@@ -724,7 +726,7 @@ namespace Raven.Client.Document
 				Conventions,
 				GetReplicationInformerForDatabase(database),
 				() => databaseChanges.Remove(database),
-				((AsyncServerClient) AsyncDatabaseCommands).TryResolveConflictByUsingRegisteredListenersAsync);
+				((AsyncServerClient)AsyncDatabaseCommands).TryResolveConflictByUsingRegisteredListenersAsync);
 		}
 
 		/// <summary>
@@ -856,6 +858,5 @@ namespace Raven.Client.Document
 			return changes == null ? new CompletedTask() : changes.ConnectionTask;
 		}
 #endif
-
 	}
 }

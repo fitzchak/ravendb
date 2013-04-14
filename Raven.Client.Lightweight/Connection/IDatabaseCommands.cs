@@ -171,7 +171,7 @@ namespace Raven.Client.Connection
 		string PutIndex(string name, IndexDefinition indexDef);
 
 		/// <summary>
-		/// Creates a transformer with the specified name, based on an transfomer definition
+		/// Creates a transformer with the specified name, based on an transformer definition
 		/// </summary>
 		string PutTransformer(string name, TransformerDefinition indexDef);
 
@@ -250,33 +250,19 @@ namespace Raven.Client.Connection
 		void Rollback(Guid txId);
 
 		/// <summary>
-		/// Promotes the transaction
-		/// </summary>
-		/// <param name="fromTxId">From tx id.</param>
-		/// <returns></returns>
-		byte[] PromoteTransaction(Guid fromTxId);
-
-		/// <summary>
 		/// Returns a new <see cref="IDatabaseCommands"/> using the specified credentials
 		/// </summary>
 		/// <param name="credentialsForSession">The credentials for session.</param>
 		IDatabaseCommands With(ICredentials credentialsForSession);
 
-		/// <summary>
-		/// Gets a value indicating whether [supports promotable transactions].
-		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if [supports promotable transactions]; otherwise, <c>false</c>.
-		/// </value>
-		bool SupportsPromotableTransactions { get; }
-
+	
 		/// <summary>
 		/// Perform a set based deletes using the specified index, not allowing the operation
 		/// if the index is stale
 		/// </summary>
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToDelete">The query to delete.</param>
-		void DeleteByIndex(string indexName, IndexQuery queryToDelete);
+		Operation DeleteByIndex(string indexName, IndexQuery queryToDelete);
 
 		/// <summary>
 		/// Perform a set based deletes using the specified index
@@ -284,7 +270,7 @@ namespace Raven.Client.Connection
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToDelete">The query to delete.</param>
 		/// <param name="allowStale">if set to <c>true</c> [allow stale].</param>
-		void DeleteByIndex(string indexName, IndexQuery queryToDelete, bool allowStale);
+		Operation DeleteByIndex(string indexName, IndexQuery queryToDelete, bool allowStale);
 
 		/// <summary>
 		/// Perform a set based update using the specified index, not allowing the operation
@@ -293,7 +279,7 @@ namespace Raven.Client.Connection
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patchRequests">The patch requests.</param>
-		void UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests);
+		Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests);
 
 		/// <summary>
 		/// Perform a set based update using the specified index, not allowing the operation
@@ -302,7 +288,7 @@ namespace Raven.Client.Connection
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patch">The patch request to use (using JavaScript)</param>
-		void UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch);
+		Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch);
 
 		/// <summary>
 		/// Perform a set based update using the specified index
@@ -311,7 +297,7 @@ namespace Raven.Client.Connection
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patchRequests">The patch requests.</param>
 		/// <param name="allowStale">if set to <c>true</c> [allow stale].</param>
-		void UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests, bool allowStale);
+		Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests, bool allowStale);
 
 		/// <summary>
 		/// Perform a set based update using the specified index
@@ -320,7 +306,7 @@ namespace Raven.Client.Connection
 		/// <param name="queryToUpdate">The query to update.</param>
         /// <param name="patch">The patch request to use (using JavaScript)</param>
 		/// <param name="allowStale">if set to <c>true</c> [allow stale].</param>
-		void UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch, bool allowStale);
+		Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch, bool allowStale);
 
 		/// <summary>
 		/// Create a new instance of <see cref="IDatabaseCommands"/> that will interacts
@@ -381,14 +367,14 @@ namespace Raven.Client.Connection
 		/// </summary>
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patches">Array of patch requests</param>
-		void Patch(string key, PatchRequest[] patches);
+		RavenJObject Patch(string key, PatchRequest[] patches);
 
 		/// <summary>
 		/// Sends a patch request for a specific document, ignoring the document's Etag
 		/// </summary>
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patch">The patch request to use (using JavaScript)</param>
-		void Patch(string key, ScriptedPatchRequest patch);
+		RavenJObject Patch(string key, ScriptedPatchRequest patch);
 
 		/// <summary>
 		/// Sends a patch request for a specific document
@@ -396,7 +382,7 @@ namespace Raven.Client.Connection
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patches">Array of patch requests</param>
 		/// <param name="etag">Require specific Etag [null to ignore]</param>
-        void Patch(string key, PatchRequest[] patches, Etag etag);
+		RavenJObject Patch(string key, PatchRequest[] patches, Etag etag);
 
 		/// <summary>
 		/// Sends a patch request for a specific document
@@ -404,7 +390,7 @@ namespace Raven.Client.Connection
 		/// <param name="key">Id of the document to patch</param>
         /// <param name="patch">The patch request to use (using JavaScript)</param>
 		/// <param name="etag">Require specific Etag [null to ignore]</param>
-        void Patch(string key, ScriptedPatchRequest patch, Etag etag);
+		RavenJObject Patch(string key, ScriptedPatchRequest patch, Etag etag);
 
 		/// <summary>
 		/// Disable all caching within the given scope

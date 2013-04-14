@@ -208,6 +208,9 @@
     <Compile Include="..\Raven.Abstractions\Util\ComparableByteArray.cs">
       <Link>Imports\Util\ComparableByteArray.cs</Link>
     </Compile>
+    <Compile Include="..\Raven.Abstractions\Util\DocumentHelpers.cs">
+      <Link>Features\Documents\DocumentHelpers.cs</Link>
+    </Compile>
     <Compile Include="..\Raven.Abstractions\Util\EtagUtil.cs">
       <Link>Imports\Util\EtagUtil.cs</Link>
     </Compile>
@@ -233,6 +236,10 @@
     <Compile Include="Behaviors\ComboBoxExt.cs" />
     <Compile Include="Behaviors\CopyValueToClipboardAction.cs" />
     <Compile Include="Behaviors\DataGridRowDoubleClickTrigger.cs" />
+    <Compile Include="Behaviors\MouseHoverTrigger.cs" />
+    <Compile Include="Behaviors\ResizeDragBehavior.cs" />
+    <Compile Include="Behaviors\SizeBindings.cs" />
+    <Compile Include="Behaviors\StudioDataTrigger.cs" />
     <Compile Include="Behaviors\DefaultButtonBehavior.cs" />
     <Compile Include="Behaviors\DataGridRowDoubleClickCommandBehavior.cs" />
     <Compile Include="Behaviors\FadeTrimming.cs" />
@@ -247,9 +254,9 @@
     <Compile Include="Behaviors\ShowAutoCompleteDropDown.cs" />
     <Compile Include="Behaviors\ShowPopupWhilstMouseOver.cs" />
     <Compile Include="Behaviors\StudioBehavior.cs" />
-    <Compile Include="Behaviors\StudioDataTrigger.cs" />
     <Compile Include="Behaviors\StudioKeyTrigger.cs" />
     <Compile Include="Commands\BackupCommand.cs" />
+    <Compile Include="Commands\ChangeLockOfIndexCommand.cs" />
     <Compile Include="Commands\CsvImportCommand.cs" />
     <Compile Include="Commands\CalculateGeocodeFromAddressCommand.cs" />
     <Compile Include="Commands\CreateSampleDataCommand.cs" />
@@ -291,7 +298,13 @@
     <Compile Include="Features\Documents\ConflictVersionsView.xaml.cs">
       <DependentUpon>ConflictVersionsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Features\Documents\ConvertingEnumerator.cs" />
     <Compile Include="Features\Documents\DocumentColumnsExtractor.cs" />
+    <Compile Include="Features\Documents\ReplicationSourceInfo.cs" />
+    <Compile Include="Features\JsonEditor\DocumentReferencesFinder.cs" />
+    <Compile Include="Features\JsonEditor\QuickDocumentView.xaml.cs">
+      <DependentUpon>QuickDocumentView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Features\Patch\AutoCompletionTrigger.cs" />
     <Compile Include="Features\Patch\PatchScriptIntelliPromptProvider.cs" />
     <Compile Include="Features\Settings\PeriodicBackupSettingsSectionView.xaml.cs">
@@ -305,15 +318,31 @@
     <Compile Include="Features\Stats\UserInfoView.xaml.cs">
       <DependentUpon>UserInfoView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Features\Tasks\StartRestoreTask.cs" />
+    <Compile Include="Features\Tasks\SmugglerTaskSectionModel.cs" />
+    <Compile Include="Features\Tasks\SmugglerTaskSectionView.xaml.cs">
+      <DependentUpon>SmugglerTaskSectionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Tasks\StartRestoreTaskSectionModel.cs" />
+    <Compile Include="Features\Tasks\TasksPageView.xaml.cs">
+      <DependentUpon>TasksPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Tasks\TaskView.xaml.cs">
+      <DependentUpon>TaskView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Features\Transformers\EditTransformerView.xaml.cs">
       <DependentUpon>EditTransformerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Features\Transformers\TransformersListView.xaml.cs">
       <DependentUpon>TransformersListView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\Converters\BreakToLinesConverter.cs" />
+    <Compile Include="Infrastructure\Converters\HorizontalIfStringConverter.cs" />
+    <Compile Include="Infrastructure\Converters\StringEmptyToValueConverter.cs" />
     <Compile Include="Infrastructure\Converters\VisibleWhenStringEmptyOrNull.cs" />
+    <Compile Include="Models\BasicTaskSectionModel.cs" />
     <Compile Include="Models\SpatialQueryModel.cs" />
+    <Compile Include="Models\TaskPageModel.cs" />
+    <Compile Include="Models\TaskSectionModel.cs" />
     <Compile Include="Models\TransformerDefinitionModel.cs" />
     <Compile Include="Models\TransformersModel.cs" />
     <Compile Include="Impl\AsyncDatabaseCommandExtensions.cs" />
@@ -329,7 +358,6 @@
     <Compile Include="Infrastructure\Converters\TrueWhenGeographyConverter.cs" />
     <Compile Include="Infrastructure\Converters\PriorityToFontColorConverter.cs" />
     <Compile Include="Infrastructure\Converters\PriorityToFontStyleConverter.cs" />
-    <Compile Include="Infrastructure\Converters\StringEmptyToValueConverter.cs" />
     <Compile Include="Infrastructure\Converters\VisibilityByParamInEqualityConverter.cs" />
     <Compile Include="Models\ConflictsModel.cs" />
     <Compile Include="Infrastructure\TemplateSelectors\DataTemplateSelector.cs" />
@@ -431,7 +459,6 @@
     <Compile Include="Features\Documents\ColumnSet.cs" />
     <Compile Include="Features\Documents\ColumnsModel.cs" />
     <Compile Include="Features\Documents\ColumnSuggester.cs" />
-    <Compile Include="Features\Documents\DocumentHelpers.cs" />
     <Compile Include="Features\Documents\DocumentNavigationStrategy.cs" />
     <Compile Include="Features\Documents\DocumentsCollectionSource.cs" />
     <Compile Include="Features\Documents\EditNeighboringDocumentCommand.cs" />
@@ -470,7 +497,7 @@
     <Compile Include="Features\JsonEditor\JsonTokenTaggerProvider.g.cs" />
     <Compile Include="Features\JsonEditor\LinkTag.cs" />
     <Compile Include="Features\JsonEditor\LinkTagAdornmentManager.cs" />
-    <Compile Include="Features\JsonEditor\LinkTagClickHandler.cs" />
+    <Compile Include="Features\JsonEditor\LinkTagMouseHandler.cs" />
     <Compile Include="Features\JsonEditor\LinkTagQuickInfoProvider.cs" />
     <Compile Include="Features\JsonEditor\PropertyValueLinkTagger.cs" />
     <Compile Include="Features\Query\IndexQueryHelpers.cs" />
@@ -478,7 +505,7 @@
     <Compile Include="Features\Query\QueryDocumentsCollectionSource.cs" />
     <Compile Include="Features\Query\QueryHistoryManager.cs" />
     <Compile Include="Features\Query\QueryIndexAutoComplete.cs" />
-    <Compile Include="Features\Tasks\CsvImportTask.cs" />
+    <Compile Include="Features\Tasks\CsvImportTaskSectionModel.cs" />
     <Compile Include="Features\Query\QueryState.cs" />
     <Compile Include="Features\Query\RecentQueriesDropDownView.xaml.cs">
       <DependentUpon>RecentQueriesDropDownView.xaml</DependentUpon>
@@ -494,11 +521,11 @@
     <Compile Include="Features\Stats\ReplicationStatisticsView.xaml.cs">
       <DependentUpon>ReplicationStatisticsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Features\Tasks\IndexingTask.cs" />
-    <Compile Include="Features\Tasks\SampleDataTask.cs" />
-    <Compile Include="Features\Tasks\StartBackupTask.cs" />
-    <Compile Include="Features\Tasks\TaskView.xaml.cs">
-      <DependentUpon>TaskView.xaml</DependentUpon>
+    <Compile Include="Features\Tasks\IndexingTaskSectionModel.cs" />
+    <Compile Include="Features\Tasks\SampleDataTaskSectionModel.cs" />
+    <Compile Include="Features\Tasks\StartBackupTaskSectionModel.cs" />
+    <Compile Include="Features\Tasks\BaseTaskView.xaml.cs">
+      <DependentUpon>BaseTaskView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Features\Terms\TermsView.xaml.cs">
       <DependentUpon>TermsView.xaml</DependentUpon>
@@ -639,6 +666,9 @@
     <Compile Include="Views\IndexStats.xaml.cs">
       <DependentUpon>IndexStats.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Tasks.xaml.cs">
+      <DependentUpon>Tasks.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Terms.xaml.cs">
       <DependentUpon>Terms.xaml</DependentUpon>
     </Compile>
@@ -748,8 +778,8 @@
     <Compile Include="Features\Stats\StatisticsView.xaml.cs">
       <DependentUpon>StatisticsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Features\Tasks\ExportTask.cs" />
-    <Compile Include="Features\Tasks\ImportTask.cs" />
+    <Compile Include="Features\Tasks\ExportTaskSectionModel.cs" />
+    <Compile Include="Features\Tasks\ImportTaskSectionModel.cs" />
     <Compile Include="Features\Logs\LogsView.xaml.cs">
       <DependentUpon>LogsView.xaml</DependentUpon>
     </Compile>
@@ -917,6 +947,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Assets\SyntaxEditorStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Assets\TextBoxStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1021,6 +1055,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Features\JsonEditor\QuickDocumentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Features\Patch\PatchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1097,6 +1135,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Features\Tasks\BaseTaskView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Features\Tasks\SmugglerTaskSectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Features\Tasks\TasksPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Features\Tasks\TaskView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1166,6 +1216,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\IndexStats.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Tasks.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1443,6 +1497,10 @@
     <Resource Include="Assets\Images\transformer_tiny.png" />
     <Resource Include="Assets\Images\transformer_small.png" />
     <Resource Include="Assets\Images\index_down.png" />
+    <Resource Include="Assets\Images\lock.png" />
+    <Resource Include="Assets\Images\lock_error.png" />
+    <Resource Include="Assets\Images\lock_open.png" />
+    <Resource Include="Assets\Images\lock_preferences.png" />
     <Content Include="Impl\SplitButton\Credits.txt" />
     <Content Include="Impl\WatermarkedTextBox\Credits.txt" />
     <Resource Include="Assets\Images\BackgroundTexture.png" />

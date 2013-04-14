@@ -275,8 +275,12 @@ namespace Raven.Abstractions.Data
 
 		private void AppendMinimalQueryString(StringBuilder path)
 		{
-			path.Append("query=")
-				.Append(Uri.EscapeUriString(Uri.EscapeDataString(Query ?? "")));
+			if (string.IsNullOrEmpty(Query) == false)
+			{
+				path.Append("&query=")
+				    .Append(Uri.EscapeUriString(Uri.EscapeDataString(Query)));
+			}
+			
 			if (string.IsNullOrEmpty(DefaultField) == false)
 			{
 				path.Append("&defaultField=").Append(Uri.EscapeDataString(DefaultField));
@@ -302,6 +306,11 @@ namespace Raven.Abstractions.Data
 		public IndexQuery Clone()
 		{
 			return (IndexQuery)MemberwiseClone();
+		}
+
+		public override string ToString()
+		{
+			return Query;
 		}
 	}
 

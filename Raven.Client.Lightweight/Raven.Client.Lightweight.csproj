@@ -65,8 +65,19 @@
     </Compile>
     <Compile Include="Bundles\MoreLikeThis\MoreLikeThisExtensions.cs" />
     <Compile Include="Bundles\Versioning\VersioningExtensions.cs" />
+    <Compile Include="Connection\ConnectionOptions.cs" />
+    <Compile Include="Connection\Operation.cs" />
+    <Compile Include="Document\DTC\IsolatedStorageTransactionRecoveryContext.cs" />
+    <Compile Include="Document\DTC\IsolatedStorageTransactionRecoveryStorage.cs" />
+    <Compile Include="Document\DTC\ITransactionRecoveryStorage.cs" />
+    <Compile Include="Document\DTC\ITransactionRecoveryStorageContext.cs" />
+    <Compile Include="Document\DTC\LocalDirectoryTransactionRecoveryStorage.cs" />
+    <Compile Include="Document\DTC\VolatileOnlyTransactionRecoveryStorage.cs" />
+    <Compile Include="Document\ReplicationBehavior.cs" />
     <Compile Include="Spatial\SpatialCriteria.cs" />
     <Compile Include="Spatial\SpatialCriteriaFactory.cs" />
+    <Compile Include="Util\AsyncCountdownEvent.cs" />
+    <Compile Include="Util\AsyncManualResetEvent.cs" />
     <Compile Include="Util\EvictItemsFromCacheBasedOnChanges.cs" />
     <Compile Include="Changes\IDatabaseChanges.cs" />
     <Compile Include="Changes\LocalConnectionState.cs" />
@@ -154,7 +165,6 @@
     <Compile Include="Document\DocumentSessionListeners.cs" />
     <Compile Include="Document\MultiLoaderWithInclude.cs" />
     <Compile Include="Document\MultiTypeHiLoKeyGenerator.cs" />
-    <Compile Include="Document\PromotableRavenClientEnlistment.cs" />
     <Compile Include="Document\RavenClientEnlistment.cs" />
     <Compile Include="Document\ReflectionUtil.cs" />
     <Compile Include="Document\SessionOperations\LoadOperation.cs" />

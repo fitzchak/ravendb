@@ -68,12 +68,13 @@ namespace Raven.Database.Indexing
 		protected readonly WorkContext context;
 		private readonly object writeLock = new object();
 		private volatile bool disposed;
-		private IndexWriter indexWriter;
+		private RavenIndexWriter indexWriter;
 		private SnapshotDeletionPolicy snapshotter;
 		private readonly IndexSearcherHolder currentIndexSearcherHolder = new IndexSearcherHolder();
 
 		private readonly ConcurrentQueue<IndexingPerformanceStats> indexingPerformanceStats = new ConcurrentQueue<IndexingPerformanceStats>();
 		private readonly static StopAnalyzer stopAnalyzer = new StopAnalyzer(Version.LUCENE_30);
+		private bool forceWriteToDisk;
 
 		public TimeSpan LastIndexingDuration { get; set; }
 		public long TimePerDoc { get; set; }
@@ -115,6 +116,11 @@ namespace Raven.Database.Indexing
 		public DateTime LastIndexTime { get; set; }
 
 		protected DateTime PreviousIndexTime { get; set; }
+
+		public bool IsOnRam
+		{
+			get { return directory is RAMDirectory; }
+		}
 
 		protected void AddindexingPerformanceStat(IndexingPerformanceStats stats)
 		{
@@ -260,12 +266,13 @@ namespace Raven.Database.Indexing
 		public static RavenJObject CreateDocumentFromFields(Document document, FieldsToFetch fieldsToFetch)
 		{
 			var documentFromFields = new RavenJObject();
-			IEnumerable<string> fields = fieldsToFetch.Fields;
-
+			var fields = fieldsToFetch.Fields;
 			if (fieldsToFetch.FetchAllStoredFields)
 				fields = fields.Concat(document.GetFields().Select(x => x.Name));
 
+
 			var q = fields
+				.Distinct()
 				.SelectMany(name => document.GetFields(name) ?? new Field[0])
 				.Where(x => x != null)
 				.Where(
@@ -308,7 +315,7 @@ namespace Raven.Database.Indexing
 			return new KeyValuePair<string, RavenJToken>(fld.Name, stringValue);
 		}
 
-		protected void Write(Func<IndexWriter, Analyzer, IndexingWorkStats, IndexedItemsInfo> action)
+		protected void Write(Func<RavenIndexWriter, Analyzer, IndexingWorkStats, IndexedItemsInfo> action)
 		{
 			if (disposed)
 				throw new ObjectDisposedException("Index " + name + " has been disposed");
@@ -421,13 +428,7 @@ namespace Raven.Database.Indexing
 		private void CreateIndexWriter()
 		{
 			snapshotter = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
-			indexWriter = new IndexWriter(directory, stopAnalyzer, snapshotter, IndexWriter.MaxFieldLength.UNLIMITED);
-			using (indexWriter.MergeScheduler) { }
-			indexWriter.SetMergeScheduler(new ErrorLoggingConcurrentMergeScheduler());
-
-			// RavenDB already manages the memory for those, no need for Lucene to do this as well
-			indexWriter.SetMaxBufferedDocs(IndexWriter.DISABLE_AUTO_FLUSH);
-			indexWriter.SetRAMBufferSizeMB(1024);
+			indexWriter = new RavenIndexWriter(directory, stopAnalyzer, snapshotter, IndexWriter.MaxFieldLength.UNLIMITED, context.Configuration.MaxIndexWritesBeforeRecreate);
 		}
 
 		private void WriteInMemoryIndexToDiskIfNecessary()
@@ -449,7 +450,7 @@ namespace Raven.Database.Indexing
 				stale = accessor.Staleness.IsIndexStale(indexDefinition.Name, null, null);
 			});
 
-			if (toobig || !stale)
+			if (forceWriteToDisk || toobig || !stale)
 			{
 				indexWriter.Commit();
 				var fsDir = context.IndexStorage.MakeRAMDirectoryPhysical(dir, indexDefinition.Name);
@@ -621,7 +622,7 @@ namespace Raven.Database.Indexing
 			}
 		}
 
-		protected void AddDocumentToIndex(IndexWriter currentIndexWriter, Document luceneDoc, Analyzer analyzer)
+		protected void AddDocumentToIndex(RavenIndexWriter currentIndexWriter, Document luceneDoc, Analyzer analyzer)
 		{
 			Analyzer newAnalyzer = AnalyzerGenerators.Aggregate(analyzer,
 																(currentAnalyzer, generator) =>
@@ -1123,7 +1124,7 @@ namespace Raven.Database.Indexing
 				if (spatialIndexQuery != null)
 				{
 					var spatialField = parent.viewGenerator.GetSpatialField(spatialIndexQuery.SpatialFieldName);
-					var dq = spatialField.MakeQuery(q, spatialField.GetStrategy(), spatialIndexQuery.QueryShape, spatialIndexQuery.SpatialRelation, spatialIndexQuery.DistanceErrorPercentage);
+					var dq = spatialField.MakeQuery(q, spatialField.GetStrategy(), spatialIndexQuery);
 					if (q is MatchAllDocsQuery) return dq;
 
 					var bq = new BooleanQuery { { q, Occur.MUST }, { dq, Occur.MUST } };
@@ -1412,6 +1413,11 @@ namespace Raven.Database.Indexing
 			if (jsonDocument == null)
 				return new DynamicNullObject();
 			return new DynamicJsonObject(jsonDocument.ToJson());
+		}
+
+		public void ForceWriteToDisk()
+		{
+			forceWriteToDisk = true;
 		}
 	}
 }

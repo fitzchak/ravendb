@@ -32,16 +32,19 @@ namespace Raven.Database.Impl
 		private readonly HashSet<string> loadedIdsForFilter = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		private readonly IStorageActionsAccessor actions;
 		private readonly OrderedPartCollection<AbstractReadTrigger> triggers;
-	    private readonly Dictionary<string, RavenJToken> queryInputs;
+		private readonly InFlightTransactionalState inFlightTransactionalState;
+		private readonly Dictionary<string, RavenJToken> queryInputs;
 	    private readonly HashSet<string> itemsToInclude;
 
 		public DocumentRetriever(IStorageActionsAccessor actions, OrderedPartCollection<AbstractReadTrigger> triggers, 
+			InFlightTransactionalState inFlightTransactionalState,
             Dictionary<string, RavenJToken> queryInputs = null,
             HashSet<string> itemsToInclude = null)
 		{
 			this.actions = actions;
 			this.triggers = triggers;
-		    this.queryInputs = queryInputs ?? new Dictionary<string, RavenJToken>();
+			this.inFlightTransactionalState = inFlightTransactionalState;
+			this.queryInputs = queryInputs ?? new Dictionary<string, RavenJToken>();
 		    this.itemsToInclude = itemsToInclude ?? new HashSet<string>();
 		}
 
@@ -145,7 +148,7 @@ namespace Raven.Database.Impl
 				// We have to load the document if user explicitly asked for the id, since 
 				// we normalize the casing for the document id on the index, and we need to return
 				// the id to the user with the same casing they gave us.
-				var fetchingId = fieldsToFetch.Fields.Any(fieldToFetch => fieldToFetch == Constants.DocumentIdFieldName);
+				var fetchingId = fieldsToFetch.HasField(Constants.DocumentIdFieldName);
 				var fieldsToFetchFromDocument = fieldsToFetch.Fields
 					.Where(fieldToFetch => queryResult.Projection[fieldToFetch] == null)
 					.ToArray();
@@ -202,6 +205,9 @@ namespace Raven.Database.Impl
 				return doc;
 			doc = actions.Documents.DocumentByKey(key, null);
 			EnsureIdInMetadata(doc);
+			var nonAuthoritativeInformationBehavior = inFlightTransactionalState.GetNonAuthoritativeInformationBehavior<JsonDocument>(null, key);
+			if (nonAuthoritativeInformationBehavior != null)
+				doc = nonAuthoritativeInformationBehavior(doc);
 			cache[key] = doc;
 			return doc;
 		}

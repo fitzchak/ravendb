@@ -257,9 +257,9 @@ namespace Raven.Client.Connection.Async
 		}
 
 		/// <summary>
-		/// Puts the transfomer definition for the specified name asynchronously
+		/// Puts the transformer definition for the specified name asynchronously
 		/// </summary>
-		public Task<string> PutTransfomerAsync(string name, TransformerDefinition transformerDefinition)
+		public Task<string> PutTransformerAsync(string name, TransformerDefinition transformerDefinition)
 		{
 			return ExecuteWithReplication("PUT", opUrl => DirectPutTransformerAsync(name, transformerDefinition, opUrl));
 		}
@@ -325,7 +325,7 @@ namespace Raven.Client.Connection.Async
 			var serializeObject = JsonConvert.SerializeObject(transformerDefinition, Default.Converters);
 			return request.WriteAsync(serializeObject)
 				.ContinueWith(writeTask => request.ReadResponseJsonAsync()
-											.ContinueWith(readJsonTask => { return readJsonTask.Result.Value<string>("Transfomer"); })).
+											.ContinueWith(readJsonTask => { return readJsonTask.Result.Value<string>("Transformer"); })).
 				Unwrap();
 		}
 
@@ -1362,7 +1362,7 @@ namespace Raven.Client.Connection.Async
 			EnsureIsNotNullOrEmpty(index, "index");
 			string path = query.GetIndexQueryUrl(url, index, "streams/query", includePageSizeEvenIfNotExplicitlySet: false);
 			var request = jsonRequestFactory.CreateHttpJsonRequest(
-				new CreateHttpJsonRequestParams(this, path, "GET", credentials, convention)
+				new CreateHttpJsonRequestParams(this, path.NoCache(), "GET", credentials, convention)
 					.AddOperationHeaders(OperationsHeaders))
 											.AddReplicationStatusHeaders(Url, url, replicationInformer,
 																		 convention.FailoverBehavior,
@@ -1389,6 +1389,7 @@ namespace Raven.Client.Connection.Async
 			private readonly Stream stream;
 			private readonly StreamReader streamReader;
 			private readonly JsonTextReaderAsync reader;
+		    private bool complete;
 
 			private bool wasInitalized;
 
@@ -1423,6 +1424,13 @@ namespace Raven.Client.Connection.Async
 
 			public async Task<bool> MoveNextAsync()
 			{
+                if (complete)
+                {
+                    // to parallel IEnumerable<T>, subsequent calls to MoveNextAsync after it has returned false should
+                    // also return false, rather than throwing
+                    return false;
+                }
+
 				if (wasInitalized == false)
 				{
 					await InitAsync();
@@ -1433,7 +1441,10 @@ namespace Raven.Client.Connection.Async
 					throw new InvalidOperationException("Unexpected end of data");
 
 				if (reader.TokenType == JsonToken.EndArray)
-					return false;
+				{
+				    complete = true;
+				    return false;
+				}
 
 				Current = (RavenJObject)await RavenJToken.ReadFromAsync(reader);
 				return true;
@@ -1475,7 +1486,7 @@ namespace Raven.Client.Connection.Async
 
 
 			var request = jsonRequestFactory.CreateHttpJsonRequest(
-				new CreateHttpJsonRequestParams(this, sb.ToString(), "GET", credentials, convention)
+				new CreateHttpJsonRequestParams(this, sb.ToString().NoCache(), "GET", credentials, convention)
 					.AddOperationHeaders(OperationsHeaders))
 				.AddReplicationStatusHeaders(Url, url, replicationInformer, convention.FailoverBehavior, HandleReplicationStatusChanges);
 			var webResponse = await request.RawExecuteRequestAsync();
@@ -1725,13 +1736,27 @@ namespace Raven.Client.Connection.Async
 		public Task<RavenJToken> GetOperationStatusAsync(long id)
 		{
 			var request = jsonRequestFactory
-				.CreateHttpJsonRequest(new CreateHttpJsonRequestParams(this, url + "/operation/status?id=" + id, "GET", credentials, convention)
+				.CreateHttpJsonRequest(new CreateHttpJsonRequestParams(this, (url + "/operation/status?id=" + id).NoCache(), "GET", credentials, convention)
 				.AddOperationHeaders(OperationsHeaders));
 
-			return
-				request
-					.ReadResponseJsonAsync()
-					.ContinueWith(task => task.Result);
+			return request.ReadResponseJsonAsync()
+			              .ContinueWith(task =>
+			              {
+				              if (task.IsFaulted)
+				              {
+					              var webException = task.Exception.ExtractSingleInnerException() as WebException;
+
+					              if (webException != null)
+					              {
+						              var httpWebResponse = webException.Response as HttpWebResponse;
+						              if (httpWebResponse != null && httpWebResponse.StatusCode == HttpStatusCode.NotFound)
+						              {
+							              return null;
+						              }
+					              }
+				              }
+				              return task.Result;
+			              });
 		}
 
 		#region IAsyncGlobalAdminDatabaseCommands

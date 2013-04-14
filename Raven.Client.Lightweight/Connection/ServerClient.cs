@@ -192,6 +192,16 @@ namespace Raven.Client.Connection
 		/// <returns></returns>
 		public JsonDocument DirectGet(string serverUrl, string key, string transform = null)
 		{
+			if (key.Length > 127)
+			{
+				// avoid hitting UrlSegmentMaxLength limits in Http.sys
+				var multiLoadResult = DirectGet(new string[] {key}, serverUrl, new string[0], null, new Dictionary<string, RavenJToken>(), false);
+				var result = multiLoadResult.Results.FirstOrDefault();
+				if (result == null)
+					return null;
+				return SerializationHelper.RavenJObjectToJsonDocument(result);
+			}
+
 			var metadata = new RavenJObject();
 		    var actualUrl = serverUrl + "/docs/" + Uri.EscapeDataString(key);
 		    if (!string.IsNullOrEmpty(transform))
@@ -896,7 +906,7 @@ namespace Raven.Client.Connection
 		{
 			EnsureIsNotNullOrEmpty(name, "name");
 
-			return ExecuteWithReplication("PUT", operationUrl => DirectPutTransfomer(name, operationUrl, indexDef));
+			return ExecuteWithReplication("PUT", operationUrl => DirectPutTransformer(name, operationUrl, indexDef));
 	
 		}
 
@@ -914,7 +924,7 @@ namespace Raven.Client.Connection
 			return ExecuteWithReplication("PUT", operationUrl => DirectPutIndex(name, operationUrl, overwrite, definition));
 		}
 
-		public string DirectPutTransfomer(string name, string operationUrl, TransformerDefinition definition)
+		public string DirectPutTransformer(string name, string operationUrl, TransformerDefinition definition)
 		{
 			string requestUri = operationUrl + "/transformers/" + name;
 
@@ -927,7 +937,7 @@ namespace Raven.Client.Connection
 
 
 			var responseJson = (RavenJObject)request.ReadResponseJson();
-			return responseJson.Value<string>("Transfomer");
+			return responseJson.Value<string>("Transformer");
 		}
 
 		public string DirectPutIndex(string name, string operationUrl, bool overwrite, IndexDefinition definition)
@@ -1373,26 +1383,6 @@ namespace Raven.Client.Connection
 			});
 		}
 
-		/// <summary>
-		/// Promotes the transaction.
-		/// </summary>
-		/// <param name="fromTxId">From tx id.</param>
-		/// <returns></returns>
-		public byte[] PromoteTransaction(Guid fromTxId)
-		{
-			return ExecuteWithReplication("PUT", u => DirectPromoteTransaction(fromTxId, u));
-		}
-
-		private byte[] DirectPromoteTransaction(Guid fromTxId, string operationUrl)
-		{
-			var webRequest = jsonRequestFactory.CreateHttpJsonRequest(
-				new CreateHttpJsonRequestParams(this, operationUrl + "/transaction/promote?fromTxId=" + fromTxId, "POST", credentials, convention)
-					.AddOperationHeaders(OperationsHeaders))
-					.AddReplicationStatusHeaders(Url, operationUrl, replicationInformer, convention.FailoverBehavior, HandleReplicationStatusChanges);
-
-
-			return webRequest.ReadResponseBytes();
-		}
 
 		private void DirectRollback(Guid txId, string operationUrl)
 		{
@@ -1460,19 +1450,6 @@ namespace Raven.Client.Connection
 			};
 		}
 
-
-
-		/// <summary>
-		/// Gets a value indicating whether [supports promotable transactions].
-		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if [supports promotable transactions]; otherwise, <c>false</c>.
-		/// </value>
-		public bool SupportsPromotableTransactions
-		{
-			get { return true; }
-		}
-
 		/// <summary>
 		/// Gets the URL.
 		/// </summary>
@@ -1491,19 +1468,19 @@ namespace Raven.Client.Connection
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToDelete">The query to delete.</param>
 		/// <param name="allowStale">if set to <c>true</c> [allow stale].</param>
-		public void DeleteByIndex(string indexName, IndexQuery queryToDelete, bool allowStale)
+		public Operation DeleteByIndex(string indexName, IndexQuery queryToDelete, bool allowStale)
 		{
-			ExecuteWithReplication<object>("DELETE", operationUrl =>
+			return ExecuteWithReplication<Operation>("DELETE", operationUrl =>
 			{
 				string path = queryToDelete.GetIndexQueryUrl(operationUrl, indexName, "bulk_docs") + "&allowStale=" + allowStale;
 				var request = jsonRequestFactory.CreateHttpJsonRequest(
 					new CreateHttpJsonRequestParams(this, path, "DELETE", credentials, convention)
 						.AddOperationHeaders(OperationsHeaders))
 						.AddReplicationStatusHeaders(Url, operationUrl, replicationInformer, convention.FailoverBehavior, HandleReplicationStatusChanges);
-
+				RavenJToken jsonResponse;
 				try
 				{
-					request.ReadResponseJson();
+					jsonResponse = request.ReadResponseJson();
 				}
 				catch (WebException e)
 				{
@@ -1512,7 +1489,8 @@ namespace Raven.Client.Connection
 						throw new InvalidOperationException("There is no index named: " + indexName);
 					throw;
 				}
-				return null;
+
+				return new Operation(this, jsonResponse.Value<long>("OperationId"));
 			});
 		}
 
@@ -1523,9 +1501,9 @@ namespace Raven.Client.Connection
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patchRequests">The patch requests.</param>
-		public void UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests)
+		public Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests)
 		{
-			UpdateByIndex(indexName, queryToUpdate, patchRequests, false);
+			return UpdateByIndex(indexName, queryToUpdate, patchRequests, false);
 		}
 
 		/// <summary>
@@ -1535,9 +1513,9 @@ namespace Raven.Client.Connection
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patch">The patch request to use (using JavaScript)</param>
-		public void UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch)
+		public Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch)
 		{
-			UpdateByIndex(indexName, queryToUpdate, patch, false);
+			return UpdateByIndex(indexName, queryToUpdate, patch, false);
 		}
 
 		/// <summary>
@@ -1547,10 +1525,10 @@ namespace Raven.Client.Connection
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patchRequests">The patch requests.</param>
 		/// <param name="allowStale">if set to <c>true</c> [allow stale].</param>
-		public void UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests, bool allowStale)
+		public Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, PatchRequest[] patchRequests, bool allowStale)
 		{
 			var requestData = new RavenJArray(patchRequests.Select(x => x.ToJson())).ToString(Formatting.Indented);
-			UpdateByIndexImpl(indexName, queryToUpdate, allowStale, requestData, "PATCH");
+			return UpdateByIndexImpl(indexName, queryToUpdate, allowStale, requestData, "PATCH");
 		}
 
 		/// <summary>
@@ -1560,15 +1538,15 @@ namespace Raven.Client.Connection
 		/// <param name="queryToUpdate">The query to update.</param>
 		/// <param name="patch">The patch request to use (using JavaScript)</param>
 		/// <param name="allowStale">if set to <c>true</c> [allow stale].</param>
-		public void UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch, bool allowStale)
+		public Operation UpdateByIndex(string indexName, IndexQuery queryToUpdate, ScriptedPatchRequest patch, bool allowStale)
 		{
 			var requestData = RavenJObject.FromObject(patch).ToString(Formatting.Indented);
-			UpdateByIndexImpl(indexName, queryToUpdate, allowStale, requestData, "EVAL");
+			return UpdateByIndexImpl(indexName, queryToUpdate, allowStale, requestData, "EVAL");
 		}
 
-		private void UpdateByIndexImpl(string indexName, IndexQuery queryToUpdate, bool allowStale, String requestData, String method)
+		private Operation UpdateByIndexImpl(string indexName, IndexQuery queryToUpdate, bool allowStale, String requestData, String method)
 		{
-			ExecuteWithReplication<object>(method, operationUrl =>
+			return ExecuteWithReplication<Operation>(method, operationUrl =>
 			{
 				string path = queryToUpdate.GetIndexQueryUrl(operationUrl, indexName, "bulk_docs") + "&allowStale=" + allowStale;
 				var request = jsonRequestFactory.CreateHttpJsonRequest(
@@ -1576,11 +1554,11 @@ namespace Raven.Client.Connection
 						.AddOperationHeaders(OperationsHeaders))
 						.AddReplicationStatusHeaders(Url, operationUrl, replicationInformer, convention.FailoverBehavior, HandleReplicationStatusChanges);
 
-
 				request.Write(requestData);
+				RavenJToken jsonResponse;
 				try
 				{
-					request.ReadResponseJson();
+					jsonResponse = request.ReadResponseJson();
 				}
 				catch (WebException e)
 				{
@@ -1589,7 +1567,8 @@ namespace Raven.Client.Connection
 						throw new InvalidOperationException("There is no index named: " + indexName);
 					throw;
 				}
-				return null;
+
+				return new Operation(this, jsonResponse.Value<long>("OperationId"));
 			});
 		}
 
@@ -1599,9 +1578,9 @@ namespace Raven.Client.Connection
 		/// </summary>
 		/// <param name="indexName">Name of the index.</param>
 		/// <param name="queryToDelete">The query to delete.</param>
-		public void DeleteByIndex(string indexName, IndexQuery queryToDelete)
+		public Operation DeleteByIndex(string indexName, IndexQuery queryToDelete)
 		{
-			DeleteByIndex(indexName, queryToDelete, false);
+			return DeleteByIndex(indexName, queryToDelete, false);
 		}
 
 		/// <summary>
@@ -1616,13 +1595,14 @@ namespace Raven.Client.Connection
 
 			return ExecuteWithReplication("GET", operationUrl =>
 			{
-				var requestUri = operationUrl + string.Format("/suggest/{0}?term={1}&field={2}&max={3}&distance={4}&accuracy={5}",
+				var requestUri = operationUrl + string.Format("/suggest/{0}?term={1}&field={2}&max={3}&distance={4}&accuracy={5}&popularity={6}",
 													 Uri.EscapeUriString(index),
 													 Uri.EscapeDataString(suggestionQuery.Term),
 													 Uri.EscapeDataString(suggestionQuery.Field),
 													 Uri.EscapeDataString(suggestionQuery.MaxSuggestions.ToInvariantString()),
 													 Uri.EscapeDataString(suggestionQuery.Distance.ToString()),
-													 Uri.EscapeDataString(suggestionQuery.Accuracy.ToInvariantString()));
+													 Uri.EscapeDataString(suggestionQuery.Accuracy.ToInvariantString()),
+													 suggestionQuery.Popularity);
 
 				var request = jsonRequestFactory.CreateHttpJsonRequest(
 					new CreateHttpJsonRequestParams(this, requestUri, "GET", credentials, convention)
@@ -1874,9 +1854,9 @@ namespace Raven.Client.Connection
 		/// </summary>
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patches">Array of patch requests</param>
-		public void Patch(string key, PatchRequest[] patches)
+		public RavenJObject Patch(string key, PatchRequest[] patches)
 		{
-			Patch(key, patches, null);
+			return Patch(key, patches, null);
 		}
 
 		/// <summary>
@@ -1884,9 +1864,9 @@ namespace Raven.Client.Connection
 		/// </summary>
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patch">The patch request to use (using JavaScript)</param>
-		public void Patch(string key, ScriptedPatchRequest patch)
+		public RavenJObject Patch(string key, ScriptedPatchRequest patch)
 		{
-			Patch(key, patch, null);
+			return Patch(key, patch, null);
 		}
 
 		/// <summary>
@@ -1895,9 +1875,9 @@ namespace Raven.Client.Connection
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patches">Array of patch requests</param>
 		/// <param name="etag">Require specific Etag [null to ignore]</param>
-		public void Patch(string key, PatchRequest[] patches, Etag etag)
+		public RavenJObject Patch(string key, PatchRequest[] patches, Etag etag)
 		{
-			Batch(new[]
+			var batchResults = Batch(new[]
 			      	{
 			      		new PatchCommandData
 			      			{
@@ -1906,6 +1886,7 @@ namespace Raven.Client.Connection
 			      				Etag = etag
 			      			}
 			      	});
+			return batchResults[0].AdditionalData;
 		}
 
 		/// <summary>
@@ -1914,17 +1895,18 @@ namespace Raven.Client.Connection
 		/// <param name="key">Id of the document to patch</param>
 		/// <param name="patch">The patch request to use (using JavaScript)</param>
 		/// <param name="etag">Require specific Etag [null to ignore]</param>
-		public void Patch(string key, ScriptedPatchRequest patch, Etag etag)
+		public RavenJObject Patch(string key, ScriptedPatchRequest patch, Etag etag)
 		{
-			Batch(new[]
-					{
-						new ScriptedPatchCommandData
-							{
-								Key = key,
-								Patch = patch,
-								Etag = etag
-							}
-					});
+			var batchResults = Batch(new[]
+			{
+				new ScriptedPatchCommandData
+				{
+					Key = key,
+					Patch = patch,
+					Etag = etag
+				}
+			});
+			return batchResults[0].AdditionalData;
 		}
 
 		/// <summary>

@@ -87,10 +87,11 @@ task Init -depends Verify40, Clean {
 	
 	$commit = Get-Git-Commit
 	(Get-Content "$base_dir\CommonAssemblyInfo.cs") | 
-		Foreach-Object { $_ -replace ".13.", ".$($env:buildlabel)." } |
+		Foreach-Object { $_ -replace ".13", ".$($env:buildlabel)" } |
 		Foreach-Object { $_ -replace "{commit}", $commit } |
 		Set-Content "$base_dir\CommonAssemblyInfo.cs" -Encoding UTF8
 	
+	Exec { git update-index --assume-unchanged Raven.Database\Server\WebUI\Raven.Studio.xap }
 	
 	New-Item $release_dir -itemType directory -ErrorAction SilentlyContinue | Out-Null
 	New-Item $build_dir -itemType directory -ErrorAction SilentlyContinue | Out-Null
@@ -318,7 +319,7 @@ task CopySmuggler {
 }
 
 task CopyBackup {
-	Copy-Item $build_dir\Raven.Abstractions.??? $build_dir\Output\Smuggler
+	Copy-Item $build_dir\Raven.Abstractions.??? $build_dir\Output\Backup
 	Copy-Item $build_dir\Raven.Backup.??? $build_dir\Output\Backup
 }
 
@@ -558,7 +559,7 @@ task CreateNugetPackages -depends Compile {
 	
 	# Upload packages
 	$accessPath = "$base_dir\..\Nuget-Access-Key.txt"
-	$sourceFeed = "https://nuget.org/api/v2"
+	$sourceFeed = "https://nuget.org/"
 	
 	if ($global:uploadCategory -and $global:uploadCategory.EndsWith("-Unstable")){
 		$accessPath = "$base_dir\..\MyGet-Access-Key.txt"
