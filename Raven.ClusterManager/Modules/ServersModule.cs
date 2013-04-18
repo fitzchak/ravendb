@@ -13,6 +13,7 @@ namespace Raven.ClusterManager.Modules
 			Get[""] = parameters =>
 			{
 				var statistics = new ClusterStatistics();
+
 				statistics.Servers = session.Query<ServerRecord>()
 					.OrderBy(record => record.Id)
 					.Take(1024)
@@ -22,7 +23,6 @@ namespace Raven.ClusterManager.Modules
 					.OrderByDescending(credentials => credentials.Id)
 					.Take(1024)
 					.ToList();
-
 
 				return statistics;
 			};

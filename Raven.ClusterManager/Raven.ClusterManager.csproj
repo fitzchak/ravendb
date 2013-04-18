@@ -142,11 +142,11 @@
     <Content Include="Assets\scripts\typings\underscore\underscore-typed.d.ts" />
     <Content Include="Assets\scripts\typings\underscore\underscore.d.ts" />
     <TypeScriptCompile Include="Assets\scripts\controllers\mainCtrl.ts" />
-    <Content Include="Assets\scripts\controllers\replicationCtrl.js" />
-    <Content Include="Assets\scripts\controllers\serverExplorerCtrl.js" />
-    <Content Include="Assets\scripts\directives\springyDirective.js" />
-    <Content Include="Assets\scripts\services\timeago.js" />
-    <Content Include="Assets\scripts\controllers\serversCtrl.js" />
+    <Content Include="Assets\scripts\controllers\replicationCtrl.ts" />
+    <Content Include="Assets\scripts\controllers\serverExplorerCtrl.ts" />
+    <Content Include="Assets\scripts\directives\springyDirective.ts" />
+    <Content Include="Assets\scripts\services\timeago.ts" />
+    <Content Include="Assets\scripts\controllers\serversCtrl.ts" />
     <Content Include="Assets\scripts\main.ts" />
     <Content Include="Assets\scripts\vendor\angularui\ui-bootstrap-tpls-0.2.0.js" />
     <Content Include="Assets\scripts\vendor\moment\moment.js" />
