@@ -1,6 +1,6 @@
 ﻿/// <reference path="typings/jquery/jquery.d.ts" />
 /// <reference path="typings/angularjs/angular.d.ts" />
-/// <reference path="typings/underscore/underscore.d.ts" />
+/// <reference path="typings/lodash/lodash.d.ts" />
 /// <reference path="typings/signalr/signalr.d.ts" />
 /*global angular:false */
 'use strict';

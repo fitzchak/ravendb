@@ -134,13 +134,10 @@
     <Content Include="Assets\scripts\typings\angularjs\angular-sanitize.d.ts" />
     <Content Include="Assets\scripts\typings\angularjs\angular.d.ts" />
     <Content Include="Assets\scripts\typings\jquery\jquery.d.ts" />
+    <Content Include="Assets\scripts\typings\lodash\lodash.d.ts" />
     <Content Include="Assets\scripts\typings\moment\moment.d.ts" />
     <Content Include="Assets\scripts\typings\select2\select2.d.ts" />
     <Content Include="Assets\scripts\typings\signalr\signalr.d.ts" />
-    <Content Include="Assets\scripts\typings\underscore\underscore-typed-1.4.2.d.ts" />
-    <Content Include="Assets\scripts\typings\underscore\underscore-typed-1.4.3.d.ts" />
-    <Content Include="Assets\scripts\typings\underscore\underscore-typed.d.ts" />
-    <Content Include="Assets\scripts\typings\underscore\underscore.d.ts" />
     <TypeScriptCompile Include="Assets\scripts\controllers\mainCtrl.ts" />
     <TypeScriptCompile Include="Assets\scripts\controllers\replicationCtrl.ts" />
     <TypeScriptCompile Include="Assets\scripts\controllers\serverExplorerCtrl.ts" />

@@ -22,7 +22,7 @@ clusterManagerApp.controller('MainCtrl', function mainCtrl($scope, $http, $timeo
 
     $http.get('/api/servers').success(function (result) {
         $scope.stats = result;
-        jQuery.each(.forEach($scope.stats.servers, function (value, index, array) {
+        _.forEach($scope.stats.servers, function (value, index, array) {
             setServerCss(value);
         });
 
