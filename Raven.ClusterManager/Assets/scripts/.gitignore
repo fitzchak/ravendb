@@ -1,0 +1,4 @@
+*.map
+controllers/*.js
+directives/*.js
+services/*.js
