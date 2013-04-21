@@ -3,6 +3,7 @@
 //      Copyright (c) Hibernating Rhinos LTD. All rights reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
+using System;
 using System.IO;
 using Nancy;
 using Nancy.Bootstrapper;
@@ -95,13 +96,21 @@ namespace Raven.ClusterManager
 				// For debug, we want to edit the static HTML files and serve them without recompiling the assembly.
 				if (rootAppPath == null)
 				{
-					rootAppPath = Path.GetDirectoryName(Path.GetDirectoryName(rootPath)) ?? rootPath;
+					rootAppPath = rootPath;
+					do
+					{
+						rootAppPath = Path.GetDirectoryName(rootAppPath);
+					} while (rootAppPath.EndsWith("Raven.ClusterManager") == false);
 					GenericFileResponse.SafePaths.Add(rootAppPath);
 				}
 				var filePath = Path.Combine(rootAppPath, @"Assets", path);
 				if (File.Exists(filePath))
 				{
 					return new GenericFileResponse(filePath);
+				}
+				else
+				{
+					throw new InvalidOperationException("404 - File does not found: " + filePath);
 				}
 #endif
 
