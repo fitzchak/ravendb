@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
-using System.Windows.Data;
 using Raven.Abstractions.Data;
 
 namespace Raven.Studio.Features.Documents
@@ -22,12 +20,10 @@ namespace Raven.Studio.Features.Documents
             valueExtractors = columns.Select(c => c.GetValueExtractor()).ToArray();
         }
 
-        public IEnumerable<object> GetValues(JsonDocument document)
+        public IEnumerable<string> GetValues(JsonDocument document)
         {
-            var values = valueExtractors.Select(e => e(document));
-
+            var values = valueExtractors.Select(e => e(document).ToString());
             return values;
-        } 
-
+        }
     }
 }

@@ -1,10 +1,8 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 using Kent.Boogaart.KBCsv;
-using Raven.Studio.Controls;
 using Raven.Studio.Infrastructure;
 using Raven.Studio.Models;
 
@@ -29,11 +27,11 @@ namespace Raven.Studio.Commands
              using (stream)
              using (var writer = new CsvWriter(stream))
              {
-                 writer.WriteHeaderRecord(new[] {"Key"}.Concat(model.ValueCalculations.Select(v => v.Header)));
+	             writer.WriteRecord(new HeaderRecord(new[] {"Key"}.Concat(model.ValueCalculations.Select(v => v.Header))));
 
                  foreach (var reportRow in model.Results)
                  {
-                     writer.WriteDataRecord(new object[] { reportRow.Key}.Concat(model.ValueCalculations.Select(v => (object)reportRow.Values[v.Header])));
+	                 writer.WriteRecord(new[] {reportRow.Key}.Concat(model.ValueCalculations.Select(v => reportRow.Values[v.Header].ToString(CultureInfo.InvariantCulture))));
                  }
              }
         }

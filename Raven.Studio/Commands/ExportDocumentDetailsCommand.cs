@@ -118,7 +118,7 @@ namespace Raven.Studio.Commands
                 using (var writer = new CsvWriter(stream))
                 {
                     var extractor = new DocumentColumnsExtractor(columns);
-                    writer.WriteHeaderRecord(columns.Select(c => c.Header));
+					writer.WriteRecord(new HeaderRecord(columns.Select(c => c.Header)));
 
                     // we do the streaming of documents on a background thread mainly to escape the
                     // SynchronizationContext: when there's no synchronization context involved the
@@ -176,7 +176,7 @@ namespace Raven.Studio.Commands
                 foreach (var document in documents)
                 {
                     var values = extractor.GetValues(document);
-                    writer.WriteDataRecord(values);
+					writer.WriteRecord(values);
                 }
             }
         }
