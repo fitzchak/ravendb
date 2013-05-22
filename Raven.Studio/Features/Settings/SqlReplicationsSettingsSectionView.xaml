@@ -3,7 +3,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:Replication="clr-namespace:Raven.Database.Bundles.SqlReplication;assembly=Raven.Client.Silverlight"
+             xmlns:replication="clr-namespace:Raven.Database.Bundles.SqlReplication;assembly=Raven.Client.Silverlight"
              xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:Behaviors="clr-namespace:Raven.Studio.Behaviors"
@@ -14,7 +14,6 @@
              xmlns:ei="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
              xmlns:mE="clr-namespace:Raven.Studio.Infrastructure.MarkupExtensions"
              xmlns:controls3="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input"
-             xmlns:behaviors="clr-namespace:RavenFS.Studio.Behaviors"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400">
 
@@ -22,21 +21,21 @@
 		<Style x:Key="ReplicationItemStyle" TargetType="ComboBoxItem" BasedOn="{StaticResource Style_ComboBoxItem_DefaultStyle}">
 			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 		</Style>
-		<DataTemplate x:Key="ReplicationItemTemplate" DataType="Replication:SqlReplicationConfig">
+		<DataTemplate x:Key="ReplicationItemTemplate" DataType="replication:SqlReplicationConfig">
 			<Grid x:Name="grid">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				<i:Interaction.Triggers>
-					<behaviors:StudioDataTrigger Binding="{Binding Disabled}" Value="True" Comparison="Equal">
+					<Behaviors:StudioDataTrigger Binding="{Binding Disabled}" Value="True" Comparison="Equal">
 						<ei:ChangePropertyAction TargetName="NameTextBlock" PropertyName="FontStyle" Value="{mE:Static Member=FontStyles.Italic}"/>
 						<ei:ChangePropertyAction TargetName="NameTextBlock" PropertyName="Foreground" Value="Gray"/>
-					</behaviors:StudioDataTrigger>
-					<behaviors:StudioDataTrigger Binding="{Binding Disabled}" Value="False" Comparison="Equal">
+					</Behaviors:StudioDataTrigger>
+					<Behaviors:StudioDataTrigger Binding="{Binding Disabled}" Value="False" Comparison="Equal">
 						<ei:ChangePropertyAction TargetName="NameTextBlock" PropertyName="FontStyle" Value="{mE:Static Member=FontStyles.Normal}"/>
 						<ei:ChangePropertyAction TargetName="NameTextBlock" PropertyName="Foreground" Value="Black"/>
-					</behaviors:StudioDataTrigger>
+					</Behaviors:StudioDataTrigger>
 				</i:Interaction.Triggers>
 				<TextBlock x:Name="NameTextBlock" Text="{Binding Name, Mode=TwoWay, Converter={StaticResource StringEmptyToUnnamed}}" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" />
 				<Button Grid.Column="1" Command="{Binding Path=DataContext.DeleteReplication, RelativeSource={RelativeSource AncestorType=ItemsPresenter}}"
@@ -47,21 +46,21 @@
 				</Button>
 			</Grid>
 		</DataTemplate>
-		<DataTemplate x:Key="ReplicationItemSelectionBoxTemplate" DataType="Replication:SqlReplicationConfig">
+		<DataTemplate x:Key="ReplicationItemSelectionBoxTemplate" DataType="replication:SqlReplicationConfig">
 			<Grid x:Name="grid">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				<i:Interaction.Triggers>
-					<behaviors:StudioDataTrigger Binding="{Binding Disabled}" Value="True" Comparison="Equal">
+					<Behaviors:StudioDataTrigger Binding="{Binding Disabled}" Value="True" Comparison="Equal">
 						<ei:ChangePropertyAction TargetName="NameTextBlock" PropertyName="FontStyle" Value="{mE:Static Member=FontStyles.Italic}"/>
 						<ei:ChangePropertyAction TargetName="NameTextBlock" PropertyName="Foreground" Value="Gray"/>
-					</behaviors:StudioDataTrigger>
-					<behaviors:StudioDataTrigger Binding="{Binding Disabled}" Value="False" Comparison="Equal">
+					</Behaviors:StudioDataTrigger>
+					<Behaviors:StudioDataTrigger Binding="{Binding Disabled}" Value="False" Comparison="Equal">
 						<ei:ChangePropertyAction TargetName="NameTextBlock" PropertyName="FontStyle" Value="{mE:Static Member=FontStyles.Normal}"/>
 						<ei:ChangePropertyAction TargetName="NameTextBlock" PropertyName="Foreground" Value="Black"/>
-					</behaviors:StudioDataTrigger>
+					</Behaviors:StudioDataTrigger>
 				</i:Interaction.Triggers>
 				<TextBlock x:Name="NameTextBlock"  Text="{Binding Name, Mode=TwoWay, Converter={StaticResource StringEmptyToUnnamed}}" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" />
 			</Grid>
@@ -129,12 +128,12 @@
 					</Grid.RowDefinitions>
 
 					<i:Interaction.Triggers>
-						<behaviors:StudioDataTrigger Binding="{Binding SelectedReplication.Value.Disabled}" Value="True" Comparison="Equal">
+						<Behaviors:StudioDataTrigger Binding="{Binding SelectedReplication.Value.Disabled}" Value="True" Comparison="Equal">
 							<ei:ChangePropertyAction TargetName="SettingsBorder" PropertyName="Background" Value="{StaticResource DisabledBrush}"/>
-						</behaviors:StudioDataTrigger>
-						<behaviors:StudioDataTrigger Binding="{Binding SelectedReplication.Value.Disabled}" Value="False" Comparison="Equal">
+						</Behaviors:StudioDataTrigger>
+						<Behaviors:StudioDataTrigger Binding="{Binding SelectedReplication.Value.Disabled}" Value="False" Comparison="Equal">
 							<ei:ChangePropertyAction TargetName="SettingsBorder" PropertyName="Background" Value="Transparent"/>
-						</behaviors:StudioDataTrigger>
+						</Behaviors:StudioDataTrigger>
 					</i:Interaction.Triggers>
 
 					<Grid Margin="10,5">

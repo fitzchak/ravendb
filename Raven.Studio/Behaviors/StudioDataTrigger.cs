@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace RavenFS.Studio.Behaviors
+namespace Raven.Studio.Behaviors
 {
 	/// <summary>
 	/// Extend Microsoft's DataTrigger by evaluating the condition when the element loads

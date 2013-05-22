@@ -15,7 +15,6 @@
                      xmlns:ContextMenu="clr-namespace:Raven.Studio.Infrastructure.ContextMenu"
                      xmlns:Delay="clr-namespace:Delay"
                      xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-                     xmlns:behaviors="clr-namespace:RavenFS.Studio.Behaviors"
                      mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="400" 
                      d:DataContext="{d:DesignInstance Models:DocumentsModel}">
 
@@ -237,12 +236,12 @@
                             Opacity="0"
                             Background="#FFC8CDEC" BorderBrush="#FFCCCFDC" CornerRadius="2" BorderThickness="1">
                         <i:Interaction.Triggers>
-                            <behaviors:StudioDataTrigger Binding="{Binding HasChanges}" Value="True" Comparison="Equal">
+                            <Behaviors:StudioDataTrigger Binding="{Binding HasChanges}" Value="True" Comparison="Equal">
                                 <ei:ControlStoryboardAction Storyboard="{StaticResource ShowRefreshPanel}" ControlStoryboardOption="Play"/>
-                            </behaviors:StudioDataTrigger>
-                            <behaviors:StudioDataTrigger Binding="{Binding HasChanges}" Value="False" Comparison="Equal">
+                            </Behaviors:StudioDataTrigger>
+                            <Behaviors:StudioDataTrigger Binding="{Binding HasChanges}" Value="False" Comparison="Equal">
                                 <ei:ControlStoryboardAction Storyboard="{StaticResource HideRefreshPanel}" ControlStoryboardOption="Play"/>
-                            </behaviors:StudioDataTrigger>
+                            </Behaviors:StudioDataTrigger>
                         </i:Interaction.Triggers>
                         <StackPanel Orientation="Horizontal" Margin="8,4" >
                             <TextBlock Text="Documents have changed" FontWeight="Bold" Margin="0,0,8,0"/>
