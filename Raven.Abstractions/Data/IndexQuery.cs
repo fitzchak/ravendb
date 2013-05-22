@@ -179,6 +179,7 @@ namespace Raven.Abstractions.Data
 		/// <param name="operationUrl">The operation URL.</param>
 		/// <param name="index">The index.</param>
 		/// <param name="operationName">Name of the operation.</param>
+		/// <param name="includePageSizeEvenIfNotExplicitlySet">Should include page size?, default value is True</param>
 		/// <returns></returns>
 		public string GetIndexQueryUrl(string operationUrl, string index, string operationName, bool includePageSizeEvenIfNotExplicitlySet = true)
 		{
