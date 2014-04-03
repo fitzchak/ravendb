@@ -188,7 +188,7 @@ class databases extends viewModelBase {
     }
 
     selectDatabase(db: database) {
-        this.databases().forEach(d=> d.isSelected(d === db));
+        this.databases().forEach(d => d.isSelected(d === db));
         db.activate();
         this.selectedDatabase(db);
     }
@@ -200,10 +200,17 @@ class databases extends viewModelBase {
 
     filterDatabases(filter: string) {
         var filterLower = filter.toLowerCase();
-        this.databases().forEach(d=> {
+        
+        this.databases().forEach(d => {
             var isMatch = !filter || (d.name.toLowerCase().indexOf(filterLower) >= 0);
             d.isVisible(isMatch);
         });
+
+        var selectedDatabase = this.selectedDatabase();
+        if (selectedDatabase && !selectedDatabase.isVisible()) {
+            selectedDatabase.isSelected(false);
+            this.selectedDatabase(null);
+        }
     }
 
     deleteSelectedDatabase() {
