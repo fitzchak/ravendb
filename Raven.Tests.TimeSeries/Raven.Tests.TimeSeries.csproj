@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -89,6 +89,7 @@
     <Compile Include="TimeSeriesFailoverTests.cs" />
     <Compile Include="TimeSeriesLoadBalancingTests.cs" />
     <Compile Include="TimeSeriesOperations.cs" />
+    <Compile Include="TimeSeriesRaft.cs" />
     <Compile Include="TimeSeriesReplicationTests.cs" />
     <Compile Include="TimeSeriesChangesTests.cs" />
     <Compile Include="TimeSeriesChangeTests.cs" />

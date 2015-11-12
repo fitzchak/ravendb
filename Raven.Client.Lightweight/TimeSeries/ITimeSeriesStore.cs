@@ -69,7 +69,7 @@ namespace Raven.Client.TimeSeries
 
         Task<long> GetLastEtag(string serverId, CancellationToken token = default(CancellationToken));
 
-        void Initialize(bool ensureDefaultTimeSeriesExists = false);
+        TimeSeriesStore Initialize(bool ensureDefaultTimeSeriesExists = false);
 
         /// <summary>
         /// Subscribe to change notifications from the server

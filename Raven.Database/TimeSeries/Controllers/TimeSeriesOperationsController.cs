@@ -33,15 +33,22 @@ namespace Raven.Database.TimeSeries.Controllers
     {
         [RavenRoute("ts/{timeSeriesName}/types/{type}")]
         [HttpPut]
-        public HttpResponseMessage PutType(TimeSeriesType type)
+        public async Task<HttpResponseMessage> PutType(TimeSeriesType type)
         {
             if (string.IsNullOrEmpty(type.Type) || type.Fields == null || type.Fields.Length < 1)
                 return GetEmptyMessage(HttpStatusCode.BadRequest);
 
-            using (var writer = TimeSeries.CreateWriter())
+            if (UseRaft)
             {
-                writer.CreateType(type.Type, type.Fields);
-                writer.Commit();
+                await TimeSeries.RaftClient.SendPutType(type.Type, type.Fields).ConfigureAwait(false);
+            }
+            else
+            {
+                using (var writer = TimeSeries.CreateWriter())
+                {
+                    writer.CreateType(type.Type, type.Fields);
+                    writer.Commit();
+                }
             }
 
             TimeSeries.MetricsTimeSeries.ClientRequests.Mark();

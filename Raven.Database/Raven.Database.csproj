@@ -568,6 +568,12 @@
     <Compile Include="TimeSeries\Controllers\AdminTimeSeriesController.cs" />
     <Compile Include="TimeSeries\Controllers\TimeSeriesDebugController.cs" />
     <Compile Include="TimeSeries\Controllers\TimeSeriesReplicationController.cs" />
+    <Compile Include="TimeSeries\Raft\Commands\AppendPointCommand.cs" />
+    <Compile Include="TimeSeries\Raft\Commands\PutTypeCommand.cs" />
+    <Compile Include="TimeSeries\Raft\Commands\TimeSeriesCommand.cs" />
+    <Compile Include="TimeSeries\Raft\Handlers\AppendPointCommandHandler.cs" />
+    <Compile Include="TimeSeries\Raft\Handlers\TimeSeriesCommandHandler.cs" />
+    <Compile Include="TimeSeries\Raft\TimeSeriesStateMachine.cs" />
     <Compile Include="TimeSeries\ReplicationLogItem.cs" />
     <Compile Include="TimeSeries\ReplicationMessage.cs" />
     <Compile Include="TimeSeries\ReplicationTask.cs" />
@@ -581,6 +587,7 @@
     <Compile Include="TimeSeries\TimeSeriesMetricsManager.cs" />
     <Compile Include="TimeSeries\KeyValueStateMachine.cs" />
     <Compile Include="TimeSeries\AggregationRange.cs" />
+    <Compile Include="TimeSeries\TimeSeriesRaftClient.cs" />
     <Compile Include="TimeSeries\TimeSeriesServer.cs" />
     <Compile Include="TimeSeries\TimeSeriesStorage.cs" />
     <Compile Include="Util\DatabaseHelper.cs" />

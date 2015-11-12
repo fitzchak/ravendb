@@ -334,6 +334,11 @@ namespace Raven.Database.Config
             TimeSeries.TombstoneRetentionTime = ravenSettings.TimeSeries.TombstoneRetentionTime.Value;
             TimeSeries.DeletedTombstonesInBatch = ravenSettings.TimeSeries.DeletedTombstonesInBatch.Value;
             TimeSeries.ReplicationLatencyInMs = ravenSettings.TimeSeries.ReplicationLatencyInMs.Value;
+            TimeSeries.ElectionTimeout = ravenSettings.TimeSeries.ElectionTimeout.Value;
+            TimeSeries.HeartbeatTimeout = ravenSettings.TimeSeries.HeartbeatTimeout.Value;
+            TimeSeries.MaxLogLengthBeforeCompaction = ravenSettings.TimeSeries.MaxLogLengthBeforeCompaction.Value;
+            TimeSeries.MaxEntriesPerRequest = ravenSettings.TimeSeries.MaxEntriesPerRequest.Value;
+            TimeSeries.MaxStepDownDrainTime = ravenSettings.TimeSeries.MaxStepDownDrainTime.Value;
 
             Encryption.EncryptionKeyBitsPreference = ravenSettings.Encryption.EncryptionKeyBitsPreference.Value;
 
@@ -1586,6 +1591,12 @@ namespace Raven.Database.Config
             public int DeletedTombstonesInBatch { get; set; }
 
             public int ReplicationLatencyInMs { get; set; }
+
+            public int ElectionTimeout { get; set; }
+            public int HeartbeatTimeout { get; set; }
+            public int MaxLogLengthBeforeCompaction { get; set; }
+            public TimeSpan MaxStepDownDrainTime { get; set; }
+            public int MaxEntriesPerRequest { get; set; }
         }
 
         public class EncryptionConfiguration

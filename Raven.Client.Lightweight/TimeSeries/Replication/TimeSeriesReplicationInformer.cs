@@ -396,6 +396,7 @@ namespace Raven.Client.TimeSeries.Replication
         //TODO: When time series replication will be refactored (simplified) -> the parameter should be removed; now its a constraint of the interface
         public void RefreshReplicationInformation()
         {
+            return;
             JsonDocument document;
             var serverHash = ServerHash.GetServerHash(timeSeriesStore.Url);
             try

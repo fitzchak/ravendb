@@ -36,7 +36,7 @@ namespace Raven.Client.TimeSeries
             isInitialized = false;
         }
 
-        public void Initialize(bool ensureDefaultTimeSeriesExists = false)
+        public TimeSeriesStore Initialize(bool ensureDefaultTimeSeriesExists = false)
         {
             if(isInitialized)
                 throw new InvalidOperationException(string.Format("TimeSeriesStore already initialized. (name = {0})", Name));
@@ -57,6 +57,7 @@ namespace Raven.Client.TimeSeries
             }			
 
             replicationInformer = new TimeSeriesReplicationInformer(JsonRequestFactory, this, TimeSeriesConvention); // make sure it is initialized
+            return this;
         }
 
         public ITimeSeriesChanges Changes(string timeSeries = null)

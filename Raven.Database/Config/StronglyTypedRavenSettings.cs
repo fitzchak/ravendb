@@ -270,6 +270,11 @@ namespace Raven.Database.Config
             TimeSeries.TombstoneRetentionTime = new TimeSpanSetting(settings[Constants.TimeSeries.TombstoneRetentionTime], TimeSpan.FromDays(14), TimeSpanArgumentType.FromParse);
             TimeSeries.DeletedTombstonesInBatch = new IntegerSetting(settings[Constants.TimeSeries.DeletedTombstonesInBatch], 1000);
             TimeSeries.ReplicationLatencyInMs = new IntegerSetting(settings[Constants.TimeSeries.ReplicationLatencyMs], 30 * 1000);
+            TimeSeries.ElectionTimeout = new IntegerSetting(settings["Raven/TimeSeries/ElectionTimeout"], RaftEngineOptions.DefaultElectionTimeout * 5);		// 6000ms
+            TimeSeries.HeartbeatTimeout = new IntegerSetting(settings["Raven/TimeSeries/HeartbeatTimeout"], RaftEngineOptions.DefaultHeartbeatTimeout * 5);	// 1500ms
+            TimeSeries.MaxLogLengthBeforeCompaction = new IntegerSetting(settings["Raven/TimeSeries/MaxLogLengthBeforeCompaction"], RaftEngineOptions.DefaultMaxLogLengthBeforeCompaction);
+            TimeSeries.MaxEntriesPerRequest = new IntegerSetting(settings["Raven/TimeSeries/MaxEntriesPerRequest"], RaftEngineOptions.DefaultMaxEntiresPerRequest);
+            TimeSeries.MaxStepDownDrainTime = new TimeSpanSetting(settings["Raven/TimeSeries/MaxStepDownDrainTime"], RaftEngineOptions.DefaultMaxStepDownDrainTime, TimeSpanArgumentType.FromParse);
 
             Encryption.UseFips = new BooleanSetting(settings["Raven/Encryption/FIPS"], false);
             Encryption.EncryptionKeyBitsPreference = new IntegerSetting(settings[Constants.EncryptionKeyBitsPreferenceSetting], Constants.DefaultKeySizeToUseInActualEncryptionInBits);
@@ -573,6 +578,12 @@ namespace Raven.Database.Config
             public IntegerSetting DeletedTombstonesInBatch { get; set; }
 
             public IntegerSetting ReplicationLatencyInMs { get; set; }
+
+            public IntegerSetting ElectionTimeout { get; set; }
+            public IntegerSetting HeartbeatTimeout { get; set; }
+            public IntegerSetting MaxLogLengthBeforeCompaction { get; set; }
+            public TimeSpanSetting MaxStepDownDrainTime { get; set; }
+            public IntegerSetting MaxEntriesPerRequest { get; set; }
         }
 
         public class EncryptionConfiguration

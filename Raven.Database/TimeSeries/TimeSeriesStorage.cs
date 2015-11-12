@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Rachis;
 using Raven.Abstractions;
 using Raven.Abstractions.Logging;
 using Raven.Abstractions.TimeSeries;
@@ -111,7 +112,8 @@ namespace Raven.Database.TimeSeries
                 tx.Commit();
             }
 
-            ReplicationTask.StartReplication();
+            RaftClient = new TimeSeriesRaftClient(this);
+            //ReplicationTask.StartReplication();
         }
 
         private static StorageEnvironmentOptions CreateStorageOptionsFromConfiguration(string path, NameValueCollection settings)
@@ -635,6 +637,15 @@ namespace Raven.Database.TimeSeries
             {
                 return logStorage.GetLogsSinceEtag(etag);
             }
+
+            public long ReadLastAppliedIndex()
+            {
+                var result = metadata.Read("Raft-LastAppliedIndex");
+                if (result == null)
+                    return 0;
+
+                return result.Reader.ReadLittleEndianInt64();    
+            }
         }
 
         public class Writer : IDisposable
@@ -1129,6 +1140,8 @@ namespace Raven.Database.TimeSeries
         {
             get { return storageEnvironment; }
         }
+
+        public TimeSeriesRaftClient RaftClient { get; set; }
 
         private TimeSeriesType GetTimeSeriesType(Tree metadata, string type)
         {
