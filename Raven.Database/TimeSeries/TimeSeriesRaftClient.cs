@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Rachis;
+using Rachis.Storage;
 using Rachis.Transport;
 using Rachis.Utils;
 using Raven.Client.TimeSeries;
@@ -82,5 +83,12 @@ namespace Raven.Database.TimeSeries
         }
 
         public int WaitForLeaderTimeoutInSeconds { get; } = 30;
+
+        public void RaftBootstrap()
+        {
+            var options = GetRaftOptions();
+            options.StorageOptions.OwnsPagers = false;
+            PersistentState.ClusterBootstrap(options);
+        }
     }
 }

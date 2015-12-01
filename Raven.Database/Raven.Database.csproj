@@ -567,6 +567,7 @@
     <Compile Include="TimeSeries\Controllers\BaseAdminTimeSeriesApiController.cs" />
     <Compile Include="TimeSeries\Controllers\AdminTimeSeriesController.cs" />
     <Compile Include="TimeSeries\Controllers\TimeSeriesDebugController.cs" />
+    <Compile Include="TimeSeries\Controllers\TimeSeriesRaftController.cs" />
     <Compile Include="TimeSeries\Controllers\TimeSeriesReplicationController.cs" />
     <Compile Include="TimeSeries\Raft\Commands\AppendPointCommand.cs" />
     <Compile Include="TimeSeries\Raft\Commands\PutTypeCommand.cs" />

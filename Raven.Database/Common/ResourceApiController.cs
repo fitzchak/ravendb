@@ -36,6 +36,9 @@ namespace Raven.Database.Common
         {
             get
             {
+                if (Debugger.IsAttached)
+                    return 60*5;
+
                 if (_maxSecondsForTaskToWaitForResourceToLoad.HasValue)
                     return _maxSecondsForTaskToWaitForResourceToLoad.Value;
 
