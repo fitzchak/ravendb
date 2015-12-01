@@ -81,27 +81,23 @@ namespace Raven.Tests.Helpers
             var storageType = GetDefaultStorageType(requestedStorage);
             var directory = dataDirectory ?? NewDataPath(fileSystemName + "_" + port);
 
-            var ravenConfiguration = new RavenConfiguration
-            {
-                Port = port,
-                DataDirectory = directory,
-                RunInMemory = runInMemory,
+            var ravenConfiguration = new RavenConfiguration();
+
+            ConfigurationHelper.ApplySettingsToConfiguration(ravenConfiguration);
+
+            ravenConfiguration.Port = port;
+            ravenConfiguration.DataDirectory = directory;
+            ravenConfiguration.RunInMemory = runInMemory;
 #if DEBUG
-                RunInUnreliableYetFastModeThatIsNotSuitableForProduction = runInMemory,
-#endif                
-                DefaultStorageTypeName = storageType,
-                AnonymousUserAccessMode = enableAuthentication ? AnonymousUserAccessMode.None : AnonymousUserAccessMode.Admin, 
-                Encryption = 
-                { 
-                    UseFips = SettingsHelper.UseFipsEncryptionAlgorithms 
-                },
-                FileSystem = 
-                {
-                    MaximumSynchronizationInterval = this.SynchronizationInterval, 
-                    DataDirectory = Path.Combine(directory, "FileSystems"),
-                    DefaultStorageTypeName = storageType
-                },
-            };
+            ravenConfiguration.RunInUnreliableYetFastModeThatIsNotSuitableForProduction = runInMemory;
+#endif
+            ravenConfiguration.DefaultStorageTypeName = storageType;
+            ravenConfiguration.AnonymousUserAccessMode = enableAuthentication ? AnonymousUserAccessMode.None : AnonymousUserAccessMode.Admin;
+            ravenConfiguration.Encryption.UseFips = ConfigurationHelper.UseFipsEncryptionAlgorithms;
+
+            ravenConfiguration.FileSystem.MaximumSynchronizationInterval = SynchronizationInterval;
+            ravenConfiguration.FileSystem.DataDirectory = Path.Combine(directory, "FileSystems");
+            ravenConfiguration.FileSystem.DefaultStorageTypeName = storageType;
 
             if (activeBundles != null)
             {
@@ -162,6 +158,8 @@ namespace Raven.Tests.Helpers
                 ConnectionStringName = connectionStringName
             };
 
+            store.AfterDispose += (sender, args) => server.Dispose();
+
             ModifyStore(store);
 
             store.Initialize(ensureFileSystemExists: true);
@@ -196,6 +194,8 @@ namespace Raven.Tests.Helpers
                 Credentials = credentials,
                 ApiKey = apiKey,
             };
+
+            store.AfterDispose += (sender, args) => server.Dispose();
 
             ModifyStore(store);
             store.Initialize(true);

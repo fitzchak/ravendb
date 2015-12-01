@@ -45,7 +45,7 @@ namespace Raven.Tests.Counters
             using (var serverA = GetNewServer(8077))
             using (var serverB = GetNewServer(8076))
             {
-                using (var ravenStoreB = NewRemoteDocumentStore(ravenDbServer: serverB))
+                using (NewRemoteDocumentStore(ravenDbServer: serverB))
                 {
                     using (var storeA = NewRemoteCountersStore(DefaultCounterStorageName, ravenServer: serverA))
                     using (var storeB = NewRemoteCountersStore(DefaultCounterStorageName, ravenServer: serverB))
@@ -58,7 +58,7 @@ namespace Raven.Tests.Counters
                         serverA.Dispose();
 
                         var total = await storeA.GetOverallTotalAsync("group", "counter");
-                            Assert.Equal(2, total.Total);
+                        Assert.Equal(2, total.Total);
                     }
                 }
             }

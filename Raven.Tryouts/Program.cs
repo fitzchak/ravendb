@@ -1,8 +1,5 @@
 using System;
-using NLog;
-using NLog.Config;
-using NLog.Targets;
-using Rachis.Tests;
+using System.Diagnostics;
 
 namespace Raven.Tryouts
 {
@@ -10,15 +7,18 @@ namespace Raven.Tryouts
     {
         public static void Main()
         {
-            
-            for (int i = 0; i < 10; i++)
+            using (var testClass = new Tests.Raft.Client.Documents())
             {
-                Console.Clear();
-                Console.WriteLine(i);
-                using (var x = new TopologyChangesTests())
+                try
                 {
-                    x.Leader_removed_from_cluster_modifies_member_lists_on_remaining_nodes(2);
+                    testClass.DeleteShouldBePropagated(5);
+                    Console.WriteLine("Test is done");
                 }
+                catch (Exception e)
+                {
+                    Debugger.Break();
+                }
+                Console.WriteLine("Dispose is done");
             }
         }
     }

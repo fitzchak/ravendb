@@ -198,8 +198,6 @@ namespace Raven.Database.Counters.Controllers
                 }
             }, timeoutTokenSource.Token);
 
-            //TODO: do not forget to add task Id
-            AddRequestTraceInfo(log => log.AppendFormat("\tCounters batch operation received {0:#,#;;0} changes in {1}", counterChanges, sp.Elapsed));
 
             long id;
             DatabasesLandlord.SystemDatabase.Tasks.AddTask(task, status, new TaskActions.PendingTaskDescription
@@ -208,6 +206,10 @@ namespace Raven.Database.Counters.Controllers
                 TaskType = TaskActions.PendingTaskType.CounterBatchOperation,
                 Payload = operationId.ToString()
             }, out id, timeoutTokenSource);
+
+            //TODO: do not forget to add task Id
+            AddRequestTraceInfo(log => 
+                log.AppendFormat("\tCounters batch operation received {0:#,#;;0} changes in {1}, long running task Id : {2}", counterChanges, sp.Elapsed, id));
 
             task.Wait(timeoutTokenSource.Token);
 
@@ -391,7 +393,7 @@ namespace Raven.Database.Counters.Controllers
             }
 
             return GetMessageWithObject(deletedCount);
-        }
+        }	
 
         [RavenRoute("cs/{counterStorageName}/counters")]
         [HttpGet]
@@ -454,7 +456,7 @@ namespace Raven.Database.Counters.Controllers
 
             using (var reader = CounterStorage.CreateReader())
             {
-                var counterSummaries = reader.GetCountersByPrefix(groupName, counterNamePrefix, skip, take).ToList();
+                var counterSummaries = reader.GetCounterSummariesByPrefix(groupName, counterNamePrefix, skip, take).ToList();
                 return GetMessageWithObject(counterSummaries);
             }
         }

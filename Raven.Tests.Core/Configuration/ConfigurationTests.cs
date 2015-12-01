@@ -185,12 +185,14 @@ namespace Raven.Tests.Core.Configuration
             stronglyTypedConfiguration.Setup(defaultMaxNumberOfItemsToIndexInSingleBatch, defaultInitialNumberOfItemsToIndexInSingleBatch);
 
             var configurationComparer = new ConfigurationComparer(inMemoryConfiguration, stronglyTypedConfiguration, propertyPathsToIgnore);
-            configurationComparer.Ignore(x=>x.EnableResponseLoggingForEmbeddedDatabases);
+            configurationComparer.Ignore(x => x.EnableResponseLoggingForEmbeddedDatabases);
             configurationComparer.Ignore(x => x.DynamicMemoryLimitForProcessing);
             configurationComparer.Assert(expected => expected.RejectClientsModeEnabled.Value, actual => actual.RejectClientsMode);
             configurationComparer.Assert(expected => expected.MaxSecondsForTaskToWaitForDatabaseToLoad.Value, actual => actual.MaxSecondsForTaskToWaitForDatabaseToLoad);
             configurationComparer.Assert(expected => expected.NewIndexInMemoryMaxTime.Value, actual => actual.NewIndexInMemoryMaxTime);
             configurationComparer.Assert(expected => expected.Replication.FetchingFromDiskTimeoutInSeconds.Value, actual => actual.Replication.FetchingFromDiskTimeoutInSeconds);
+            configurationComparer.Assert(expected => expected.ConcurrentResourceLoadTimeout.Value, actual => actual.ConcurrentResourceLoadTimeout);
+            configurationComparer.Assert(expected => expected.MaxConcurrentResourceLoads.Value, actual => actual.MaxConcurrentResourceLoads);
             configurationComparer.Assert(expected => expected.Prefetcher.MaximumSizeAllowedToFetchFromStorageInMb.Value, actual => actual.Prefetcher.MaximumSizeAllowedToFetchFromStorageInMb);
             configurationComparer.Assert(expected => expected.Prefetcher.FetchingDocumentsFromDiskTimeoutInSeconds.Value, actual => actual.Prefetcher.FetchingDocumentsFromDiskTimeoutInSeconds);
             configurationComparer.Assert(expected => expected.Voron.AllowIncrementalBackups.Value, actual => actual.Storage.Voron.AllowIncrementalBackups);
@@ -216,7 +218,7 @@ namespace Raven.Tests.Core.Configuration
 
             configurationComparer.Assert(expected => expected.Indexing.DisableIndexingFreeSpaceThreshold.Value, actual => actual.Indexing.DisableIndexingFreeSpaceThreshold);
             configurationComparer.Assert(expected => expected.Indexing.DisableMapReduceInMemoryTracking.Value, actual => actual.Indexing.DisableMapReduceInMemoryTracking);
-            
+
             configurationComparer.Assert(expected => expected.Monitoring.Snmp.Port.Value, actual => actual.Monitoring.Snmp.Port);
             configurationComparer.Assert(expected => expected.Monitoring.Snmp.Community.Value, actual => actual.Monitoring.Snmp.Community);
             configurationComparer.Assert(expected => expected.Monitoring.Snmp.Enabled.Value, actual => actual.Monitoring.Snmp.Enabled);
@@ -257,7 +259,7 @@ namespace Raven.Tests.Core.Configuration
             configurationComparer.Assert(expected => expected.AvailableMemoryForRaisingBatchSizeLimit.Value, actual => actual.AvailableMemoryForRaisingBatchSizeLimit);
             configurationComparer.Assert(expected => expected.MaxProcessingRunLatency.Value, actual => actual.MaxProcessingRunLatency);
             configurationComparer.Assert(expected => expected.DisableClusterDiscovery.Value, actual => actual.DisableClusterDiscovery);
-            configurationComparer.Assert(expected => expected.TurnOffDiscoveryClient.Value, actual => actual.TurnOffDiscoveryClient);            
+            configurationComparer.Assert(expected => expected.TurnOffDiscoveryClient.Value, actual => actual.TurnOffDiscoveryClient);
             configurationComparer.Assert(expected => expected.ServerName.Value, actual => actual.ServerName);
             configurationComparer.Assert(expected => expected.MaxStepsForScript.Value, actual => actual.MaxStepsForScript);
             configurationComparer.Assert(expected => expected.MaxRecentTouchesToRemember.Value, actual => actual.MaxRecentTouchesToRemember);
@@ -307,7 +309,8 @@ namespace Raven.Tests.Core.Configuration
             configurationComparer.Assert(expected => expected.Cluster.MaxEntriesPerRequest.Value, actual => actual.Cluster.MaxEntriesPerRequest);
             configurationComparer.Assert(expected => expected.Cluster.MaxStepDownDrainTime.Value, actual => actual.Cluster.MaxStepDownDrainTime);
             configurationComparer.Assert(expected => expected.Cluster.MaxLogLengthBeforeCompaction.Value, actual => actual.Cluster.MaxLogLengthBeforeCompaction);
-            configurationComparer.Assert(expected => expected.TempPath.Value, actual => actual.TempPath);
+            configurationComparer.Assert(expected => expected.TempPath.Value, actual => actual.TempPath);    
+            configurationComparer.Assert(expected => expected.Http.AuthenticationSchemes.Value, actual => actual.Http.AuthenticationSchemes);
             
             configurationComparer.Ignore(x => x.Storage.Esent.JournalsStoragePath);
             configurationComparer.Ignore(x => x.Storage.Voron.JournalsStoragePath);
@@ -427,7 +430,7 @@ namespace Raven.Tests.Core.Configuration
                 {
                     if (property.Name == "ImplicitFetchFieldsFromDocumentMode")
                     {
-                        
+
                     }
                     if (property.PropertyType.IsEnum == false &&
                         property.PropertyType.FullName.StartsWith("System") == false)

@@ -13,29 +13,42 @@ namespace Raven.Database.Counters.Controllers
     {
         [RavenRoute("cs")]
         [HttpGet]
-        public HttpResponseMessage Counters(bool getAdditionalData = false)
+        public HttpResponseMessage Counters(int skip, int take, bool getAdditionalData = false)
         {
-            return Resources(Constants.Counter.Prefix, GetCounterStoragesData, getAdditionalData);
+            return Resources(Constants.Counter.Prefix, storages => GetCounterStoragesData(storages,skip,take), getAdditionalData);
+        }
+
+        [RavenRoute("cs/exists")]
+        [HttpGet]
+        public HttpResponseMessage Exists(string storageName)
+        {
+            HttpResponseMessage message = null;
+            Resource.TransactionalStorage.Batch(accessor =>
+            {
+                message = GetMessageWithObject(new
+                {
+                    Exists = accessor.Documents.DocumentByKey(Constants.Counter.Prefix + storageName) != null
+                });
+            });
+
+            return message;
         }
 
         private class CounterStorageData : TenantData
         {
         }
 
-        private static List<CounterStorageData> GetCounterStoragesData(IEnumerable<RavenJToken> counterStorages)
+        private static List<CounterStorageData> GetCounterStoragesData(IEnumerable<RavenJToken> counterStorages, int skip, int take)
         {
             return counterStorages
                 .Select(counterStorage =>
                 {
                     var bundles = new string[] {};
                     var settings = counterStorage.Value<RavenJObject>("Settings");
-                    if (settings != null)
+                    var activeBundles = settings?.Value<string>("Raven/ActiveBundles");
+                    if (activeBundles != null)
                     {
-                        var activeBundles = settings.Value<string>("Raven/ActiveBundles");
-                        if (activeBundles != null)
-                        {
-                            bundles = activeBundles.Split(';');
-                        }
+                        bundles = activeBundles.Split(';');
                     }
                     return new CounterStorageData
                     {
@@ -44,7 +57,7 @@ namespace Raven.Database.Counters.Controllers
                         Bundles = bundles,
                         IsAdminCurrentTenant = true,
                     };
-                }).ToList();
+                }).Skip(skip).Take(take).ToList();
         }
     }
 }

@@ -155,6 +155,7 @@
     <Compile Include="Connection\WebRequestEventArgs.cs" />
     <Compile Include="Connection\WebResponseExtensions.cs" />
     <Compile Include="Counters\Counter.cs" />
+    <Compile Include="Counters\CounterGroup.cs" />
     <Compile Include="Counters\CounterNameGroupPair.cs" />
     <Compile Include="Counters\CounterState.cs" />
     <Compile Include="Counters\CounterBackupRequest.cs" />
@@ -274,6 +275,7 @@
     <Compile Include="Data\VoronStorageStats.cs" />
     <Compile Include="Exceptions\BadRequestException.cs" />
     <Compile Include="Exceptions\ClientNotSupportedException.cs" />
+    <Compile Include="Exceptions\ConcurrentLoadTimeoutException.cs" />
     <Compile Include="Exceptions\DocumentDoesNotExistsException.cs" />
     <Compile Include="Exceptions\ImplicitFetchFieldsFromDocumentNotAllowedException.cs" />
     <Compile Include="Exceptions\InvalidSpatialShapeException.cs" />
@@ -441,11 +443,15 @@
     <Compile Include="Smuggler\SmugglerFilesApiBase.cs" />
     <Compile Include="Smuggler\SmugglerFilesOptions.cs" />
     <Compile Include="Smuggler\SmugglerHelper.cs" />
+    <Compile Include="Smuggler\SmugglerJsonTextWriter.cs" />
     <Compile Include="Smuggler\SmugglerMode.cs" />
     <Compile Include="Smuggler\SmugglerOptions.cs" />
     <Compile Include="Spatial\ShapeConverter.cs" />
     <Compile Include="Spatial\GeoJsonWktConverter.cs" />
     <Compile Include="Spatial\WktSanitizer.cs" />
+    <Compile Include="Streaming\ExcelOutputWriter.cs" />
+    <Compile Include="Streaming\IOutputWriter.cs" />
+    <Compile Include="Streaming\JsonOutputWriter.cs" />
     <Compile Include="SystemTime.cs" />
     <Compile Include="TimeSeries\AggregationDuration.cs" />
     <Compile Include="TimeSeries\AggregationDurationType.cs" />
@@ -542,6 +548,7 @@
   <Import Project="..\Imports\Fody\Fody.targets" Condition="$(Configuration) == 'Release'" />
   <Import Project="..\Imports\Tasks.targets" Condition="'$(TasksTargetsImported)' == ''" />
   <ItemGroup>
+    <Analyzer Include="..\SharedLibs\ClrHeapAllocationAnalyzer.dll" />
     <Analyzer Include="..\SharedLibs\Raven.CodeAnalysis.dll" />
   </ItemGroup>
 </Project>

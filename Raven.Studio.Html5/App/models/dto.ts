@@ -125,6 +125,7 @@ interface indexStatisticsDto {
     LastIndexingTime: string;
     IsOnRam: string; // Yep, it's really a string. Example values: "false", "true (3 KBytes)"
     LockMode: string;
+    IsMapReduce: boolean;
     ForEntityName: string[];
     Performance: indexPerformanceDto[];
     DocsCount: number;
@@ -802,11 +803,11 @@ interface ICollectionBase {
 }
 
 interface smugglerOptionsDto {
-    IncludeDocuments: boolean;
-    IncludeIndexes: boolean;
-    IncludeTransformers: boolean;
-    IncludeAttachments: boolean;
-    RemoveAnalyzers: boolean;
+    OperateOnTypes: number;
+    BatchSize: number;
+    ShouldExcludeExpired: boolean;
+    Filters: filterSettingDto[];
+    TransformScript: string;
     NoneDefualtFileName: string;
 }
 
@@ -873,6 +874,11 @@ interface statusDebugDataSubscriptionsDto {
     TimeOfLastClientActivity: string;
     IsOpen: boolean;
     ConnectionOptions: subscriptionConnectionOptionsDto;
+}
+
+interface subscriptionDto {
+    SubscriptionId: number;
+    AckEtag: string;
 }
 
 interface subscriptionCriteriaDto {

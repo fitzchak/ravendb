@@ -1,4 +1,4 @@
-namespace Raven.Database.Counters
+﻿namespace Raven.Abstractions.Counters
 {
     public class CounterGroup
     {

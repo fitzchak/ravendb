@@ -263,10 +263,7 @@ namespace Raven.Database
 
         public Action<DiskSpaceNotification> OnDiskSpaceChanged = delegate { };
 
-        public static string BuildVersion
-        {
-            get { return buildVersion ?? (buildVersion = GetBuildVersion().ToString(CultureInfo.InvariantCulture)); }
-        }
+        public static string BuildVersion => buildVersion ?? (buildVersion = GetBuildVersion().ToString(CultureInfo.InvariantCulture));
 
         public static string ProductVersion
         {
@@ -309,10 +306,7 @@ namespace Raven.Database
         [Obsolete("Use RavenFS instead.")]
         public AttachmentActions Attachments { get; private set; }
 
-        public TaskScheduler BackgroundTaskScheduler
-        {
-            get { return backgroundTaskScheduler; }
-        }
+        public TaskScheduler BackgroundTaskScheduler => backgroundTaskScheduler;
 
         public InMemoryRavenConfiguration Configuration { get; private set; }
 
@@ -324,10 +318,7 @@ namespace Raven.Database
         /// <summary>
         ///     Whatever this database has been disposed
         /// </summary>
-        public bool Disposed
-        {
-            get { return disposed; }
-        }
+        public bool Disposed => disposed;
 
         [ImportMany]
         public OrderedPartCollection<AbstractDocumentCodec> DocumentCodecs { get; set; }
@@ -353,10 +344,7 @@ namespace Raven.Database
         }
 
         [CLSCompliant(false)]
-        public InFlightTransactionalState InFlightTransactionalState
-        {
-            get { return inFlightTransactionalState; }
-        }
+        public InFlightTransactionalState InFlightTransactionalState => inFlightTransactionalState;
 
         [ImportMany]
         public OrderedPartCollection<AbstractIndexCodec> IndexCodecs { get; set; }
@@ -377,15 +365,9 @@ namespace Raven.Database
         public IndexActions Indexes { get; private set; }
 
         [CLSCompliant(false)]
-        public IndexingExecuter IndexingExecuter
-        {
-            get { return indexingExecuter; }
-        }
+        public IndexingExecuter IndexingExecuter => indexingExecuter;
 
-        public LastCollectionEtags LastCollectionEtags
-        {
-            get { return lastCollectionEtags; }
-        }
+        public LastCollectionEtags LastCollectionEtags => lastCollectionEtags;
 
         public MaintenanceActions Maintenance { get; private set; }
 
@@ -404,10 +386,7 @@ namespace Raven.Database
 
         public PatchActions Patches { get; private set; }
 
-        public Prefetcher Prefetcher
-        {
-            get { return prefetcher; }
-        }
+        public Prefetcher Prefetcher => prefetcher;
 
         [ImportMany]
         public OrderedPartCollection<AbstractPutTrigger> PutTriggers { get; set; }
@@ -526,20 +505,14 @@ namespace Raven.Database
                 .ToList();
         }
 
-        public IndexingPerformanceStatistics[] IndexingPerformanceStatistics
-        {
-            get
+        public IndexingPerformanceStatistics[] IndexingPerformanceStatistics => (from pair in IndexDefinitionStorage.IndexDefinitions
+            let performance = IndexStorage.GetIndexingPerformance(pair.Key)
+            select new IndexingPerformanceStatistics
             {
-                return (from pair in IndexDefinitionStorage.IndexDefinitions
-                       let performance = IndexStorage.GetIndexingPerformance(pair.Key)
-                       select new IndexingPerformanceStatistics
-                       {
-                           IndexId = pair.Key,
-                           IndexName = pair.Value.Name,
-                           Performance = performance
-                       }).ToArray();
-            }
-        }
+                IndexId = pair.Key,
+                IndexName = pair.Value.Name,
+                Performance = performance
+            }).ToArray();
 
         public DatabaseStatistics Statistics
         {
@@ -608,6 +581,7 @@ namespace Raven.Database
                             index.IsTestIndex = indexDefinition.IsTestIndex;
                             index.IsOnRam = IndexStorage.IndexOnRam(index.Id);
                             index.LockMode = indexDefinition.LockMode;
+                            index.IsMapReduce = indexDefinition.IsMapReduce;
 
                             index.ForEntityName = IndexDefinitionStorage.GetViewGenerator(index.Id).ForEntityNames.ToArray();
                             IndexSearcher searcher;
@@ -650,15 +624,9 @@ namespace Raven.Database
         [CLSCompliant(false)]
         public TransformerActions Transformers { get; private set; }
 
-        public TransportState TransportState
-        {
-            get { return transportState; }
-        }
+        public TransportState TransportState => transportState;
 
-        public WorkContext WorkContext
-        {
-            get { return workContext; }
-        }
+        public WorkContext WorkContext => workContext;
         public RequestManager RequestManager { get; set; }
 
         public BatchResult[] Batch(IList<ICommandData> commands, CancellationToken token)

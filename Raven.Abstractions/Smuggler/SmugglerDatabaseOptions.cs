@@ -187,7 +187,7 @@ namespace Raven.Abstractions.Smuggler
         /// <summary>
         /// When set ovverides the default document name.
         /// </summary>
-        public string NoneDefualtFileName { get; set; }
+        public string NoneDefaultFileName { get; set; }
 
         public virtual bool ExcludeExpired(RavenJToken item, DateTime now)
         {
@@ -229,6 +229,8 @@ namespace Raven.Abstractions.Smuggler
         public bool StripReplicationInformation { get; set; }
 
         public bool SkipConflicted { get; set; }
+
+        public int MaxSplitExportFileSize { get; set; }
     }
 
  
