@@ -44,18 +44,31 @@ namespace Raven.Database.TimeSeries.Raft
         public long LastAppliedIndex
         {
             get { return storage.CreateReader().ReadLastAppliedIndex(); }
+            private set
+            {
+                using (var writer = storage.CreateWriter())
+                {
+                    writer.SetLastAppliedIndex(value);
+                    writer.Commit();
+                }
+            }
         }
 
         public void Apply(LogEntry entry, Command cmd)
         {
-            var putTypeCommand = cmd as PutTypeCommand;
-            if (putTypeCommand != null)
+            if (LastAppliedIndex >= entry.Index)
+                throw new InvalidOperationException("Already applied " + entry.Index);
+
+            LastAppliedIndex = entry.Index;
+
+            var timeSeriesCommand = cmd as TimeSeriesCommand;
+            if (timeSeriesCommand != null)
             {
-                using (var writer = storage.CreateWriter())
-                {
-                    writer.CreateType(putTypeCommand.Type, putTypeCommand.Fields);
-                    writer.Dispose();
-                }
+                timeSeriesCommand.Apply(storage);
+            }
+            else
+            {
+                
             }
         }
 

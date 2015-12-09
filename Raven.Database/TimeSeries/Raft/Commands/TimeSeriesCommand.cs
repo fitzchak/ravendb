@@ -3,7 +3,7 @@ using Rachis.Commands;
 
 namespace Raven.Database.TimeSeries.Raft.Commands
 {
-    public class TimeSeriesCommand : Command
+    public abstract class TimeSeriesCommand : Command
     {
         public string TimeSeries { get; set; }
 
@@ -11,5 +11,7 @@ namespace Raven.Database.TimeSeries.Raft.Commands
         {
             Completion = new TaskCompletionSource<object>();
         }
+
+        public abstract void Apply(TimeSeriesStorage storage);
     }
 }

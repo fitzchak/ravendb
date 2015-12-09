@@ -20,6 +20,7 @@ namespace Raven.Database.TimeSeries
     {
         private readonly TimeSeriesStorage timeSeriesStorage;
         private readonly ConcurrentDictionary<string, TimeSeriesStore> stores = new ConcurrentDictionary<string, TimeSeriesStore>();
+        private StorageEnvironmentOptions memory;
 
         public RaftEngine RaftEngine { get; set; }
 
@@ -36,7 +37,11 @@ namespace Raven.Database.TimeSeries
             var configuration = timeSeriesStorage.Configuration;
             if (configuration.RunInMemory)
             {
-                raftOptions = StorageEnvironmentOptions.CreateMemoryOnly();
+                if (memory == null)
+                {
+                    memory = StorageEnvironmentOptions.CreateMemoryOnly();
+                }
+                raftOptions = memory;
             }
             else
             {
@@ -82,6 +87,28 @@ namespace Raven.Database.TimeSeries
             }
         }
 
+        public async Task SendAppendPoint(string type, string key, DateTimeOffset at, double[] values)
+        {
+            try
+            {
+                var command = new AppendPointCommand {Type = type, Key = key, Time = at, Values = values};
+                RaftEngine.AppendCommand(command);
+
+                await command.Completion.Task.ConfigureAwait(false);
+            }
+            catch (NotLeadingException)
+            {
+                var leaderNode = RaftEngine.GetLeaderNode(WaitForLeaderTimeoutInSeconds);
+
+                var store = stores.GetOrAdd(leaderNode.Uri.AbsoluteUri, x => new TimeSeriesStore
+                {
+                    Url = leaderNode.Uri.AbsoluteUri,
+                }.Initialize());
+
+                await store.AppendAsync(type, key, at, values).ConfigureAwait(false);
+            }
+        }
+
         public int WaitForLeaderTimeoutInSeconds { get; } = 30;
 
         public void RaftBootstrap()
@@ -89,6 +116,7 @@ namespace Raven.Database.TimeSeries
             var options = GetRaftOptions();
             options.StorageOptions.OwnsPagers = false;
             PersistentState.ClusterBootstrap(options);
+            RaftEngine = new RaftEngine(GetRaftOptions());
         }
     }
 }

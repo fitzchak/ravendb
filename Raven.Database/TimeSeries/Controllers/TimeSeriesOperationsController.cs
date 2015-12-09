@@ -68,7 +68,7 @@ namespace Raven.Database.TimeSeries.Controllers
                 writer.DeleteType(type);
                 writer.Commit();
             }
-            
+
             TimeSeries.MetricsTimeSeries.ClientRequests.Mark();
 
             return new HttpResponseMessage(HttpStatusCode.NoContent);
@@ -81,6 +81,12 @@ namespace Raven.Database.TimeSeries.Controllers
             var point = await ReadJsonObjectAsync<TimeSeriesFullPoint>().ConfigureAwait(false);
             if (point == null || string.IsNullOrEmpty(point.Type) || string.IsNullOrEmpty(point.Key) || point.Values == null || point.Values.Length == 0)
                 return GetEmptyMessage(HttpStatusCode.BadRequest);
+
+            if (UseRaft)
+            {
+                await TimeSeries.RaftClient.SendAppendPoint(point.Type, point.Key, point.At, point.Values).ConfigureAwait(false);
+                return GetEmptyMessage();
+            }
 
             using (var writer = TimeSeries.CreateWriter())
             {

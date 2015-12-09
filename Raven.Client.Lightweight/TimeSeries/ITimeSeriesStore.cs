@@ -32,6 +32,7 @@ namespace Raven.Client.TimeSeries
 
         Task DeleteTypeAsync(string type, CancellationToken token = default(CancellationToken));
         Task BootstrapLeader(CancellationToken token = default(CancellationToken));
+        Task JoinTopology(string name, string uri, CancellationToken token = default(CancellationToken));
 
         Task AppendAsync(string type, string key, DateTimeOffset at, double value, CancellationToken token = default(CancellationToken));
 

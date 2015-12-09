@@ -89,6 +89,7 @@
     <Compile Include="TimeSeriesFailoverTests.cs" />
     <Compile Include="TimeSeriesLoadBalancingTests.cs" />
     <Compile Include="TimeSeriesOperations.cs" />
+    <Compile Include="TimeSeriesRaftServers.cs" />
     <Compile Include="TimeSeriesRaft.cs" />
     <Compile Include="TimeSeriesReplicationTests.cs" />
     <Compile Include="TimeSeriesChangesTests.cs" />
@@ -131,6 +132,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

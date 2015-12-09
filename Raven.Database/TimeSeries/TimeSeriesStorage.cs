@@ -644,7 +644,7 @@ namespace Raven.Database.TimeSeries
                 if (result == null)
                     return 0;
 
-                return result.Reader.ReadLittleEndianInt64();    
+                return result.Reader.ReadLittleEndianInt64();
             }
         }
 
@@ -1019,6 +1019,11 @@ namespace Raven.Database.TimeSeries
                     timeSeriesType.KeysCount = seriesTree.State.EntriesCount;
                 }
                 return timeSeriesType;
+            }
+
+            public void SetLastAppliedIndex(long index)
+            {
+                metadata.Add("Raft-LastAppliedIndex", EndianBitConverter.Little.GetBytes(index));
             }
         }
 

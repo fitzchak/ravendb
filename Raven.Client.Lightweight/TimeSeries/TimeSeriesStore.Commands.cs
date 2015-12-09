@@ -69,6 +69,21 @@ namespace Raven.Client.TimeSeries
             }, token).ConfigureAwait(false);
         }
 
+        public async Task JoinTopology(string name, string uri, CancellationToken token = default(CancellationToken))
+        {
+            AssertInitialized();
+
+            await ReplicationInformer.ExecuteWithReplicationAsync(Url, HttpMethods.Post, async (url, timeSeriesName) =>
+            {
+                var requestUriString = string.Format(CultureInfo.InvariantCulture, "{0}ts/{1}/raft/join?name={2}&url={3}",
+                    url, timeSeriesName, name, uri);
+                using (var request = CreateHttpJsonRequest(requestUriString, HttpMethods.Post))
+                {
+                    return await request.ReadResponseJsonAsync().WithCancellation(token).ConfigureAwait(false);
+                }
+            }, token).ConfigureAwait(false);
+        }
+
         public Task AppendAsync(string type, string key, DateTimeOffset at, double value, CancellationToken token = new CancellationToken())
         {
             return AppendAsync(type, key, at, token, value);
