@@ -56,7 +56,7 @@ namespace Raven.Server.Documents
             return Task.CompletedTask;
         }
 
-        [Route("/databases/*/queries","GET")]
+        [Route("/databases/*/docs","GET")]
         public Task Get()
         {
             RavenOperationContext context;
