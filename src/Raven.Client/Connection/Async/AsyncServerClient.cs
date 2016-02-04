@@ -613,7 +613,7 @@ namespace Raven.Client.Connection.Async
             if (key != null)
                 key = Uri.EscapeDataString(key);
 
-            using (var request = jsonRequestFactory.CreateHttpJsonRequest(new CreateHttpJsonRequestParams(this, operationMetadata.Url + "/docs/" + key, method, metadata, operationMetadata.Credentials, convention, GetRequestTimeMetric(operationMetadata.Url)).AddOperationHeaders(OperationsHeaders)))
+            using (var request = jsonRequestFactory.CreateHttpJsonRequest(new CreateHttpJsonRequestParams(this, operationMetadata.Url + "/docs?id=" + key, method, metadata, operationMetadata.Credentials, convention, GetRequestTimeMetric(operationMetadata.Url)).AddOperationHeaders(OperationsHeaders)))
             {
                 request.AddRequestExecuterAndReplicationHeaders(this, operationMetadata.Url);
 
