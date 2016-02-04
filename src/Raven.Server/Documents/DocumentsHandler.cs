@@ -29,7 +29,7 @@ namespace Raven.Server.Documents
                 if (string.IsNullOrWhiteSpace(id))
                     throw new ArgumentException("The 'id' query string parameter must have a non empty value");
 
-                var doc = context.ReadForDisk(HttpContext.Request.Body, id);
+                var doc = context.ReadForDisk(RequestBodyStream(), id);
 
                 long? etag = null;
                 var etags = HttpContext.Request.Headers["If-None-Match"];
