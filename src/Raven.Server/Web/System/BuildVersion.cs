@@ -51,11 +51,7 @@ namespace Raven.Server.Web.System
         public async Task Get()
         {
             var versionBuffer = GetVersionBuffer(ServerStore);
-
-            using (var stream = ResponseBodyStream())
-            {
-                await stream.WriteAsync(versionBuffer, 0, versionBuffer.Length);
-            }
+            await ResponseBodyStream().WriteAsync(versionBuffer, 0, versionBuffer.Length);
         }
     }
 }
