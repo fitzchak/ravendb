@@ -1,5 +1,4 @@
 ﻿using Raven.Abstractions;
-using Raven.Abstractions.Data;
 using Raven.Abstractions.Indexing;
 using Raven.Client.Data;
 using Raven.Client.Indexing;

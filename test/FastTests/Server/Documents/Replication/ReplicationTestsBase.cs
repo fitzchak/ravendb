@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Raven.Abstractions.Data;
 using Raven.Abstractions.Replication;
 using Raven.Client.Document;
 

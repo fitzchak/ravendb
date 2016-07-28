@@ -4,13 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
-using Raven.Abstractions.Data;
-using Raven.Server.Json;
 using Raven.Server.ServerWide.Context;
 using Sparrow.Json;
 using Sparrow.Logging;
 using System.Linq;
-using Raven.Abstractions.Replication;
+using Raven.Client.Documents;
 using Raven.Client.Replication.Messages;
 using Sparrow.Json.Parsing;
 

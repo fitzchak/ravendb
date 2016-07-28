@@ -3,9 +3,9 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
 using Raven.Server.Routing;
 using Microsoft.AspNetCore.Http;
+using Raven.Client.Documents;
 
 namespace Raven.Server.Web.Studo
 {
@@ -30,7 +30,7 @@ namespace Raven.Server.Web.Studo
         public async Task GetNewEncryption()
         {
             RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
-            var byteStruct = new byte[Constants.DefaultGeneratedEncryptionKeyLength];
+            var byteStruct = new byte[Constants.Encryption.DefaultGeneratedEncryptionKeyLength];
             randomNumberGenerator.GetBytes(byteStruct);
             var result = Convert.ToBase64String(byteStruct);
 

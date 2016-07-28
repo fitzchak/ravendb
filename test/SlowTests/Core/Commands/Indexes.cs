@@ -5,17 +5,9 @@
 // -----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Indexing;
-using Raven.Client.Data;
-using Raven.Client.Indexing;
-using Raven.Json.Linq;
-
 using SlowTests.Core.Utils.Indexes;
 
 using Xunit;

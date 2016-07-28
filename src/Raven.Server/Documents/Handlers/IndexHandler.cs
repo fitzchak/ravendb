@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-
-using Raven.Abstractions.Data;
 using Raven.Abstractions.Extensions;
-using Raven.Abstractions.Indexing;
-using Raven.Client.Data.Indexes;
-using Raven.Client.Indexing;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Indexing;
+using Raven.Client.Extensions;
 using Raven.Server.Documents.Indexes;
 using Raven.Server.Documents.Queries;
 using Raven.Server.Json;
@@ -29,7 +27,7 @@ namespace Raven.Server.Documents.Handlers
             using (ContextPool.AllocateOperationContext(out context))
             {
                 var json = await context.ReadForDiskAsync(RequestBodyStream(), name);
-                var indexDefinition = JsonDeserialization.IndexDefinition(json);
+                var indexDefinition = JsonDeserializationServer.IndexDefinition(json);
                 indexDefinition.Name = name;
 
                 var indexId = Database.IndexStore.CreateIndex(indexDefinition);
@@ -483,7 +481,7 @@ namespace Raven.Server.Documents.Handlers
                     return Task.CompletedTask;
                 }
 
-                HttpContext.Response.Headers[Constants.MetadataEtagField] = result.ResultEtag.ToInvariantString();
+                HttpContext.Response.Headers[Constants.HttpHeaders.Etag] = result.ResultEtag.ToInvariantString();
 
                 using (var writer = new BlittableJsonTextWriter(context, ResponseBodyStream()))
                 {

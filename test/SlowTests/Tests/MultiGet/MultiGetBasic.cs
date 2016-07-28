@@ -1,18 +1,9 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Extensions;
-using Raven.Client.Connection;
-using Raven.Client.Data;
-using Raven.Imports.Newtonsoft.Json;
-
 using Xunit;
 
 namespace SlowTests.Tests.MultiGet

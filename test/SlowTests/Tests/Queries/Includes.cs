@@ -1,12 +1,8 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Client;
-
 using Xunit;
 
 namespace SlowTests.Tests.Queries

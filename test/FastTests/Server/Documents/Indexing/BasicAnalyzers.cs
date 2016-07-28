@@ -3,8 +3,6 @@ using System.IO;
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
-
-using Raven.Abstractions.Data;
 using Raven.Abstractions.Indexing;
 using Raven.Server.Documents.Indexes;
 using Raven.Server.Documents.Indexes.Persistence.Lucene;

@@ -23,7 +23,6 @@ using Voron.Impl.FreeSpace;
 using Voron.Impl.Journal;
 using Voron.Impl.Paging;
 using Voron.Impl.Scratch;
-using Voron.Platform.Posix;
 using Voron.Platform.Win32;
 using Voron.Util;
 using Voron.Util.Conversion;

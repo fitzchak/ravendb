@@ -7,15 +7,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Extensions;
-using Raven.Abstractions.Indexing;
-using Raven.Abstractions.Logging;
-using Raven.Client.Data;
-using Raven.Client.Data.Indexes;
-using Raven.Client.Data.Queries;
-using Raven.Client.Indexing;
+using NLog.Fluent;
+using Raven.Client;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Changes;
+using Raven.Client.Documents.Indexing;
+using Raven.Client.Documents.Queries;
+using Raven.Client.Extensions;
 using Raven.Server.Documents.Includes;
 using Raven.Server.Documents.Indexes.Auto;
 using Raven.Server.Documents.Indexes.MapReduce.Auto;
@@ -27,7 +25,6 @@ using Raven.Server.Documents.Queries;
 using Raven.Server.Documents.Queries.MoreLikeThis;
 using Raven.Server.Documents.Queries.Results;
 using Raven.Server.Documents.Transformers;
-using Raven.Server.Exceptions;
 using Raven.Server.ServerWide;
 using Raven.Server.ServerWide.Context;
 using Raven.Server.Utils;
@@ -35,6 +32,7 @@ using Raven.Server.Utils;
 using Sparrow;
 using Sparrow.Collections;
 using Sparrow.Json;
+using Sparrow.Logging;
 using Voron;
 
 namespace Raven.Server.Documents.Indexes
@@ -55,8 +53,6 @@ namespace Raven.Server.Documents.Indexes
         private long _writeErrors;
 
         private const long WriteErrorsLimit = 10;
-
-        protected readonly ILog Log = LogManager.GetLogger(typeof(Index));
 
         internal readonly LuceneIndexPersistence IndexPersistence;
 
@@ -95,6 +91,7 @@ namespace Raven.Server.Documents.Indexes
         private readonly ConcurrentQueue<IndexingStatsAggregator> _lastIndexingStats = new ConcurrentQueue<IndexingStatsAggregator>();
 
         private int _numberOfQueries;
+        private Logger _logger;
 
         protected Index(int indexId, IndexType type, IndexDefinitionBase definition)
         {
@@ -196,6 +193,7 @@ namespace Raven.Server.Documents.Indexes
                     Debug.Assert(Definition != null);
 
                     DocumentDatabase = documentDatabase;
+                    _logger = DocumentDatabase.LoggerSetup.GetLogger<Index>(DocumentDatabase.Name);
                     _environment = environment;
                     _unmanagedBuffersPool = new UnmanagedBuffersPool($"Indexes//{IndexId}");
                     _contextPool = new TransactionContextPool(_unmanagedBuffersPool, _environment);
@@ -223,6 +221,8 @@ namespace Raven.Server.Documents.Indexes
                 }
             }
         }
+
+        protected readonly ILog Log = LogManager.GetLogger(typeof(Index));
 
         protected virtual void InitializeInternal()
         {

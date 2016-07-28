@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Logging;
+using Raven.Client.Documents;
+using Raven.Client.Json;
 using Raven.Server.Json;
 using Raven.Server.ServerWide.Context;
 using Sparrow.Json;
@@ -70,7 +70,7 @@ namespace Raven.Server.Documents.Versioning
 
                 try
                 {
-                    var versioningConfiguration = JsonDeserialization.VersioningConfiguration(configuration.Data);
+                    var versioningConfiguration = JsonDeserializationServer.VersioningConfiguration(configuration.Data);
                     return new VersioningStorage(database, versioningConfiguration);
                 }
                 catch (Exception e)
@@ -104,7 +104,7 @@ namespace Raven.Server.Documents.Versioning
         {
             var enableVersioning = false;
             BlittableJsonReaderObject metadata;
-            if (document.TryGet(Constants.Metadata, out metadata))
+            if (document.TryGet(Constants.Metadata.MetadataId, out metadata))
             {
                 bool disableVersioning;
                 if (metadata.TryGet(Constants.Versioning.RavenDisableVersioning, out disableVersioning))

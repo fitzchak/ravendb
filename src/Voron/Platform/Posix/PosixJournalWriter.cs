@@ -6,10 +6,8 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using Voron.Impl;
 using Voron.Impl.Journal;
 using Voron.Impl.Paging;
-using System.Collections.Generic;
 
 namespace Voron.Platform.Posix
 {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Reflection;
-using Raven.Abstractions;
-using Raven.Abstractions.Json;
+using Raven.Client;
 using Sparrow.Json;
 
 namespace Raven.Server.Utils
@@ -51,8 +50,7 @@ namespace Raven.Server.Utils
                         DateTimeStyles.RoundtripKind, out dateTime))
                         return (T)(object)dateTime;
 
-                    dateTime = RavenJsonTextReader.ParseDateMicrosoft(s);
-                    return (T)(object)dateTime;
+                    throw new NotImplementedException();
                 }
             }
 

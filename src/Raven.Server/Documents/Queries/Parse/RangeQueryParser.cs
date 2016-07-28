@@ -9,9 +9,7 @@ using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
-
-using Raven.Abstractions.Indexing;
-
+using Raven.Client.Documents.Indexing;
 using Version = Lucene.Net.Util.Version;
 
 namespace Raven.Server.Documents.Queries.Parse

@@ -3,7 +3,6 @@ using System.IO;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions.Util;
 using Sparrow.Collections;
 
 namespace Raven.Server.Json
@@ -143,7 +142,7 @@ namespace Raven.Server.Json
         {
             base.Dispose(disposing);
 
-            AsyncHelpers.RunSync(() => Task.WhenAll(_activeWriteTasks));
+            Task.WhenAll(_activeWriteTasks);
             _isDisposed = true;
         }
     }

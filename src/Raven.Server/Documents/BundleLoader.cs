@@ -1,6 +1,6 @@
 using System;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Logging;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Changes;
 using Raven.Server.Documents.Expiration;
 using Raven.Server.Documents.PeriodicExport;
 using Raven.Server.Documents.Versioning;

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Raven.Abstractions.Logging;
 using Raven.Server.Routing;
 using Raven.Server.ServerWide.Context;
 using Sparrow.Json.Parsing;
 using Sparrow.Json;
-using System.Net.WebSockets;
 
 
 namespace Raven.Server.Documents.Handlers

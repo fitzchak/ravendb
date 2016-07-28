@@ -1,11 +1,6 @@
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions.Commands;
-using Raven.Client.Data;
-using Raven.Json.Linq;
-
 using Xunit;
 
 using User = SlowTests.Core.Utils.Entities.User;

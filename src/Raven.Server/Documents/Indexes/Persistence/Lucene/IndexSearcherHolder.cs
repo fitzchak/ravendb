@@ -3,8 +3,6 @@ using System.Threading;
 
 using Lucene.Net.Search;
 
-using Raven.Abstractions.Logging;
-
 namespace Raven.Server.Documents.Indexes.Persistence.Lucene
 {
     public class IndexSearcherHolder

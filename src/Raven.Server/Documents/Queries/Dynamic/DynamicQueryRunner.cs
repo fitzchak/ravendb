@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Raven.Abstractions.Util;
-using Raven.Client.Data;
 using Raven.Server.Documents.Includes;
 using Raven.Server.Documents.Indexes;
 using Raven.Server.Documents.Transformers;
@@ -80,7 +78,7 @@ namespace Raven.Server.Documents.Queries.Dynamic
 
                 includeDocumentsCommand.Fill(result.Includes);
 
-                return new CompletedTask<DocumentQueryResult>(result);
+                return Task.FromResult(result);
             }
 
             Index index;
@@ -100,7 +98,7 @@ namespace Raven.Server.Documents.Queries.Dynamic
 
                 if (existingResultEtag == currentIndexEtag)
                 {
-                    return new CompletedTask<DocumentQueryResult>(new DocumentQueryResult
+                    return Task.FromResult(new DocumentQueryResult
                     {
                         NotModified = true
                     });

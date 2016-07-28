@@ -2,8 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Raven.Abstractions.Indexing;
-using Raven.Client.Data.Indexes;
+using Raven.Client.Documents.Indexing;
 using Raven.Server.Documents.Indexes.Auto;
 using Raven.Server.Documents.Indexes.Persistence.Lucene;
 using Raven.Server.Documents.Indexes.Workers;

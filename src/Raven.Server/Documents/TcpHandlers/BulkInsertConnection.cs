@@ -7,8 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents;
 using Raven.Server.ServerWide.Context;
 using Sparrow;
 using Sparrow.Json;
@@ -242,12 +241,12 @@ namespace Raven.Server.Documents.TcpHandlers
 
                             string docKey;
                             BlittableJsonReaderObject metadata;
-                            if (reader.TryGet(Constants.Metadata, out metadata) == false)
+                            if (reader.TryGet(Constants.Metadata.MetadataId, out metadata) == false)
                             {
                                 const string message = "'@metadata' is missing in received document for bulk insert";
                                 throw new InvalidDataException(message);
                             }
-                            if (metadata.TryGet(Constants.MetadataDocId, out docKey) == false)
+                            if (metadata.TryGet(Constants.Metadata.MetadataDocId, out docKey) == false)
                             {
                                 const string message = "'@id' is missing in received document for bulk insert";
                                 throw new InvalidDataException(message);

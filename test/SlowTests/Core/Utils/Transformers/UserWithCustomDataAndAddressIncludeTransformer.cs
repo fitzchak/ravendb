@@ -4,11 +4,6 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using System.Linq;
-
-using Raven.Client.Indexes;
-using Raven.Tests.Core.Utils.Entities;
-
 using User = SlowTests.Core.Utils.Entities.User;
 
 namespace SlowTests.Core.Utils.Transformers

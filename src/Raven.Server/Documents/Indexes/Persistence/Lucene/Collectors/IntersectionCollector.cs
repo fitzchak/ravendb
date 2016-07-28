@@ -3,8 +3,7 @@ using System.Linq;
 
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-
-using Raven.Abstractions.Data;
+using Raven.Client.Documents;
 
 namespace Raven.Server.Documents.Indexes.Persistence.Lucene.Collectors
 {
@@ -22,7 +21,7 @@ namespace Raven.Server.Documents.Indexes.Persistence.Lucene.Collectors
                 var subQueryResult = new SubQueryResult
                 {
                     LuceneId = scoreDoc.Doc,
-                    RavenDocId = document.Get(Constants.DocumentIdFieldName) ?? document.Get(Constants.ReduceKeyFieldName),
+                    RavenDocId = document.Get(Constants.Indexing.DocumentIdFieldName) ?? document.Get(Constants.Indexing.ReduceKeyFieldName),
                     Score = float.IsNaN(scoreDoc.Score) ? 0.0f : scoreDoc.Score,
                     Count = 1
                 };
@@ -39,7 +38,7 @@ namespace Raven.Server.Documents.Indexes.Persistence.Lucene.Collectors
         {
             //Don't need to add the currentBase here, it's already accounted for
             var document = _currentReader.Document(doc);
-            var key = document.Get(Constants.DocumentIdFieldName) ?? document.Get(Constants.ReduceKeyFieldName);
+            var key = document.Get(Constants.Indexing.DocumentIdFieldName) ?? document.Get(Constants.Indexing.ReduceKeyFieldName);
             var currentScore = _currentScorer.Score();
 
             SubQueryResult value;

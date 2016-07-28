@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
+using Raven.Client;
+using Raven.Client.Documents;
 using Raven.Server.Json;
 using Raven.Server.ReplicationUtil;
 using Raven.Server.ServerWide.Context;
@@ -31,9 +31,9 @@ namespace Raven.Server.Documents.SqlReplication
         protected override bool ShouldReloadConfiguration(string systemDocumentKey)
         {
             return
-                systemDocumentKey.StartsWith(Constants.SqlReplication.SqlReplicationConfigurationPrefix,
+                systemDocumentKey.StartsWith(Constants.SqlReplication.ConfigurationPrefix,
                     StringComparison.OrdinalIgnoreCase) ||
-                systemDocumentKey.Equals(Constants.SqlReplication.SqlReplicationConnections, StringComparison.OrdinalIgnoreCase);
+                systemDocumentKey.Equals(Constants.SqlReplication.Connections, StringComparison.OrdinalIgnoreCase);
         }
 
         protected override void LoadConfigurations()
@@ -43,7 +43,7 @@ namespace Raven.Server.Documents.SqlReplication
             {
                 context.OpenReadTransaction();
 
-                var sqlReplicationConnections = _database.DocumentsStorage.Get(context, Constants.SqlReplication.SqlReplicationConnections);
+                var sqlReplicationConnections = _database.DocumentsStorage.Get(context, Constants.SqlReplication.Connections);
                 if (sqlReplicationConnections != null)
                 {
                     object connections;
@@ -53,10 +53,10 @@ namespace Raven.Server.Documents.SqlReplication
                     }
                 }
 
-                var documents = _database.DocumentsStorage.GetDocumentsStartingWith(context, Constants.SqlReplication.SqlReplicationConfigurationPrefix, null, null, 0, MaxSupportedSqlReplication);
+                var documents = _database.DocumentsStorage.GetDocumentsStartingWith(context, Constants.SqlReplication.ConfigurationPrefix, null, null, 0, MaxSupportedSqlReplication);
                 foreach (var document in documents)
                 {
-                    var configuration = JsonDeserialization.SqlReplicationConfiguration(document.Data);
+                    var configuration = JsonDeserializationServer.SqlReplicationConfiguration(document.Data);
                     var sqlReplication = new SqlReplication(_database, configuration, _metricsScheduler);
                     Replications.Add(sqlReplication);
                     if (sqlReplication.ValidateName() == false ||

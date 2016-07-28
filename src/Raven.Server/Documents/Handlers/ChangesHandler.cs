@@ -9,10 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
-using Raven.Abstractions.Logging;
-using Raven.Server.Json;
 using Raven.Server.Routing;
-using Raven.Server.ServerWide.Context;
 using Sparrow.Json;
 using Sparrow.Json.Parsing;
 

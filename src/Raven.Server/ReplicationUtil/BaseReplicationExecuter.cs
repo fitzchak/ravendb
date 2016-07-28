@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions.Logging;
 using Raven.Abstractions.Util;
 using Raven.Server.Documents;
 using Sparrow;

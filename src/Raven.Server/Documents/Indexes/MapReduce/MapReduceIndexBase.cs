@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Raven.Client.Data.Indexes;
+using Raven.Client.Documents.Indexing;
 using Raven.Server.Documents.Indexes.Persistence.Lucene;
 using Raven.Server.Documents.Queries;
 using Raven.Server.Documents.Queries.Results;

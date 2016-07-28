@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Raven.Client.Data.Indexes;
+using Raven.Client.Documents.Indexing;
 using Raven.Server.ServerWide.Context;
 using Voron;
 

@@ -1,5 +1,4 @@
-﻿using System;
-using Raven.Server.Utils;
+﻿using Raven.Server.Utils;
 
 namespace Raven.Server.Documents.Transformers
 {

@@ -4,8 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Collections.Generic;
-using Raven.Server.Json;
 using Sparrow.Json;
 using Sparrow.Json.Parsing;
 

@@ -5,13 +5,9 @@
 // ----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Client.Linq;
-
 using Xunit;
 
 using Company = SlowTests.Core.Utils.Entities.Company;

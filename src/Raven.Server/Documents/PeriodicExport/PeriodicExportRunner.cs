@@ -6,12 +6,10 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
 using Raven.Abstractions.Extensions;
-using Raven.Abstractions.Logging;
-using Raven.Abstractions.Util;
-using Raven.Client.Smuggler;
+using Raven.Client;
+using Raven.Client.Documents;
+using Raven.Client.Json;
 using Raven.Server.Documents.PeriodicExport.Aws;
 using Raven.Server.Documents.PeriodicExport.Azure;
 using Raven.Server.Json;
@@ -472,7 +470,7 @@ namespace Raven.Server.Documents.PeriodicExport
 
                 try
                 {
-                    var periodicExportConfiguration = JsonDeserialization.PeriodicExportConfiguration(configuration.Data);
+                    var periodicExportConfiguration = JsonDeserializationServer.PeriodicExportConfiguration(configuration.Data);
                     if (periodicExportConfiguration.Active == false)
                     {
                         Log.Info("Periodic export is disabled.");
@@ -485,7 +483,7 @@ namespace Raven.Server.Documents.PeriodicExport
                     {
                         try
                         {
-                            periodicExportStatus = JsonDeserialization.PeriodicExportStatus(status.Data);
+                            periodicExportStatus = JsonDeserializationServer.PeriodicExportStatus(status.Data);
                         }
                         catch (Exception e)
                         {

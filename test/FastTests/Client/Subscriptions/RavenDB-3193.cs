@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Raven.Abstractions.Data;
 using Raven.Json.Linq;
 using Xunit;
 using System.Threading.Tasks;

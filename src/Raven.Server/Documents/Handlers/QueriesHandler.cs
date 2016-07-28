@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Extensions;
-using Raven.Client.Data;
-using Raven.Client.Data.Queries;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Queries;
+using Raven.Client.Extensions;
 using Raven.Server.Documents.Queries;
 using Raven.Server.Documents.Queries.MoreLikeThis;
 using Raven.Server.Json;
@@ -65,7 +64,7 @@ namespace Raven.Server.Documents.Handlers
                 return;
             }
 
-            HttpContext.Response.Headers[Constants.MetadataEtagField] = result.ResultEtag.ToInvariantString();
+            HttpContext.Response.Headers[Constants.HttpHeaders.Etag] = result.ResultEtag.ToInvariantString();
 
             using (var writer = new BlittableJsonTextWriter(context, ResponseBodyStream()))
             {
@@ -88,7 +87,7 @@ namespace Raven.Server.Documents.Handlers
                 return;
             }
 
-            HttpContext.Response.Headers[Constants.MetadataEtagField] = result.ResultEtag.ToInvariantString();
+            HttpContext.Response.Headers[Constants.HttpHeaders.Etag] = result.ResultEtag.ToInvariantString();
 
             using (var writer = new BlittableJsonTextWriter(context, ResponseBodyStream()))
             {

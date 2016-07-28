@@ -3,12 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Standard;
-
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Indexing;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Indexing;
 using Raven.Server.Documents.Indexes.Persistence.Lucene.Analyzers;
 
 namespace Raven.Server.Documents.Indexes.Persistence.Lucene

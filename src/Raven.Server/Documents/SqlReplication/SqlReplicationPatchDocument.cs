@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using Jint;
 using Jint.Native;
+using Raven.Client.Extensions;
 using Raven.Server.Documents.Patch;
 using Raven.Server.ServerWide.Context;
-using Sparrow.Json;
 
 namespace Raven.Server.Documents.SqlReplication
 {
@@ -36,7 +35,7 @@ namespace Raven.Server.Documents.SqlReplication
             engine.Global.Delete("replicateTo", true);
             engine.Global.Delete("varchar", true);
             engine.Global.Delete("nVarchar", true);
-            foreach (var sqlReplicationTable in config.SqlReplicationTables)
+            foreach (var sqlReplicationTable in new List<SqlReplicationTable>())
             {
                 engine.Global.Delete("replicateTo" + sqlReplicationTable.TableName, true);
             }
@@ -49,7 +48,7 @@ namespace Raven.Server.Documents.SqlReplication
             engine.SetValue("documentId", _documentKey);
             engine.SetValue("replicateTo", new Action<string, JsValue>((tableName, colsAsObject) => ReplicateToFunction(tableName, colsAsObject, scope)));
             scriptResult.Keys.Add(_documentKey);
-            foreach (var sqlReplicationTable in config.SqlReplicationTables)
+            foreach (var sqlReplicationTable in new List<SqlReplicationTable>())
             {
                 var current = sqlReplicationTable;
                 engine.SetValue("replicateTo" + sqlReplicationTable.TableName, (Action<JsValue>)(cols =>

@@ -4,13 +4,9 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-using System.Linq;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Client;
-
 using SlowTests.Core.Utils.Indexes;
 
 using Xunit;

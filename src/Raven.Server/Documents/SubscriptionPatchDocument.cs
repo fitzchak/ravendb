@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Jint;
-using Jint.Native;
-using Jint.Parser;
-using Jint.Runtime;
+﻿using Jint;
 using Raven.Server.Documents.Patch;
 using Raven.Server.ServerWide.Context;
 

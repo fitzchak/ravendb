@@ -1,5 +1,4 @@
-﻿using Raven.Abstractions.Indexing;
-using Raven.Client.Indexing;
+﻿using Raven.Client.Documents.Indexing;
 using Sparrow.Json.Parsing;
 
 namespace Raven.Server.Extensions

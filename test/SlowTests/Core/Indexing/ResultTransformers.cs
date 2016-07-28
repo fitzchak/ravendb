@@ -5,14 +5,9 @@
 // -----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions.Data;
-using Raven.Client.Linq;
-using Raven.Json.Linq;
 using SlowTests.Core.Utils.Entities;
 using SlowTests.Core.Utils.Indexes;
 using SlowTests.Core.Utils.Transformers;
@@ -166,7 +161,7 @@ namespace SlowTests.Core.Indexing
                     Assert.Equal("Amazing", result.Name);
                     Assert.True(result.Employees.SequenceEqual(new[] { "John", "Bob" }));
 
-                    var results = session.Load<CompanyEmployeesTransformer.Result>(new[] { "companies/1", "companies/2" }, typeof(CompanyEmployeesTransformer));
+                    var results = session.Load<CompanyEmployeesTransformer.Result>(new [] { "companies/1", "companies/2" }, typeof(CompanyEmployeesTransformer));
 
                     Assert.Equal(2, results.Length);
 
@@ -313,7 +308,7 @@ namespace SlowTests.Core.Indexing
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Missing feature: Includes in transformers")]
         public async Task CanSpecifyTransformerParameterAndIncludeInTransformer()
         {
             using (var store = await GetDocumentStore())
@@ -385,7 +380,7 @@ namespace SlowTests.Core.Indexing
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Missing feature: AsDocument")]
         public async Task CanUseAsDocumentInTransformer()
         {
             using (var store = await GetDocumentStore())
@@ -404,14 +399,12 @@ namespace SlowTests.Core.Indexing
 
                     var post =
                         session.Query<Post>()
-                            .Where(x => x.Title == "Result Transformers")
                             .Customize(x => x.WaitForNonStaleResults())
                             .TransformWith<PostWithAsDocumentTransformer, PostWithAsDocumentTransformer.Result>()
                             .First();
 
                     Assert.NotNull(post.RawDocument);
-                    var metadata = (RavenJObject)post.RawDocument[Constants.Metadata];
-                    Assert.Equal("posts/1", metadata.Value<string>(Constants.MetadataDocId));
+                    Assert.Equal("posts/1", post.RawDocument.Value<string>(Constants.DocumentIdFieldName));
                 }
             }
         }

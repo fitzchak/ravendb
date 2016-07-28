@@ -3,9 +3,8 @@
 //      Copyright (c) Hibernating Rhinos LTD. All rights reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
-using System;
 
-namespace Raven.Abstractions.Replication
+namespace Raven.Client.Replication
 {
     /// <summary>
     /// Data class for replication config document, available on a destination server

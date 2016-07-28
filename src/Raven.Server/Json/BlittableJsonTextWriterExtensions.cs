@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Raven.Abstractions;
 using Raven.Abstractions.Extensions;
-using Raven.Abstractions.Indexing;
-using Raven.Client.Data;
-using Raven.Client.Data.Indexes;
-using Raven.Client.Data.Queries;
-using Raven.Client.Indexing;
+using Raven.Client;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Indexing;
+using Raven.Client.Documents.Queries;
+using Raven.Client.Extensions;
 using Raven.Server.Documents;
 using Raven.Server.Documents.Queries;
 using Raven.Server.Documents.Queries.Dynamic;

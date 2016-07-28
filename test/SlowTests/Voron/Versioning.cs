@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using FastTests.Voron.FixedSize;
 using Xunit;
 
 namespace SlowTests.Voron

@@ -6,22 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FastTests;
-using FastTests.Server.Documents.SqlReplication;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Logging;
-using Raven.Client.Document;
-using Raven.Database.Util;
-using Raven.Server.Documents.SqlReplication;
-using Sparrow;
 using Xunit;
-using Xunit.Sdk;
 
 namespace SlowTests.Server.Documents.SqlReplication
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents;
 using Raven.Client.Smuggler;
 using Raven.Server.Documents;
 using Raven.Server.Documents.Versioning;
@@ -284,40 +284,40 @@ namespace Raven.Server.Smuggler
                 foreach (var document in _documents)
                 {
                     BlittableJsonReaderObject metadata;
-                    if (document.TryGet(Constants.Metadata, out metadata) == false)
+                    if (document.TryGet(Constants.Metadata.MetadataId, out metadata) == false)
                         throw new InvalidOperationException("A document must have a metadata");
-                    // We are using the id term here and not key in order to be backward compatiable with old export files.
-                    string key;
-                    if (metadata.TryGet(Constants.MetadataDocId, out key) == false)
-                        throw new InvalidOperationException("Document's metadata must include the document's key.");
+
+                    string id;
+                    if (metadata.TryGet(Constants.Metadata.MetadataDocId, out id) == false)
+                        throw new InvalidOperationException("Document's metadata must include the document's id.");
 
                     DynamicJsonValue mutatedMetadata;
                     metadata.Modifications = mutatedMetadata = new DynamicJsonValue(metadata);
-                    mutatedMetadata.Remove(Constants.MetadataDocId);
-                    mutatedMetadata.Remove(Constants.MetadataEtagId);
+                    mutatedMetadata.Remove(Constants.Metadata.MetadataDocId);
+                    mutatedMetadata.Remove(Constants.Metadata.MetadataEtagId);
 
                     if (IsRevision)
                     {
                         long etag;
-                        if (metadata.TryGet(Constants.MetadataEtagId, out etag) == false)
+                        if (metadata.TryGet(Constants.Metadata.MetadataEtagId, out etag) == false)
                             throw new InvalidOperationException("Document's metadata must include the document's key.");
 
-                        _database.BundleLoader.VersioningStorage.PutDirect(context, key, etag, document);
+                        _database.BundleLoader.VersioningStorage.PutDirect(context, id, etag, document);
                     }
-                    else if (BuildVersion < 4000 && key.Contains("/revisions/"))
+                    else if (BuildVersion < 4000 && id.Contains("/revisions/"))
                     {
                         long etag;
-                        if (metadata.TryGet(Constants.MetadataEtagId, out etag) == false)
+                        if (metadata.TryGet(Constants.Metadata.MetadataEtagId, out etag) == false)
                             throw new InvalidOperationException("Document's metadata must include the document's key.");
 
-                        var endIndex = key.IndexOf("/revisions/", StringComparison.OrdinalIgnoreCase);
-                        key = key.Substring(0, endIndex);
+                        var endIndex = id.IndexOf("/revisions/", StringComparison.OrdinalIgnoreCase);
+                        id = id.Substring(0, endIndex);
 
-                        _database.BundleLoader.VersioningStorage.PutDirect(context, key, etag, document);
+                        _database.BundleLoader.VersioningStorage.PutDirect(context, id, etag, document);
                     }
                     else
                     {
-                        _database.DocumentsStorage.Put(context, key, null, document);
+                        _database.DocumentsStorage.Put(context, id, null, document);
                     }
                 }
             }

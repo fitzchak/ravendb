@@ -10,9 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Net;
 using System.Threading;
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Logging;
+using Raven.Client.Documents;
 using Raven.Server.Json;
 using Raven.Server.ServerWide.Context;
 using Sparrow.Json;
@@ -56,7 +54,7 @@ namespace Raven.Server.Documents.Expiration
 
                 try
                 {
-                    var expirationConfiguration = JsonDeserialization.ExpirationConfiguration(configuration.Data);
+                    var expirationConfiguration = JsonDeserializationServer.ExpirationConfiguration(configuration.Data);
                     if (expirationConfiguration.Active == false)
                         return null;
 
@@ -159,7 +157,7 @@ namespace Raven.Server.Documents.Expiration
                                     // We have to check this as the user can update this valud.
                                     string expirationDate;
                                     BlittableJsonReaderObject metadata;
-                                    if (document.Data.TryGet(Constants.Metadata, out metadata) == false ||
+                                    if (document.Data.TryGet(Constants.Metadata.MetadataId, out metadata) == false ||
                                         metadata.TryGet(Constants.Expiration.RavenExpirationDate, out expirationDate) == false)
                                         continue;
 
@@ -208,7 +206,7 @@ namespace Raven.Server.Documents.Expiration
         {
             string expirationDate;
             BlittableJsonReaderObject metadata;
-            if (document.TryGet(Constants.Metadata, out metadata) == false ||
+            if (document.TryGet(Constants.Metadata.MetadataId, out metadata) == false ||
                 metadata.TryGet(Constants.Expiration.RavenExpirationDate, out expirationDate) == false)
                 return;
 

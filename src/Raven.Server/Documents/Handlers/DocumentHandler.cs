@@ -10,7 +10,8 @@ using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Data;
 using Raven.Server.Documents.Includes;
 using Raven.Server.Documents.Patch;
 using Raven.Server.Documents.Transformers;
@@ -39,7 +40,7 @@ namespace Raven.Server.Documents.Handlers
                 if (document == null)
                     HttpContext.Response.StatusCode = 404;
                 else
-                    HttpContext.Response.Headers[Constants.MetadataEtagField] = document.Etag.ToString();
+                    HttpContext.Response.Headers[Constants.HttpHeaders.Etag] = document.Etag.ToString();
                 return Task.CompletedTask;
             }
         }

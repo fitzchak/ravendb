@@ -6,8 +6,7 @@ using Jint.Native;
 using Jint.Native.Object;
 using Jint.Runtime;
 using Jint.Runtime.Descriptors;
-using Raven.Abstractions.Data;
-using Raven.Server.Json;
+using Raven.Client.Documents;
 using Raven.Server.ServerWide.Context;
 using Sparrow.Json;
 using Sparrow.Json.Parsing;
@@ -138,7 +137,7 @@ namespace Raven.Server.Documents.Patch
             var obj = new DynamicJsonValue();
             foreach (var property in jsObject.GetOwnProperties())
             {
-                if (property.Key == Constants.ReduceKeyFieldName || property.Key == Constants.DocumentIdFieldName)
+                if (property.Key == Constants.Indexing.ReduceKeyFieldName || property.Key == Constants.Indexing.DocumentIdFieldName)
                     continue;
 
                 var value = property.Value.Value;

@@ -1,11 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using FastTests;
-using Raven.Client;
-using Raven.Client.Indexes;
-using Raven.Client.Indexing;
 using Xunit;
-using System.Linq;
 
 namespace SlowTests.Core.Indexing
 {

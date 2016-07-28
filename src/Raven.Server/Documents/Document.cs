@@ -1,5 +1,5 @@
 ﻿using System;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents;
 using Sparrow;
 using Sparrow.Json;
 using Sparrow.Json.Parsing;
@@ -34,7 +34,7 @@ namespace Raven.Server.Documents
         {
             DynamicJsonValue mutatedMetadata;
             BlittableJsonReaderObject metadata;
-            if (Data.TryGet(Constants.Metadata, out metadata))
+            if (Data.TryGet(Constants.Metadata.MetadataId, out metadata))
             {
                 metadata.Modifications = mutatedMetadata = new DynamicJsonValue(metadata);
             }
@@ -42,12 +42,12 @@ namespace Raven.Server.Documents
             {
                 Data.Modifications = new DynamicJsonValue(Data)
                 {
-                    [Constants.Metadata] = mutatedMetadata = new DynamicJsonValue()
+                    [Constants.Metadata.MetadataId] = mutatedMetadata = new DynamicJsonValue()
                 };
             }
 
-            mutatedMetadata[Constants.MetadataEtagId] = Etag;
-            mutatedMetadata[Constants.MetadataDocId] = Key;
+            mutatedMetadata[Constants.Metadata.MetadataEtagId] = Etag;
+            mutatedMetadata[Constants.Metadata.MetadataDocId] = Key;
 
             _hash = null;
         }
@@ -56,7 +56,7 @@ namespace Raven.Server.Documents
         {
             foreach (var property in Data.GetPropertyNames())
             {
-                if (string.Equals(property, Constants.Metadata, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(property, Constants.Metadata.MetadataId, StringComparison.OrdinalIgnoreCase))
                     continue;
 
                 if (Data.Modifications == null)
@@ -103,7 +103,7 @@ namespace Raven.Server.Documents
             isSystemDocument = false;
             string collectionName;
             BlittableJsonReaderObject metadata;
-            if (document.TryGet(Constants.Metadata, out metadata) == false ||
+            if (document.TryGet(Constants.Metadata.MetadataId, out metadata) == false ||
                 metadata.TryGet(Constants.Headers.RavenEntityName, out collectionName) == false)
             {
                 collectionName = NoCollectionSpecified;

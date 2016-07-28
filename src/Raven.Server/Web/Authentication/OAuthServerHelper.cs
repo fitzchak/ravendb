@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Raven.Abstractions.Connection;
-using Raven.Abstractions.Util.Encryptors;
+using Raven.Client.Authentication;
+using Raven.Client.Authentication.Encryptors;
 using Raven.Server.Config;
+using System.Linq;
 
 namespace Raven.Server.Web.Authentication
 {

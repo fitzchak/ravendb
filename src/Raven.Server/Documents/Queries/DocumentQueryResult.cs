@@ -1,6 +1,4 @@
-﻿using Raven.Abstractions.Data;
-using Raven.Client.Data;
-using Raven.Client.Data.Queries;
+﻿using Raven.Client.Documents.Queries;
 
 namespace Raven.Server.Documents.Queries
 {

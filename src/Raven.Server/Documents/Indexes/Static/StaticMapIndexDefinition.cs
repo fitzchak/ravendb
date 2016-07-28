@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Linq;
-
-using Raven.Abstractions.Data;
-using Raven.Client.Indexing;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Indexing;
+using Raven.Client.Json;
 using Raven.Server.Extensions;
-using Raven.Server.Json;
 using Raven.Server.ServerWide.Context;
 
 using Sparrow.Json;
 using Voron;
+using System.Linq;
+using Raven.Server.Json;
 
 namespace Raven.Server.Documents.Indexes.Static
 {
@@ -96,7 +96,7 @@ namespace Raven.Server.Documents.Indexes.Static
             if (reader.TryGet(nameof(IndexDefinition), out jsonObject) == false || jsonObject == null)
                 throw new InvalidOperationException("No persisted definition");
 
-            return JsonDeserialization.IndexDefinition(jsonObject);
+            return JsonDeserializationServer.IndexDefinition(jsonObject);
         }
     }
 }

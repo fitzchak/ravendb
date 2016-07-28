@@ -13,17 +13,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Primitives;
-using Raven.Abstractions;
-using Raven.Abstractions.Connection;
-using Raven.Abstractions.Util;
+using Raven.Client;
+using Raven.Client.Http;
 
 namespace Raven.Server.Documents.PeriodicExport.Azure
 {
@@ -462,7 +459,7 @@ namespace Raven.Server.Documents.PeriodicExport.Azure
         {
             protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
             {
-                return new CompletedTask();
+                return Task.CompletedTask;
             }
 
             protected override bool TryComputeLength(out long length)

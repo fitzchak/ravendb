@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents.Changes;
 using Raven.Server.ServerWide;
 using Raven.Server.ServerWide.Context;
 using Voron.Impl;

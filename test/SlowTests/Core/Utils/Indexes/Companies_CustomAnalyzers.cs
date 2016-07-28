@@ -3,11 +3,6 @@
 //      Copyright (c) Hibernating Rhinos LTD. All rights reserved.
 //  </copyright>
 // ----------------------------------------------------------------------
-using System.Linq;
-
-using Raven.Abstractions.Indexing;
-using Raven.Client.Indexes;
-using Raven.Tests.Core.Utils.Entities;
 
 using Company = SlowTests.Core.Utils.Entities.Company;
 

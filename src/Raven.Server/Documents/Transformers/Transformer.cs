@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Raven.Abstractions;
-using Raven.Abstractions.Indexing;
-using Raven.Imports.Newtonsoft.Json;
+using Newtonsoft.Json;
+using Raven.Client;
+using Raven.Client.Documents.Indexing;
 using Raven.Server.Config.Categories;
 using Raven.Server.Documents.Includes;
 using Raven.Server.Documents.Indexes.Static;
@@ -87,7 +87,8 @@ namespace Raven.Server.Documents.Transformers
             if (_configuration.RunInMemory)
                 return;
 
-            File.WriteAllText(GetPath(TransformerId, Name, _configuration), JsonConvert.SerializeObject(Definition, Formatting.Indented, Default.Converters));
+            //todo: do not use JsonConvert
+            //File.WriteAllText(GetPath(TransformerId, Name, _configuration), JsonConvert.SerializeObject(Definition, Formatting.Indented, Default.Converters));
         }
 
         public static Transformer CreateNew(int transformerId, TransformerDefinition definition,

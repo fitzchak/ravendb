@@ -5,10 +5,9 @@ using System.Globalization;
 using System.Linq;
 
 using Lucene.Net.Documents;
-
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Indexing;
-using Raven.Client.Data;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Indexing;
+using Raven.Client.Documents.Queries;
 using Raven.Client.Linq;
 using Raven.Server.Documents.Indexes.Persistence.Lucene.Documents.Fields;
 using Raven.Server.Json;

@@ -5,10 +5,6 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions.Indexing;
-using Raven.Client.Indexes;
-
 using Xunit;
 
 namespace SlowTests.Tests.Sorting

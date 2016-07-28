@@ -2,10 +2,6 @@ using System;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Client.Data;
-using Raven.Json.Linq;
-
 using Xunit;
 
 using Post = SlowTests.Core.Utils.Entities.Post;

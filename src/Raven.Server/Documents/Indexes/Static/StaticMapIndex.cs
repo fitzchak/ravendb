@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Raven.Abstractions.Data;
-using Raven.Client.Data.Indexes;
-using Raven.Client.Indexing;
+using Raven.Client.Documents.Changes;
+using Raven.Client.Documents.Indexing;
 using Raven.Server.Documents.Indexes.Persistence.Lucene;
 using Raven.Server.Documents.Indexes.Workers;
 using Raven.Server.ServerWide.Context;

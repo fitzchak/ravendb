@@ -1,5 +1,5 @@
 ﻿using System;
-using Raven.Client.Data;
+using Raven.Client.Documents.Queries;
 
 namespace Raven.Server.Documents.Indexes.Static
 {

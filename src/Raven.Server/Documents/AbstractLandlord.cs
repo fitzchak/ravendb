@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions.Logging;
 using Raven.Server.ServerWide;
 using Raven.Server.Utils;
 using Sparrow;
@@ -12,7 +10,7 @@ using Sparrow.Logging;
 
 namespace Raven.Server.Documents
 {
-    public abstract class AbstractLandlord<TResource> : IDisposable 
+    public abstract class AbstractLandlord<TResource> : IDisposable
         where TResource : IDisposable
     {
         protected static readonly ILog Log = LogManager.GetLogger(typeof(AbstractLandlord<TResource>).FullName);
@@ -29,7 +27,7 @@ namespace Raven.Server.Documents
         public readonly ConcurrentDictionary<StringSegment, DateTime> LastRecentlyUsed =
             new ConcurrentDictionary<StringSegment, DateTime>(CaseInsensitiveStringSegmentEqualityComparer.Instance);
 
-        protected readonly ConcurrentSet<string> Locks = 
+        protected readonly ConcurrentSet<string> Locks =
             new ConcurrentSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public AbstractLandlord(ServerStore serverStore, LoggerSetup loggerSetup)

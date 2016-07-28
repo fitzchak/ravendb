@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
 using NLog;
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Exceptions.Subscriptions;
-using Raven.Database.Util;
+using Raven.Client;
+using Raven.Client.Documents.Subscriptions;
+using Raven.Client.Json;
+using Raven.Server.Documents.Subscriptions;
 using Raven.Server.Json;
 using Raven.Server.ServerWide.Context;
 using Raven.Server.Utils.Metrics;
@@ -37,7 +36,7 @@ namespace Raven.Server.Documents
         private readonly DocumentDatabase _db;
         private readonly MetricsScheduler _metricsScheduler;
         private readonly StorageEnvironment _environment;
-        private Logger _log; //todo: add logging
+        private ILog _log; //todo: add logging
 
         private readonly UnmanagedBuffersPool _unmanagedBuffersPool;
 
@@ -88,7 +87,7 @@ namespace Raven.Server.Documents
 
             // Validate that this can be properly parsed into a criteria object
             // and doing that without holding the tx lock
-            JsonDeserialization.SubscriptionCriteria(criteria);
+            JsonDeserializationServer.SubscriptionCriteria(criteria);
 
             using (var tx = _environment.WriteTransaction())
             {
@@ -200,7 +199,7 @@ namespace Raven.Server.Documents
                 int criteriaSize;
                 var criteriaPtr = config.Read(Schema.SubscriptionTable.CriteriaIndex, out criteriaSize);
                 var criteriaBlittable = new BlittableJsonReaderObject(criteriaPtr, criteriaSize, context);
-                criteria = JsonDeserialization.SubscriptionCriteria(criteriaBlittable);
+                criteria = JsonDeserializationServer.SubscriptionCriteria(criteriaBlittable);
                 startEtag = *(long*)config.Read(Schema.SubscriptionTable.AckEtagIndex, out criteriaSize);
             }
         }
@@ -333,7 +332,7 @@ namespace Raven.Server.Documents
                 *(long*)tvr.Read(Schema.SubscriptionTable.TimeOfLastActivityIndex, out size);
             var criteria = new BlittableJsonReaderObject(tvr.Read(Schema.SubscriptionTable.CriteriaIndex, out size), size, context);
 
-            var criteriaInstance = JsonDeserialization.SubscriptionCriteria(criteria);
+            var criteriaInstance = JsonDeserializationServer.SubscriptionCriteria(criteria);
             criteria.Dispose();
 
             return new DynamicJsonValue

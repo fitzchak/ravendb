@@ -5,9 +5,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Raven.Server.Json;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Replication;
-using Raven.Client.Document;
 using Raven.Server.ServerWide.Context;
 using Sparrow.Json;
 using Sparrow.Json.Parsing;
@@ -15,16 +12,17 @@ using Sparrow.Logging;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-using Raven.Abstractions.Connection;
-using Raven.Client.Connection;
-using Raven.Client.Extensions;
-using Raven.Json.Linq;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Changes;
+using Raven.Client.Documents.Subscriptions;
+using Raven.Client.Json;
+using Raven.Client.Replication;
+using Raven.Client.Replication.Messages;
 
 namespace Raven.Server.Documents.Replication
 {
     public class OutgoingReplicationHandler : IDisposable
     {
-        private static readonly DocumentConvention _convention = new DocumentConvention();
         private readonly DocumentDatabase _database;
         private readonly ReplicationDestination _destination;
         private readonly Logger _log;
@@ -65,16 +63,17 @@ namespace Raven.Server.Documents.Replication
 
         private TcpConnectionInfo GetTcpInfo()
         {
-            //since we use it only once when the connection is initialized, no reason to keep requestFactory around for long
+            throw new NotImplementedException();
+           /* //since we use it only once when the connection is initialized, no reason to keep requestFactory around for long
             using (var requestFactory = new HttpJsonRequestFactory(1))
             using (var request = requestFactory.CreateHttpJsonRequest(new CreateHttpJsonRequestParams(null, string.Format("{0}/info/tcp",
-                MultiDatabase.GetRootDatabaseUrl(_destination.Url)),
+                DatabaseNameHelper.GetRootDatabaseUrl(_destination.Url)),
                 HttpMethod.Get,
                 new OperationCredentials(_destination.ApiKey, CredentialCache.DefaultCredentials), _convention)))
             {
                 var result = request.ReadResponseJson();
                 return _convention.CreateSerializer().Deserialize<TcpConnectionInfo>(new RavenJTokenReader(result));
-            }
+            }*/
         }
 
         //TODO : add code to record stats and maybe additional logging
@@ -118,7 +117,7 @@ namespace Raven.Server.Documents.Replication
 
                         using (var lastEtagMessage = parser.ParseToMemory($"Last etag from server {FromToString}"))
                         {
-                            var replicationEtagReply = JsonDeserialization.ReplicationEtagReply(lastEtagMessage);
+                            var replicationEtagReply = JsonDeserializationServer.ReplicationEtagReply(lastEtagMessage);
                             _lastSentEtag = replicationEtagReply.LastSentEtag;
                         }
 
@@ -242,7 +241,7 @@ namespace Raven.Server.Documents.Replication
 
             using (var replicationBatchReplyMessage = parser.ParseToMemory("replication acknowledge message"))
             {
-                var replicationBatchReply = JsonDeserialization.ReplicationBatchReply(replicationBatchReplyMessage);
+                var replicationBatchReply = JsonDeserializationServer.ReplicationBatchReply(replicationBatchReplyMessage);
 
                 if (replicationBatchReply.Type == ReplicationBatchReply.ReplyType.Ok)
                     OnDocumentsSent();

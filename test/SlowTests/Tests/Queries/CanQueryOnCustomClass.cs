@@ -5,13 +5,9 @@
 // -----------------------------------------------------------------------
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Imports.Newtonsoft.Json;
-
 using Xunit;
 
 namespace SlowTests.Tests.Queries

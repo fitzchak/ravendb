@@ -7,9 +7,6 @@
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Json.Linq;
-
 using Xunit;
 
 using Company = SlowTests.Core.Utils.Entities.Company;

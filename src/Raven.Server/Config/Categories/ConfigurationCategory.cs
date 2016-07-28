@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
-using Raven.Abstractions.Extensions;
 using Raven.Server.Config.Attributes;
 using Raven.Server.Config.Settings;
 
@@ -133,19 +130,6 @@ namespace Raven.Server.Config.Categories
             }
 
             Initialized = true;
-        }
-
-        protected object GetDefaultValue<T>(Expression<Func<T, object>> getValue)
-        {
-            var prop = getValue.ToProperty();
-            var value = prop.GetCustomAttributes<DefaultValueAttribute>().First().Value;
-
-            if (DefaultValueSetInConstructor.Equals(value))
-            {
-                return prop.GetValue(this);
-            }
-
-            return value;
         }
     }
 }

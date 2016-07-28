@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Raven.Abstractions.Indexing;
+using Raven.Client.Documents.Indexing;
+using Raven.Client.Json;
 using Raven.Server.Json;
 using Raven.Server.Routing;
 using Raven.Server.ServerWide.Context;
@@ -20,7 +21,7 @@ namespace Raven.Server.Documents.Handlers
             using (ContextPool.AllocateOperationContext(out context))
             {
                 var json = await context.ReadForMemoryAsync(RequestBodyStream(), name);
-                var transformerDefinition = JsonDeserialization.TransformerDefinition(json);
+                var transformerDefinition = JsonDeserializationServer.TransformerDefinition(json);
                 transformerDefinition.Name = name;
 
                 var transformerId = Database.TransformerStore.CreateTransformer(transformerDefinition);

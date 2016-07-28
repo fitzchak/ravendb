@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents.Changes;
 
 namespace Raven.Server.Documents
 {

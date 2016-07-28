@@ -1,7 +1,6 @@
-using Raven.Abstractions.Indexing;
-using Raven.Client.Indexing;
+using Raven.Client.Documents.Indexing;
 
-namespace Raven.Abstractions.Replication
+namespace Raven.Client.Replication
 {
     public class SideBySideReplicationInfo
     {

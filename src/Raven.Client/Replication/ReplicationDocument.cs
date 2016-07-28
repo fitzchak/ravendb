@@ -3,12 +3,12 @@
 //     Copyright (c) Hibernating Rhinos LTD. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using System.Collections.Generic;
-
 using Raven.Abstractions.Cluster;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents;
 
-namespace Raven.Abstractions.Replication
+namespace Raven.Client.Replication
 {
     /// <summary>
     /// This class represent the list of replication destinations for the server
@@ -43,7 +43,7 @@ namespace Raven.Abstractions.Replication
         /// </summary>
         public ReplicationDocument()
         {
-            Id = Constants.RavenReplicationDestinations;
+            Id = Constants.Replication.RavenReplicationDestinations;
             Destinations = new List<TClass>();
         }
     }

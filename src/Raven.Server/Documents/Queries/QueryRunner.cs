@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Primitives;
-
-using Raven.Client.Data;
-using Raven.Client.Data.Indexes;
-using Raven.Client.Data.Queries;
-using Raven.Client.Util.RateLimiting;
+using Raven.Client.Documents.Indexing;
+using Raven.Client.Documents.Queries;
 using Raven.Server.Documents.Indexes;
 using Raven.Server.Documents.Queries.Dynamic;
 using Raven.Server.Documents.Queries.MoreLikeThis;

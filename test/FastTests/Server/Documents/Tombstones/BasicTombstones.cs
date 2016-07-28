@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 using System.Threading;
-
-using Raven.Abstractions.Data;
 using Raven.Abstractions.Indexing;
 using Raven.Server.Documents.Indexes;
 using Raven.Server.Documents.Indexes.Auto;

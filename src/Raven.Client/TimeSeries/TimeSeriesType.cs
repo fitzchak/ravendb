@@ -2,10 +2,10 @@ namespace Raven.Abstractions.TimeSeries
 {
     public class TimeSeriesType
     {
-        public string Type { get; set; }
+        public string Type;
 
-        public string[] Fields { get; set; }
+        public string[] Fields;
         
-        public long KeysCount { get; set; }
+        public long KeysCount;
     }
 }

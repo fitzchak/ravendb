@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using Raven.Abstractions.Logging;
-using Raven.Client.Data.Indexes;
+using Raven.Client.Documents.Indexing;
 using Raven.Server.Config.Categories;
 using Raven.Server.Documents.Indexes.MapReduce;
 using Raven.Server.Documents.Indexes.Persistence.Lucene;

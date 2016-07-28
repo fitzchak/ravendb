@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-
-using Raven.Abstractions.Logging;
-
 using Sparrow.Collections;
 
 namespace Raven.Server.Documents

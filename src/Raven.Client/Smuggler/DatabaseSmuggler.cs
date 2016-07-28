@@ -5,8 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
-using Raven.Client.Document;
+using Raven.Client.Documents;
 
 namespace Raven.Client.Smuggler
 {

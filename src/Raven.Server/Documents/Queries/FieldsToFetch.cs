@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using Raven.Abstractions.Indexing;
-using Raven.Client.Data;
+using Raven.Client.Documents.Indexing;
 using Raven.Server.Documents.Indexes;
 
 using Sparrow;

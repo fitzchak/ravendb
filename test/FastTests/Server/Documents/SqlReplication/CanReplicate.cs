@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
 using Raven.Abstractions.Logging;
 using Raven.Client.Document;
 using Raven.Database.Util;

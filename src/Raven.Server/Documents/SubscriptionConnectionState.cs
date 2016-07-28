@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Exceptions.Subscriptions;
-using Raven.Abstractions.Extensions;
+using Raven.Client.Documents.Subscriptions;
+using Raven.Client.Extensions;
+using Raven.Server.Documents.Subscriptions;
 using Raven.Server.Utils.Metrics;
 using Sparrow;
 

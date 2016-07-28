@@ -2,9 +2,6 @@ using System;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Client;
-
 using Xunit;
 
 namespace SlowTests.Tests.MultiGet

@@ -1,41 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Raven.Server.Documents.SqlReplication
 {
     public class SqlReplicationConfiguration
     {
-        public SqlReplicationConfiguration()
-        {
-            SqlReplicationTables = new List<SqlReplicationTable>();
-        }
+        public string Id;
 
-        public string Id { get; set; }
+        public string Name;
 
-        public string Name { get; set; }
+        public bool Disabled;
 
-        public bool Disabled { get; set; }
+        public bool ParameterizeDeletesDisabled;
 
-        public bool ParameterizeDeletesDisabled { get; set; }
+        public bool ForceSqlServerQueryRecompile;
 
-        public bool ForceSqlServerQueryRecompile { get; set; }
+        public bool QuoteTables;
 
-        public bool QuoteTables { get; set; }
+        public string Collection;
 
-        public string Collection { get; set; }
+        public string Script;
 
-        public string Script { get; set; }
+        public string ConnectionStringName;
 
-        public string ConnectionStringName { get; set; }
-
-        public List<SqlReplicationTable> SqlReplicationTables { get; set; }
+        public readonly List<SqlReplicationTable> SqlReplicationTables = new List<SqlReplicationTable>();
     }
 
     public class SqlReplicationTable
     {
-        public string TableName { get; set; }
-        public string DocumentKeyColumn { get; set; }
-        public bool InsertOnlyMode { get; set; }
+        public string TableName;
+        public string DocumentKeyColumn;
+        public bool InsertOnlyMode;
 
         protected bool Equals(SqlReplicationTable other)
         {

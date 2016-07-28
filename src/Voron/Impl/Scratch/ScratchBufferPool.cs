@@ -9,8 +9,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using Voron.Exceptions;
-using Voron.Impl.Paging;
-using Voron.Util;
 
 namespace Voron.Impl.Scratch
 {

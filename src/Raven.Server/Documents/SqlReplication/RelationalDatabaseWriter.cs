@@ -6,8 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Raven.Abstractions;
-using Raven.Abstractions.Logging;
+using Raven.Client;
 using Raven.Server.ServerWide.Context;
 using Sparrow.Json;
 
@@ -380,7 +379,7 @@ namespace Raven.Server.Documents.SqlReplication
 
         public bool ExecuteScript(SqlReplicationScriptResult scriptResult)
         {
-            foreach (var sqlReplicationTable in _sqlReplication.Configuration.SqlReplicationTables)
+            foreach (var sqlReplicationTable in new List<SqlReplicationTable>())
             {
                 // first, delete all the rows that might already exist there
                 if (sqlReplicationTable.InsertOnlyMode == false)
@@ -405,7 +404,8 @@ namespace Raven.Server.Documents.SqlReplication
             var identifiers = scriptResult.Data.SelectMany(x => x.Value).Select(x => x.DocumentKey).Distinct().ToList();
 
             // first, delete all the rows that might already exist there
-            foreach (var sqlReplicationTable in _sqlReplication.Configuration.SqlReplicationTables)
+            var sqlReplicationTables = new List<SqlReplicationTable>();
+            foreach (var sqlReplicationTable in sqlReplicationTables)
             {
                 var commands = new List<DbCommand>();
                 DeleteItems(sqlReplicationTable.TableName, sqlReplicationTable.DocumentKeyColumn, _sqlReplication.Configuration.ParameterizeDeletesDisabled,
@@ -413,7 +413,7 @@ namespace Raven.Server.Documents.SqlReplication
                 yield return TableQuerySummary.GenerateSummaryFromCommands(sqlReplicationTable.TableName, commands);
             }
 
-            foreach (var sqlReplicationTable in _sqlReplication.Configuration.SqlReplicationTables)
+            foreach (var sqlReplicationTable in sqlReplicationTables)
             {
                 List<ItemToReplicate> dataForTable;
                 if (scriptResult.Data.TryGetValue(sqlReplicationTable.TableName, out dataForTable) == false)

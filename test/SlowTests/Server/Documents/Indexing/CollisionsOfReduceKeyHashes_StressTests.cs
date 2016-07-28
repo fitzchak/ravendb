@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using FastTests.Server.Documents.Indexing.Static;
 using Xunit;
 
 namespace SlowTests.Server.Documents.Indexing

@@ -1,10 +1,6 @@
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions.Connection;
-using Raven.Client.Data;
-
 using Xunit;
 
 namespace SlowTests.Core.ScriptedPatching

@@ -1,6 +1,6 @@
 using System.IO;
 using System.IO.Compression;
-using Raven.Client.Data.Indexes;
+using Raven.Client.Documents.Indexing;
 using Raven.Client.Smuggler;
 using Raven.Server.Documents;
 using Raven.Server.Json;

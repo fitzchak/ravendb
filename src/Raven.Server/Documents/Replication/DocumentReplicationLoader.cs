@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Replication;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Changes;
+using Raven.Client.Json;
+using Raven.Client.Replication;
 using Raven.Client.Replication.Messages;
 using Raven.Server.Json;
 using Raven.Server.ServerWide.Context;
@@ -59,7 +60,7 @@ namespace Raven.Server.Documents.Replication
             ReplicationLatestEtagRequest getLatestEtagMessage;
             using (var readerObject = multiDocumentParser.ParseToMemory("IncomingReplication/get-last-etag-message read"))
             {
-                getLatestEtagMessage = JsonDeserialization.ReplicationLatestEtagRequest(readerObject);
+                getLatestEtagMessage = JsonDeserializationServer.ReplicationLatestEtagRequest(readerObject);
             }
 
             DocumentsOperationContext documentsOperationContext;
@@ -270,7 +271,7 @@ namespace Raven.Server.Documents.Replication
 
                 using (configurationDocument.Data)
                 {
-                    return JsonDeserialization.ReplicationDocument(configurationDocument.Data);
+                    return JsonDeserializationServer.ReplicationDocument(configurationDocument.Data);
                 }
             }
         }

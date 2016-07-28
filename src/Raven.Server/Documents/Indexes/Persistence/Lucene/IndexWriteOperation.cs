@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
-
-using Raven.Abstractions.Logging;
+using Raven.Client.Documents;
 using Raven.Server.Documents.Indexes.Persistence.Lucene.Analyzers;
 using Raven.Server.Documents.Indexes.Persistence.Lucene.Documents;
-using Raven.Server.Exceptions;
 using Raven.Server.Indexing;
-
 using Sparrow.Json;
-
 using Voron.Impl;
-
-using Constants = Raven.Abstractions.Data.Constants;
 
 namespace Raven.Server.Documents.Indexes.Persistence.Lucene
 {
@@ -22,8 +15,8 @@ namespace Raven.Server.Documents.Indexes.Persistence.Lucene
     {
         private readonly ILog _log = LogManager.GetLogger(typeof(IndexWriteOperation));
 
-        private readonly Term _documentId = new Term(Constants.DocumentIdFieldName, "Dummy");
-        private readonly Term _reduceKeyHash = new Term(Constants.ReduceKeyFieldName, "Dummy");
+        private readonly Term _documentId = new Term(Constants.Indexing.DocumentIdFieldName, "Dummy");
+        private readonly Term _reduceKeyHash = new Term(Constants.Indexing.ReduceKeyFieldName, "Dummy");
 
         private readonly string _name;
 

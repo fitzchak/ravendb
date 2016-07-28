@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
 using System.Threading;
-using Raven.Abstractions.Logging;
 using Raven.Server.Documents.Indexes.Persistence.Lucene;
 using Raven.Server.Documents.Indexes.Workers;
 using Raven.Server.ServerWide.Context;

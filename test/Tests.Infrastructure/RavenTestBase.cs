@@ -1,27 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
-using Raven.Client;
-using Raven.Client.Document;
-using Raven.Client.Extensions;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Data;
 using Raven.Server;
-using Raven.Server.Config;
-using Raven.Server.Config.Settings;
 using Raven.Server.Documents;
 using Raven.Server.ServerWide.Context;
 using Raven.Server.Utils;
 
 using Sparrow.Collections;
-using Sparrow.Logging;
 
 namespace FastTests
 {
@@ -127,32 +119,6 @@ namespace FastTests
             }
         }
 
-        private static RavenServer CreateServer(int port, int tcpPort)
-        {
-            var configuration = new RavenConfiguration();
-            configuration.Initialize();
-            configuration.DebugLog.LogMode = LogMode.None;
-            configuration.Core.ServerUrl = $"http://localhost:{port}";
-            configuration.Core.TcpServerUrl = $"tcp://localhost:{tcpPort}";
-            configuration.Server.Name = ServerName;
-            configuration.Core.RunInMemory = true;
-            string postfix = port == 8080 ? "" : "_" + port;
-            configuration.Core.DataDirectory = Path.Combine(configuration.Core.DataDirectory, $"Tests{postfix}");
-            configuration.Server.MaxTimeForTaskToWaitForDatabaseToLoad = new TimeSetting(10, TimeUnit.Seconds);
-            configuration.Storage.AllowOn32Bits = true;
-
-            IOExtensions.DeleteDirectory(configuration.Core.DataDirectory);
-
-            var server = new RavenServer(configuration);
-            server.Initialize();
-
-            // TODO: Make sure to properly handle this when this is resolved:
-            // TODO: https://github.com/dotnet/corefx/issues/5205
-            // TODO: AssemblyLoadContext.GetLoadContext(typeof(RavenTestBase).GetTypeInfo().Assembly).Unloading +=
-
-            return server;
-        }
-
         protected Task<DocumentDatabase> GetDocumentDatabaseInstanceFor(DocumentStore store)
         {
             return Server.ServerStore.DatabasesLandlord.TryGetOrCreateResourceStore(store.DefaultDatabase);
@@ -168,7 +134,7 @@ namespace FastTests
 
             var path = NewDataPath(name);
 
-            var doc = MultiDatabase.CreateDatabaseDocument(name);
+            var doc = DatabaseNameHelper.CreateDatabaseDocument(name);
             doc.Settings["Raven/DataDir"] = path;
             doc.Settings["Raven/ThrowIfAnyIndexOrTransformerCouldNotBeOpened"] = "true";
             modifyDatabaseDocument?.Invoke(doc);

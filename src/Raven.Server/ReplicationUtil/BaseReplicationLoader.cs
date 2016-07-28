@@ -1,6 +1,5 @@
 using System;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Logging;
+using Raven.Client.Documents.Changes;
 using Raven.Server.Documents;
 using Sparrow.Collections;
 

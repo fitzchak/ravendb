@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Sparrow;
-using Voron.Data.BTrees;
 using Voron.Data.Tables;
 using Voron.Impl;
 using Voron.Impl.Paging;

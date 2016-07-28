@@ -7,7 +7,6 @@
 using Sparrow;
 using System;
 using Voron.Impl;
-using Voron.Impl.FileHeaders;
 
 namespace Voron.Data.Fixed
 {

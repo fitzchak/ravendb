@@ -3,17 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
-
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Extensions;
-using Raven.Abstractions.Indexing;
-using Raven.Abstractions.Logging;
-using Raven.Client.Data;
-using Raven.Client.Data.Indexes;
+using Raven.Client.Documents;
+using Raven.Client.Documents.Indexing;
+using Raven.Client.Documents.Queries;
+using Raven.Client.Extensions;
 using Raven.Server.Documents.Indexes.Persistence.Lucene.Analyzers;
 using Raven.Server.Documents.Indexes.Persistence.Lucene.Collectors;
 using Raven.Server.Documents.Queries;
@@ -25,7 +21,6 @@ using Raven.Server.Indexing;
 
 using Voron.Impl;
 
-using Constants = Raven.Abstractions.Data.Constants;
 
 namespace Raven.Server.Documents.Indexes.Persistence.Lucene
 {
@@ -334,7 +329,7 @@ namespace Raven.Server.Documents.Indexes.Persistence.Lucene
             var documentQuery = new BooleanQuery();
 
             if (string.IsNullOrWhiteSpace(query.DocumentId) == false)
-                documentQuery.Add(new TermQuery(new Term(Constants.DocumentIdFieldName, query.DocumentId.ToLowerInvariant())), Occur.MUST);
+                documentQuery.Add(new TermQuery(new Term(Constants.Indexing.DocumentIdFieldName, query.DocumentId.ToLowerInvariant())), Occur.MUST);
 
             foreach (var key in query.MapGroupFields.Keys)
                 documentQuery.Add(new TermQuery(new Term(key, query.MapGroupFields[key])), Occur.MUST);
@@ -352,7 +347,7 @@ namespace Raven.Server.Documents.Indexes.Persistence.Lucene
                 mlt.SetStopWords(stopWords);
 
             var fieldNames = query.Fields ?? ir.GetFieldNames(IndexReader.FieldOption.INDEXED)
-                                    .Where(x => x != Constants.DocumentIdFieldName && x != Constants.ReduceKeyFieldName)
+                                    .Where(x => x != Constants.Indexing.DocumentIdFieldName && x != Constants.Indexing.ReduceKeyFieldName)
                                     .ToArray();
 
             mlt.SetFieldNames(fieldNames);
@@ -389,7 +384,7 @@ namespace Raven.Server.Documents.Indexes.Persistence.Lucene
                     continue;
 
                 var doc = _searcher.Doc(hit.Doc);
-                var id = doc.Get(Constants.DocumentIdFieldName) ?? doc.Get(Constants.ReduceKeyFieldName);
+                var id = doc.Get(Constants.Indexing.DocumentIdFieldName) ?? doc.Get(Constants.Indexing.ReduceKeyFieldName);
                 if (id == null)
                     continue;
 

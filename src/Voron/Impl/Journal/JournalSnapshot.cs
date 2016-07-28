@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Voron.Util;
 
 namespace Voron.Impl.Journal

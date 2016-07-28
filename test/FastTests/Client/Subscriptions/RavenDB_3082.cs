@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
 using Raven.Tests.Core.Utils.Entities;
 using Raven.Tests.Notifications;
 using Xunit;

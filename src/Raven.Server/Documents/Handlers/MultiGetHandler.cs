@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Raven.Client.Data;
+using Raven.Client.Documents;
 using Raven.Server.Routing;
 using Raven.Server.Web;
 using Sparrow.Json;

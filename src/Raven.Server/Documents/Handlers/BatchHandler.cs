@@ -1,17 +1,13 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions;
-using Raven.Abstractions.Extensions;
+using Raven.Client.Documents;
 using Raven.Server.Documents.Patch;
-using Raven.Server.Json;
 using Raven.Server.Routing;
 using Raven.Server.ServerWide;
 using Raven.Server.ServerWide.Context;
 using Sparrow.Json;
 using Sparrow.Json.Parsing;
-using Constants = Raven.Abstractions.Data.Constants;
 
 namespace Raven.Server.Documents.Handlers
 {
@@ -132,7 +128,7 @@ namespace Raven.Server.Documents.Handlers
                             context.DocumentDatabase.HugeDocuments.AddIfDocIsHuge(cmd.Key, cmd.Document.Size);
 
                             BlittableJsonReaderObject metadata;
-                            cmd.Document.TryGet(Constants.Metadata, out metadata);
+                            cmd.Document.TryGet(Constants.Metadata.MetadataId, out metadata);
 
                             Reply.Add(new DynamicJsonValue
                             {

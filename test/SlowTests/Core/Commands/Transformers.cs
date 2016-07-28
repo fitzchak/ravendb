@@ -1,9 +1,6 @@
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions.Indexing;
-
 using Xunit;
 
 namespace SlowTests.Core.Commands

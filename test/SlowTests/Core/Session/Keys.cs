@@ -7,9 +7,6 @@
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions.Util;
-
 using Xunit;
 
 using Address = SlowTests.Core.Utils.Entities.Address;

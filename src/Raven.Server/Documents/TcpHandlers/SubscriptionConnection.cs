@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Exceptions.Subscriptions;
-using Raven.Abstractions.Extensions;
+using Raven.Client.Documents.Changes;
+using Raven.Client.Documents.Subscriptions;
+using Raven.Client.Extensions;
+using Raven.Client.Json;
+using Raven.Server.Documents.Subscriptions;
 using Raven.Server.Json;
 using Raven.Server.ServerWide.Context;
 using Sparrow;
@@ -59,7 +60,7 @@ namespace Raven.Server.Documents.TcpHandlers
             }
             using (var subscriptionCommandOptions = await _multiDocumentParser.ParseToMemoryAsync("subscription options"))
             {
-                _options = JsonDeserialization.SubscriptionConnectionOptions(subscriptionCommandOptions);
+                _options = JsonDeserializationServer.SubscriptionConnectionOptions(subscriptionCommandOptions);
             }
             _options.CancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_database.DatabaseShutdown);
             _options.ClientEndpoint = _tcpClient.Client.RemoteEndPoint;
@@ -325,7 +326,7 @@ namespace Raven.Server.Documents.TcpHandlers
                                     {
                                         using (var reply = await replyFromClientTask)
                                         {
-                                            clientReply = JsonDeserialization.SubscriptionConnectionClientMessage(reply);
+                                            clientReply = JsonDeserializationServer.SubscriptionConnectionClientMessage(reply);
                                         }
                                         replyFromClientTask = _multiDocumentParser.ParseToMemoryAsync("client reply");
                                         break;

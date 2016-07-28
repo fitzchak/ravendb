@@ -6,16 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Indexing;
-using Raven.Client;
-using Raven.Client.Indexing;
-
 using SlowTests.Core.Utils.Indexes;
 
 using Xunit;

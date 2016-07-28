@@ -5,13 +5,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Raven.Abstractions.Data;
-using Raven.Client.Data;
+using Raven.Client.Documents.Queries;
 using Raven.Server.Documents.Queries.LuceneIntegration;
 
 namespace Raven.Database.Indexing

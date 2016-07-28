@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Logging;
+using Raven.Client;
+using Raven.Client.Documents;
+using Raven.Client.Json;
 using Raven.Server.Documents.Patch;
 using Raven.Server.Json;
 using Raven.Server.ReplicationUtil;
@@ -37,7 +37,7 @@ namespace Raven.Server.Documents.SqlReplication
       
         private void LoadLastEtag(DocumentsOperationContext context)
         {
-            var sqlReplicationStatus = _database.DocumentsStorage.Get(context, Constants.SqlReplication.RavenSqlReplicationStatusPrefix + ReplicationUniqueName);
+            var sqlReplicationStatus = _database.DocumentsStorage.Get(context, Constants.SqlReplication.StatusPrefix+ ReplicationUniqueName);
             if (sqlReplicationStatus == null)
             {
                 Statistics.LastReplicatedEtag = 0;
@@ -45,7 +45,7 @@ namespace Raven.Server.Documents.SqlReplication
             }
             else
             {
-                var replicationStatus = JsonDeserialization.SqlReplicationStatus(sqlReplicationStatus.Data);
+                var replicationStatus = JsonDeserializationServer.SqlReplicationStatus(sqlReplicationStatus.Data);
                 Statistics.LastReplicatedEtag = replicationStatus.LastReplicatedEtag;
                 Statistics.LastTombstonesEtag = replicationStatus.LastTombstonesEtag;
             }
@@ -53,7 +53,7 @@ namespace Raven.Server.Documents.SqlReplication
 
         private void WriteLastEtag(DocumentsOperationContext context)
         {
-            var key = Constants.SqlReplication.RavenSqlReplicationStatusPrefix + ReplicationUniqueName;
+            var key = Constants.SqlReplication.StatusPrefix + ReplicationUniqueName;
             var document = context.ReadObject(new DynamicJsonValue
             {
                 ["Name"] = ReplicationUniqueName,
@@ -137,7 +137,7 @@ namespace Raven.Server.Documents.SqlReplication
             var documentsKeys = documents.Select(tombstone => (string)tombstone.Key).ToList();
             using (var writer = new RelationalDatabaseWriter(_database, context, _predefinedSqlConnection, this))
             {
-                foreach (var sqlReplicationTable in Configuration.SqlReplicationTables)
+                foreach (var sqlReplicationTable in new List<SqlReplicationTable>())
                 {
                     writer.DeleteItems(sqlReplicationTable.TableName, sqlReplicationTable.DocumentKeyColumn, Configuration.ParameterizeDeletesDisabled, documentsKeys);
                 }
@@ -244,7 +244,7 @@ namespace Raven.Server.Documents.SqlReplication
                 object connection;
                 if (connections.TryGetMember(Configuration.ConnectionStringName, out connection))
                 {
-                    _predefinedSqlConnection = JsonDeserialization.PredefinedSqlConnection(connection as BlittableJsonReaderObject);
+                    _predefinedSqlConnection = JsonDeserializationServer.PredefinedSqlConnection(connection as BlittableJsonReaderObject);
                     if (_predefinedSqlConnection != null)
                     {
                         return true;

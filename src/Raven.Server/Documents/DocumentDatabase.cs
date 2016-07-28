@@ -1,29 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Raven.Abstractions.Connection;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Logging;
-using Raven.Client.Connection;
-using Raven.Client.Extensions;
-using Raven.Json.Linq;
+using Raven.Client.Documents;
 using Raven.Server.Config;
 using Raven.Server.Documents.Indexes;
 using Raven.Server.Documents.Patch;
 using Raven.Server.Documents.Replication;
-using Raven.Server.Documents.PeriodicExport;
 using Raven.Server.Documents.SqlReplication;
 using Raven.Server.Documents.Transformers;
 using Raven.Server.ServerWide;
 using Raven.Server.ServerWide.Context;
 using Raven.Server.Utils;
 using Raven.Server.Utils.Metrics;
-using Sparrow;
 using Sparrow.Json;
 using Sparrow.Json.Parsing;
 using Sparrow.Logging;
@@ -33,8 +22,6 @@ namespace Raven.Server.Documents
 {
     public class DocumentDatabase : IResourceStore
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(DocumentDatabase));
-
         private readonly CancellationTokenSource _databaseShutdown = new CancellationTokenSource();
         public readonly PatchDocument Patch;
 
@@ -146,7 +133,7 @@ namespace Raven.Server.Documents
         public void Dispose()
         {
             _databaseShutdown.Cancel();
-            var exceptionAggregator = new ExceptionAggregator(Log, $"Could not dispose {nameof(DocumentDatabase)}");
+            var exceptionAggregator = new ExceptionAggregator(null, $"Could not dispose {nameof(DocumentDatabase)}");
 
             exceptionAggregator.Execute(() =>
             {

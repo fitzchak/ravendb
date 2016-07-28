@@ -3,16 +3,17 @@
 //     Copyright (c) Hibernating Rhinos LTD. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using System;
 
-namespace Raven.Abstractions.Extensions
+namespace Raven.Client.Extensions
 {
     /// <summary>
     /// A helper class that translate between Disposable and Action
     /// </summary>
     public class DisposableAction : IDisposable
     {
-        private readonly Action action;
+        private readonly Action _action;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DisposableAction"/> class.
@@ -20,7 +21,7 @@ namespace Raven.Abstractions.Extensions
         /// <param name="action">The action.</param>
         public DisposableAction(Action action)
         {
-            this.action = action;
+            _action = action;
         }
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace Raven.Abstractions.Extensions
         /// </summary>
         public void Dispose()
         {
-            action();
+            _action();
         }
     }
 }

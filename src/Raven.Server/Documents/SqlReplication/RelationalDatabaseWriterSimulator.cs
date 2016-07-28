@@ -23,7 +23,8 @@ namespace Raven.Server.Documents.SqlReplication
 
         public IEnumerable<string> SimulateExecuteCommandText(SqlReplicationScriptResult scriptResult)
         {
-            foreach (var sqlReplicationTable in _sqlReplication.Configuration.SqlReplicationTables)
+            var sqlReplicationTables = new List<SqlReplicationTable>();
+            foreach (var sqlReplicationTable in sqlReplicationTables)
             {
                 if (sqlReplicationTable.InsertOnlyMode)
                     continue;
@@ -36,7 +37,7 @@ namespace Raven.Server.Documents.SqlReplication
                 }
             }
 
-            foreach (var sqlReplicationTable in _sqlReplication.Configuration.SqlReplicationTables)
+            foreach (var sqlReplicationTable in sqlReplicationTables)
             {
                 List<ItemToReplicate> dataForTable;
                 if (scriptResult.Data.TryGetValue(sqlReplicationTable.TableName, out dataForTable) == false)

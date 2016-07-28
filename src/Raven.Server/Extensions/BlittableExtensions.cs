@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
 using Raven.Abstractions.Extensions;
+using Raven.Client;
+using Raven.Client.Documents;
 using Raven.Server.Documents.Replication;
 using Sparrow.Json;
 using Sparrow.Json.Parsing;
@@ -15,7 +15,7 @@ namespace Raven.Server
         {
             DynamicJsonValue mutableMetadata;
             BlittableJsonReaderObject metadata;
-            if (doc.TryGet(Constants.Metadata, out metadata))
+            if (doc.TryGet(Constants.Metadata.MetadataId, out metadata))
             {
                 metadata.Modifications = mutableMetadata = new DynamicJsonValue(metadata);
             }
@@ -23,7 +23,7 @@ namespace Raven.Server
             {
                 doc.Modifications = new DynamicJsonValue(doc)
                 {
-                    [Constants.Metadata] = mutableMetadata = new DynamicJsonValue()
+                    [Constants.Metadata.MetadataId] = mutableMetadata = new DynamicJsonValue()
                 };
             }
 
@@ -35,8 +35,8 @@ namespace Raven.Server
         {
             string id;
             BlittableJsonReaderObject metadata;
-            if (!document.TryGet(Constants.Metadata, out metadata) ||
-                !metadata.TryGet(Constants.MetadataDocId, out id))
+            if (!document.TryGet(Constants.Metadata.MetadataId, out metadata) ||
+                !metadata.TryGet(Constants.Metadata.MetadataDocId, out id))
                 return null;
             return id;
         }
@@ -45,8 +45,8 @@ namespace Raven.Server
         {
             long etag;
             BlittableJsonReaderObject metadata;
-            if (!document.TryGet(Constants.Metadata, out metadata) ||
-                !metadata.TryGet(Constants.MetadataEtagField, out etag))
+            if (!document.TryGet(Constants.Metadata.MetadataId, out metadata) ||
+                !metadata.TryGet(Constants.HttpHeaders.Etag, out etag))
                     return 0;
             return etag;
         }
@@ -61,7 +61,7 @@ namespace Raven.Server
             //(last result in the vector key seems corrupted)
             BlittableJsonReaderObject metadata;
             BlittableJsonReaderArray changeVector;
-            if (document.TryGet(Constants.Metadata, out metadata) == false ||
+            if (document.TryGet(Constants.Metadata.MetadataId, out metadata) == false ||
                 metadata.TryGet(Constants.Replication.DocumentChangeVector,
                 out changeVector) == false)
             {

@@ -11,8 +11,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 
-using Raven.Abstractions.Logging;
-
 namespace Raven.Server.Documents.Indexes.Persistence.Lucene
 {
     public class LuceneIndexWriter : IDisposable

@@ -5,7 +5,7 @@
 // -----------------------------------------------------------------------
 using System;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents;
 using Raven.Server.Routing;
 using Raven.Server.ServerWide.Context;
 using Sparrow.Json;

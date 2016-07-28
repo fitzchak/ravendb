@@ -4,13 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions.Data;
-using Raven.Client.Data;
-using Raven.Client.Data.Queries;
-using Raven.Client.Indexing;
-using Raven.Json.Linq;
-
 using SlowTests.Core.Utils.Indexes;
 
 using Xunit;

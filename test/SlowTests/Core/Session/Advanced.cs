@@ -2,12 +2,6 @@ using System;
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Abstractions.Commands;
-using Raven.Abstractions.Data;
-using Raven.Client.Exceptions;
-using Raven.Json.Linq;
-
 using Xunit;
 
 using Company = SlowTests.Core.Utils.Entities.Company;

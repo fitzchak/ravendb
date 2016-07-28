@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Jint;
 using Jint.Parser;
-using Raven.Abstractions;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Json.Linq;
+using Raven.Client;
 
 namespace Raven.Server.Documents.Patch
 {
@@ -47,7 +43,9 @@ namespace Raven.Server.Documents.Patch
                     if (customFunctions == null && other.customFunctions == null)
                         return true;
                     if (customFunctions != null && other.customFunctions != null)
-                        return RavenJTokenEqualityComparer.Default.Equals(customFunctions, other.customFunctions);
+                        throw new NotImplementedException();
+
+                        // return RavenJTokenEqualityComparer.Default.Equals(customFunctions, other.customFunctions);
                 }
                 return false;
             }
@@ -56,8 +54,10 @@ namespace Raven.Server.Documents.Patch
             {
                 unchecked
                 {
-                    return ((request != null ? request.GetHashCode() : 0) * 397) ^
+                    throw new NotImplementedException();
+                    /*return ((request != null ? request.GetHashCode() : 0) * 397) ^
                         (customFunctions != null ? RavenJTokenEqualityComparer.Default.GetHashCode(customFunctions) : 0);
+                */
                 }
             }
         }

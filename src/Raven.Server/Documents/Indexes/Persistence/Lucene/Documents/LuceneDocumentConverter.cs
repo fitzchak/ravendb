@@ -2,7 +2,7 @@
 using System.Diagnostics;
 
 using Lucene.Net.Documents;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents;
 using Sparrow.Binary;
 using Sparrow.Json;
 

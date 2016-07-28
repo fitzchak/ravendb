@@ -6,15 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-
 using Raven.Server.Config;
 using Raven.Server.Config.Attributes;
 using Raven.Server.Documents;
 using System.Threading;
-using Raven.Client.Data;
+using Raven.Client.Authentication;
 using Raven.Server.Web;
 
 namespace Raven.Server.Routing

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Security.Cryptography;
 using Raven.Client.Linq;
 using Raven.Server.Documents.Indexes.Static;
 using Raven.Server.ServerWide.Context;
-using Sparrow;
 using Sparrow.Json;
 using Voron;
 using Raven.Server.Documents.Includes;

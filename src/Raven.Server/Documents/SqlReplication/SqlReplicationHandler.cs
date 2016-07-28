@@ -7,7 +7,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents;
 using Raven.Server.Json;
 using Raven.Server.Routing;
 using Raven.Server.ServerWide.Context;
@@ -122,7 +122,7 @@ namespace Raven.Server.Documents.SqlReplication
                 context.OpenReadTransaction();
 
                 var dbDoc = context.ReadForMemory(RequestBodyStream(), "SimulateSqlReplicationResult");
-                var simulateSqlReplication = JsonDeserialization.SimulateSqlReplication(dbDoc);
+                var simulateSqlReplication = JsonDeserializationServer.SimulateSqlReplication(dbDoc);
                 var result = Database.SqlReplicationLoader.SimulateSqlReplicationSqlQueries(simulateSqlReplication, context);
 
                 using (var writer = new BlittableJsonTextWriter(context, ResponseBodyStream()))
@@ -153,7 +153,7 @@ namespace Raven.Server.Documents.SqlReplication
             using (Database.DocumentsStorage.ContextPool.AllocateOperationContext(out context))
             using (var tx = context.OpenWriteTransaction())
             {
-                Database.DocumentsStorage.Delete(context, Constants.SqlReplication.RavenSqlReplicationStatusPrefix + name, null);
+                Database.DocumentsStorage.Delete(context, Constants.SqlReplication.StatusPrefix + name, null);
                 tx.Commit();
             }
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
-using Raven.Abstractions.Data;
 using Raven.Abstractions.Replication;
 using Raven.Client.Changes;
 using Raven.Client.Document;

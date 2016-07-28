@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Extensions;
-using Raven.Abstractions.Indexing;
-using Raven.Client.Indexing;
+using Raven.Client.Documents.Indexing;
+using Raven.Client.Extensions;
 using Raven.Server.ServerWide.Context;
 
 using Sparrow.Json;

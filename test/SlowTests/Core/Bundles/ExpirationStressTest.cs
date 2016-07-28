@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System.Threading.Tasks;
-using FastTests.Server.Documents.Expiration;
+using Raven.Client.Documents;
 using Xunit;
 
 namespace SlowTests.Core.Bundles
@@ -18,7 +18,7 @@ namespace SlowTests.Core.Bundles
         [InlineData(10000)]
         public async Task CanAddALotOfEntitiesWithSameExpiry_ThenReadItBeforeItExpires_ButWillNotBeAbleToReadItAfterExpiry(int count)
         {
-            using (var expiration = new Expiration())
+            using (var expiration = new Constants.Expiration())
             {
                 await expiration.CanAddALotOfEntitiesWithSameExpiry_ThenReadItBeforeItExpires_ButWillNotBeAbleToReadItAfterExpiry(count);
             }

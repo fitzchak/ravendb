@@ -1,10 +1,6 @@
 using System.Threading.Tasks;
 
 using FastTests;
-
-using Raven.Client.Bundles.MoreLikeThis;
-using Raven.Client.Data.Queries;
-
 using SlowTests.Core.Utils.Indexes;
 using SlowTests.Core.Utils.Transformers;
 

@@ -2,21 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
-using Raven.Abstractions;
-using Raven.Abstractions.Connection;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Extensions;
-using Raven.Abstractions.Logging;
-using Raven.Client.Data;
-using Raven.Client.OAuth;
-using Raven.Server.Json;
+using Raven.Client;
+using Raven.Client.Authentication;
+using Raven.Client.Documents;
+using Raven.Client.Extensions;
 using Raven.Server.Routing;
 using Raven.Server.ServerWide.Context;
 using Sparrow.Json;
 using Sparrow.Json.Parsing;
+using System.Linq;
 
 namespace Raven.Server.Web.Authentication
 {

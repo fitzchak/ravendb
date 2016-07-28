@@ -9,9 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Raven.Abstractions;
-using Raven.Abstractions.Connection;
-using Raven.Abstractions.Util;
+using Raven.Client;
+using Raven.Client.Http;
 
 namespace Raven.Server.Documents.PeriodicExport.Aws
 {

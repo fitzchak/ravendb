@@ -7,7 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Raven.Abstractions.Data;
+using Raven.Client.Documents;
 using Raven.Server.Config;
 using Raven.Server.Routing;
 using Raven.Server.ServerWide.Context;

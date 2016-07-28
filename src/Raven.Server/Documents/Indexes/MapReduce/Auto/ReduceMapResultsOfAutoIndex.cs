@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Raven.Abstractions.Indexing;
+using Raven.Client.Documents.Indexing;
 using Raven.Server.Json;
 using Raven.Server.ServerWide.Context;
 using Raven.Server.Utils;

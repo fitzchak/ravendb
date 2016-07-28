@@ -5,11 +5,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-using Raven.Abstractions.Connection;
-using Raven.Abstractions.Util;
-using Raven.Imports.Newtonsoft.Json;
-using Raven.Imports.Newtonsoft.Json.Linq;
-
 namespace Raven.Server.Extensions
 {
     ///<summary>
@@ -56,16 +51,6 @@ namespace Raven.Server.Extensions
                 : firstLine;
         }
 
-        public static Task<string> TryReadResponseIfWebException(this AggregateException e)
-        {
-            var errorResponseException = e.ExtractSingleInnerException() as ErrorResponseException;
-            if (errorResponseException != null)
-            {
-                return new CompletedTask<string>(errorResponseException.ResponseString);
-            }
-            return new CompletedTask<string>(string.Empty);
-        }
-
         public static string TryReadResponseIfWebException(this Exception ex)
         {
             var webException = ex as WebException;
@@ -79,56 +64,6 @@ namespace Raven.Server.Extensions
             }
 
             return string.Empty;
-        }
-
-        public static string TryReadErrorPropertyFromJson(this string errorString)
-        {
-            if (string.IsNullOrEmpty(errorString) || !errorString.StartsWith("{"))
-            {
-                return string.Empty;
-            }
-
-            try
-            {
-                var jObject = JObject.Parse(errorString);
-                if (jObject["Error"] != null)
-                {
-                    return (string)jObject["Error"];
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-            catch (JsonReaderException)
-            {
-                return string.Empty;
-            }
-        }
-
-        public static Task<T> TryReadErrorResponseObject<T>(this ErrorResponseException ex, T protoTypeObject = null) where T : class
-        {
-            var response = ex.ResponseString;
-            if (string.IsNullOrEmpty(response))
-                return null;
-
-            try
-            {
-                return new CompletedTask<T>(JsonConvert.DeserializeObject<T>(response));
-            }
-            catch (JsonReaderException readerException)
-            {
-                throw new InvalidOperationException("Exception occured reading the string: " + ex.ResponseString, readerException);
-            }
-        }
-
-        public static T TryReadErrorResponseObject<T>(this Exception ex, T protoTypeObject = null) where T : class
-        {
-            var response = TryReadResponseIfWebException(ex);
-            if (string.IsNullOrEmpty(response))
-                return null;
-
-            return JsonConvert.DeserializeObject<T>(response);
         }
 
         /// <remarks>Code from http://stackoverflow.com/questions/1886611/c-overriding-tostring-method-for-custom-exceptions </remarks>
