@@ -3,9 +3,10 @@
 //      Copyright (c) Hibernating Rhinos LTD. All rights reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
+
 using System.Net.Http;
 
-namespace Raven.Abstractions.Util
+namespace Raven.Client.Http
 {
     public static class HttpMethods
     {

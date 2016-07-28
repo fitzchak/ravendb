@@ -3,11 +3,12 @@
 //      Copyright (c) Hibernating Rhinos LTD. All rights reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
+
 using System;
 using System.Net;
-using System.Runtime.Serialization;
+using Raven.Client.Documents.Subscriptions;
 
-namespace Raven.Abstractions.Exceptions.Subscriptions
+namespace Raven.Server.Documents.Subscriptions
 {
     public class SubscriptionDoesNotExistException : SubscriptionException
     {

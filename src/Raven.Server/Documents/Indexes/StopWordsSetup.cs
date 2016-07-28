@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Raven.Abstractions.Data
+namespace Raven.Server.Documents.Indexes
 {
     public class StopWordsSetup
     {

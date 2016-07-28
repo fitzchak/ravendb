@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Raven.Client.Data
+namespace Raven.Server.Documents.Indexes
 {
     public class IndexingError
     {

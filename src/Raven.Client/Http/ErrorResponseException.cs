@@ -3,10 +3,8 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using Raven.Abstractions.Data;
 
-namespace Raven.Abstractions.Connection
+namespace Raven.Client.Http
 {
     public class ErrorResponseException : Exception
     {

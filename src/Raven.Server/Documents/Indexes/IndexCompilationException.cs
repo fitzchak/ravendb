@@ -1,8 +1,7 @@
 using System;
+using Raven.Server.Extensions;
 
-using Raven.Abstractions.Extensions;
-
-namespace Raven.Client.Exceptions
+namespace Raven.Server.Documents.Indexes
 {
     public class IndexCompilationException : Exception
     {
