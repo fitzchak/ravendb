@@ -1,8 +1,8 @@
-namespace Raven.Abstractions.Util.Encryptors
-{
-    using System;
-    using System.Security.Cryptography;
+using System;
+using System.Security.Cryptography;
 
+namespace Raven.Client.Authentication.Encryptors
+{
     public abstract class HashEncryptorBase
     {
         protected bool AllowNonThreadSafeMethods { get; private set; }

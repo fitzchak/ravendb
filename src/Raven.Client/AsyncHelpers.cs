@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Raven.Abstractions.Extensions;
+using Raven.Client.Extensions;
 
 namespace Raven.Abstractions.Util
 {

@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Raven.Abstractions.Extensions;
+using Raven.Client.Authentication.Encryptors;
 
-namespace Raven.Abstractions.Connection
+namespace Raven.Client.Authentication
 {
-    using Raven.Abstractions.Util.Encryptors;
-
     public static class OAuthHelper
     {
         public static class Keys

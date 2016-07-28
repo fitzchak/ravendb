@@ -1,7 +1,7 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Raven.Abstractions.Extensions
+namespace Raven.Client.Authentication
 {
     public static class CryptoTransformExtensions
     {

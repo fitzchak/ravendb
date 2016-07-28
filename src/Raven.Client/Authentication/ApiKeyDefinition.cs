@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Raven.Client.Data
+namespace Raven.Client.Authentication
 {
     public class ApiKeyDefinition
     {
         public bool Enabled;
         public string Secret;
         public bool ServerAdmin;
-        public Dictionary<string, AccessModes> ResourcesAccessMode = new Dictionary<string, AccessModes>(StringComparer.OrdinalIgnoreCase);
+        public readonly Dictionary<string, AccessModes> ResourcesAccessMode = new Dictionary<string, AccessModes>(StringComparer.OrdinalIgnoreCase);
     }
-
 
     public enum AccessModes
     {

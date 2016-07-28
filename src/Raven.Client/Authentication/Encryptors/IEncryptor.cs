@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Raven.Abstractions.Util.Encryptors
+namespace Raven.Client.Authentication.Encryptors
 {
     public interface IEncryptor
     {

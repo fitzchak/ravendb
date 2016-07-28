@@ -1,10 +1,10 @@
 //Copyright (c) Microsoft Corporation.  All rights reserved.
+
 using System;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Raven.Abstractions.Util
+namespace Raven.Client.Authentication
 {
 
     // **************************************************************
