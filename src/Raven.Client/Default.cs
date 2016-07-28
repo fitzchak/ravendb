@@ -1,8 +1,4 @@
-using  Raven.Imports.Newtonsoft.Json;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Json;
-
-namespace Raven.Abstractions
+﻿namespace Raven.Client
 {
     public static class Default
     {
@@ -19,29 +15,15 @@ namespace Raven.Abstractions
         /// </remarks>
         public static readonly string[] DateTimeFormatsToRead = new[]
         {
-            "o", 
-            "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffff", 
-            "yyyy-MM-ddTHH:mm:ss.fffffffzzz", 
-            "yyyy-MM-ddTHH:mm:ss.FFFFFFFK", 
-            "r",  
+            "o",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffff",
+            "yyyy-MM-ddTHH:mm:ss.fffffffzzz",
+            "yyyy-MM-ddTHH:mm:ss.FFFFFFFK",
+            "r",
             "yyyy-MM-ddTHH:mm:ss.FFFK"
         };
 
         public static readonly string DateTimeOffsetFormatsToWrite = "o";
         public static readonly string DateTimeFormatsToWrite = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffff";
-
-        public static readonly JsonConverterCollection Converters = new JsonConverterCollection
-        {
-            new JsonEnumConverter(),
-            new JsonToJsonConverter(),
-            new JsonDateTimeISO8601Converter(),
-            new JsonDateTimeOffsetConverter(),
-            new JsonDictionaryDateTimeKeysConverter(),
-        };
-
-        static Default ()
-        {
-            //Converters.Freeze();
-        }
     }
 }
