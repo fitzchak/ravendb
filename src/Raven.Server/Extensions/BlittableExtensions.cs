@@ -46,7 +46,7 @@ namespace Raven.Server
             long etag;
             BlittableJsonReaderObject metadata;
             if (!document.TryGet(Constants.Metadata.MetadataId, out metadata) ||
-                !metadata.TryGet(Constants.HttpHeaders.Etag, out etag))
+                !metadata.TryGet(Constants.Document.Etag, out etag))
                     return 0;
             return etag;
         }

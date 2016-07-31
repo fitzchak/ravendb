@@ -481,7 +481,7 @@ namespace Raven.Server.Documents.Handlers
                     return Task.CompletedTask;
                 }
 
-                HttpContext.Response.Headers[Constants.HttpHeaders.Etag] = result.ResultEtag.ToInvariantString();
+                HttpContext.Response.Headers[Constants.Document.Etag] = result.ResultEtag.ToInvariantString();
 
                 using (var writer = new BlittableJsonTextWriter(context, ResponseBodyStream()))
                 {

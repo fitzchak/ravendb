@@ -724,31 +724,31 @@ namespace Raven.Server.Documents
             table.Insert(tbv);
         }
 
-        public PutResult Put(DocumentsOperationContext context, string key, long? expectedEtag,
+        public PutResult Put(DocumentsOperationContext context, string id, long? expectedEtag,
             BlittableJsonReaderObject document)
         {
-            if (string.IsNullOrWhiteSpace(key))
-                throw new ArgumentException("Document key cannot be null or whitespace", nameof(key));
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("Document ID cannot be null or whitespace", nameof(id));
             if (context.Transaction == null)
                 throw new ArgumentException("Context must be set with a valid transaction before calling Put",
                     nameof(context));
 
             string originalCollectionName;
             bool isSystemDocument;
-            var collectionName = GetCollectionName(key, document, out originalCollectionName, out isSystemDocument);
+            var collectionName = GetCollectionName(id, document, out originalCollectionName, out isSystemDocument);
             _docsSchema.Create(context.Transaction.InnerTransaction, collectionName);
             var table = new Table(_docsSchema, collectionName, context.Transaction.InnerTransaction);
 
-            if (key[key.Length - 1] == '/')
+            if (id[id.Length - 1] == '/')
             {
-                key = GetNextIdentityValueWithoutOverwritingOnExistingDocuments(key, table, context);
+                id = GetNextIdentityValueWithoutOverwritingOnExistingDocuments(id, table, context);
             }
 
             byte* lowerKey;
             int lowerSize;
             byte* keyPtr;
             int keySize;
-            GetLowerKeySliceAndStorageKey(context, key, out lowerKey, out lowerSize, out keyPtr, out keySize);
+            GetLowerKeySliceAndStorageKey(context, id, out lowerKey, out lowerSize, out keyPtr, out keySize);
 
             var newEtag = ++_lastEtag;
             var newEtagBigEndian = IPAddress.HostToNetworkOrder(newEtag);
@@ -767,7 +767,7 @@ namespace Raven.Server.Documents
                 if (expectedEtag != null && expectedEtag != 0)
                 {
                     throw new ConcurrencyException(
-                        $"Document {key} does not exists, but Put was called with etag {expectedEtag}. Optimistic concurrency violation, transaction will be aborted.");
+                        $"Document {id} does not exists, but Put was called with etag {expectedEtag}. Optimistic concurrency violation, transaction will be aborted.");
                 }
                 table.Insert(tbv);
             }
@@ -778,22 +778,22 @@ namespace Raven.Server.Documents
                 var oldEtag = IPAddress.NetworkToHostOrder(*(long*)pOldEtag);
                 if (expectedEtag != null && oldEtag != expectedEtag)
                     throw new ConcurrencyException(
-                        $"Document {key} has etag {oldEtag}, but Put was called with etag {expectedEtag}. Optimistic concurrency violation, transaction will be aborted.");
+                        $"Document {id} has etag {oldEtag}, but Put was called with etag {expectedEtag}. Optimistic concurrency violation, transaction will be aborted.");
 
                 int oldSize;
                 var oldDoc = new BlittableJsonReaderObject(oldValue.Read(3, out oldSize), oldSize, context);
-                var oldCollectionName = Document.GetCollectionName(key, oldDoc, out isSystemDocument);
+                var oldCollectionName = Document.GetCollectionName(id, oldDoc, out isSystemDocument);
                 if (oldCollectionName != originalCollectionName)
                     throw new InvalidOperationException(
-                        $"Changing '{key}' from '{oldCollectionName}' to '{originalCollectionName}' via update is not supported.{System.Environment.NewLine}" +
-                        $"Delete the document and recreate the document {key}.");
+                        $"Changing '{id}' from '{oldCollectionName}' to '{originalCollectionName}' via update is not supported.{System.Environment.NewLine}" +
+                        $"Delete the document and recreate the document {id}.");
 
                 table.Update(oldValue.Id, tbv);
             }
 
             if (isSystemDocument == false)
             {
-                _documentDatabase.BundleLoader.VersioningStorage?.PutFromDocument(context, originalCollectionName, key, newEtagBigEndian, document);
+                _documentDatabase.BundleLoader.VersioningStorage?.PutFromDocument(context, originalCollectionName, id, newEtagBigEndian, document);
                 _documentDatabase.BundleLoader.ExpiredDocumentsCleaner?.Put(context, Slice.External(context.Allocator, lowerKey, (ushort)lowerSize), document);
             }
 
@@ -801,7 +801,7 @@ namespace Raven.Server.Documents
             {
                 Etag = newEtag,
                 CollectionName = originalCollectionName,
-                Key = key,
+                Key = id,
                 Type = DocumentChangeTypes.Put,
                 IsSystemDocument = isSystemDocument,
             });
@@ -809,7 +809,7 @@ namespace Raven.Server.Documents
             return new PutResult
             {
                 ETag = newEtag,
-                Key = key
+                Id = id
             };
         }
 

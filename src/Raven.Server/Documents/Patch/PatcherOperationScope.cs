@@ -265,12 +265,12 @@ namespace Raven.Server.Documents.Patch
             return ToJsObject(engine, document.Data);
         }
 
-        public virtual string PutDocument(string key, JsValue document, JsValue metadata, JsValue etagJs, Engine engine)
+        public virtual string PutDocument(string id, JsValue document, JsValue metadata, JsValue etagJs, Engine engine)
         {
             if (document.IsObject() == false)
             {
                 throw new InvalidOperationException(
-                    $"Created document must be a valid object which is not null or empty. Document key: '{key}'.");
+                    $"Created document must be a valid object which is not null or empty. Document ID: '{id}'.");
             }
 
             long? etag = null;
@@ -280,7 +280,7 @@ namespace Raven.Server.Documents.Patch
             }
             else if(etagJs.IsNull() == false && etagJs.IsUndefined() == false && etagJs.ToString() != "None")
             {
-                throw new InvalidOperationException($"Invalid ETag value for document '{key}'");
+                throw new InvalidOperationException($"Invalid ETag value for document '{id}'");
             }
 
             var data = ToBlittable(document.AsObject());
@@ -293,16 +293,16 @@ namespace Raven.Server.Documents.Patch
             {
                 DebugActions.PutDocument.Add(new DynamicJsonValue
                 {
-                    ["Key"] = key,
-                    ["Etag"] = etag,
+                    [Constants.Document.Id] = id,
+                    [Constants.Document.Etag] = etag,
                     ["Data"] = data,
                 });
             }
 
-            var dataReader = _context.ReadObject(data, key, BlittableJsonDocumentBuilder.UsageMode.ToDisk);
-            var put = _database.DocumentsStorage.Put(_context, key, etag, dataReader);
+            var dataReader = _context.ReadObject(data, id, BlittableJsonDocumentBuilder.UsageMode.ToDisk);
+            var put = _database.DocumentsStorage.Put(_context, id, etag, dataReader);
 
-            return put.Key;
+            return put.Id;
         }
 
         public virtual void DeleteDocument(string documentKey)

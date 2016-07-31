@@ -20,8 +20,9 @@
             public const string MetadataEtagId = "@etag";
         }
 
-        public class HttpHeaders
+        public class Document
         {
+            public const string Id = "Id";
             public const string Etag = "ETag";
         }
 

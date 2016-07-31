@@ -40,7 +40,7 @@ namespace Raven.Server.Documents.Handlers
                 if (document == null)
                     HttpContext.Response.StatusCode = 404;
                 else
-                    HttpContext.Response.Headers[Constants.HttpHeaders.Etag] = document.Etag.ToString();
+                    HttpContext.Response.Headers[Constants.Document.Etag] = document.Etag.ToString();
                 return Task.CompletedTask;
             }
         }
@@ -344,11 +344,11 @@ namespace Raven.Server.Documents.Handlers
                 {
                     writer.WriteStartObject();
 
-                    writer.WritePropertyName(context.GetLazyString("Key"));
-                    writer.WriteString(context.GetLazyString(cmd.PutResult.Key));
+                    writer.WritePropertyName(context.GetLazyString(Constants.Document.Id));
+                    writer.WriteString(context.GetLazyString(cmd.PutResult.Id));
                     writer.WriteComma();
 
-                    writer.WritePropertyName(context.GetLazyString("Etag"));
+                    writer.WritePropertyName(context.GetLazyString(Constants.Document.Etag));
                     writer.WriteInteger(cmd.PutResult.ETag ?? -1);
 
                     writer.WriteEndObject();

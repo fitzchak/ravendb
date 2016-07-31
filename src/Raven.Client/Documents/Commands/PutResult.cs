@@ -6,9 +6,9 @@
     public class PutResult
     {
         /// <summary>
-        /// Key of the document that was PUT.
+        /// ID of the document that was PUT.
         /// </summary>
-        public string Key;
+        public string Id;
 
         /// <summary>
         /// long? of the document after PUT operation.
