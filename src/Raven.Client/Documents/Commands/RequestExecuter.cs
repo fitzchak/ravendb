@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Raven.Client.Http;
 using Sparrow.Json;
 
 namespace Raven.Client.Documents.Commands
@@ -52,6 +53,10 @@ namespace Raven.Client.Documents.Commands
             {
                 // read response
                 // error handling
+                if (response.IsSuccessStatusCode == false)
+                {
+                    throw new ErrorResponseException(response, "TODO");
+                }
 
                 using (var stream = await response.Content.ReadAsStreamAsync())
                 {

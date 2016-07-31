@@ -14,7 +14,7 @@ namespace Tryouts
         {
             using (var store = new DocumentStore
             {
-                Url = "http://localhost.fiddler:8080",
+                Url = "http://localhost.fiddler:8079",
                 DefaultDatabase = "ClientNew"
             }.Initialize())
             {
