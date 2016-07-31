@@ -8,7 +8,7 @@ using Sparrow.Json;
 
 namespace Raven.Client.Json
 {
-    public static class JsonDeserialization
+    public class JsonDeserialization
     {
         private static readonly Type[] EmptyTypes = new Type[0];
 
@@ -27,11 +27,15 @@ namespace Raven.Client.Json
                 var vars = new Dictionary<Type, ParameterExpression>();
                 var instance = Expression.New(typeof(T).GetConstructor(EmptyTypes));
                 var propInit = new List<MemberBinding>();
+                foreach (var fieldInfo in typeof(T).GetFields())
+                {
+                    propInit.Add(Expression.Bind(fieldInfo, GetValue(fieldInfo.Name, fieldInfo.FieldType, json, vars)));
+                }
                 foreach (var propertyInfo in typeof(T).GetProperties())
                 {
                     if (propertyInfo.CanWrite == false)
                         continue;
-                    propInit.Add(Expression.Bind(propertyInfo, GetValue(propertyInfo, json, vars)));
+                    propInit.Add(Expression.Bind(propertyInfo, GetValue(propertyInfo.Name, propertyInfo.PropertyType, json, vars)));
                 }
 
                 var lambda = Expression.Lambda<Func<BlittableJsonReaderObject, T>>(Expression.Block(vars.Values, Expression.MemberInit(instance, propInit)), json);
@@ -50,9 +54,9 @@ namespace Raven.Client.Json
         //TODO : consider refactoring JsonDeserialization::GetValue() to be more generic
         //since this is understandble and clear code while it is short,
         //when it will become longer, it is likely to cause issues
-        private static Expression GetValue(PropertyInfo propertyInfo, ParameterExpression json, Dictionary<Type, ParameterExpression> vars)
+        private static Expression GetValue(string propertyName, Type propertyType, ParameterExpression json, Dictionary<Type, ParameterExpression> vars)
         {
-            var type = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? propertyInfo.PropertyType;
+            var type = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
             if (type == typeof(string) ||
                 type == typeof(bool) ||
                 type == typeof(long) ||
@@ -61,25 +65,25 @@ namespace Raven.Client.Json
                 type.GetTypeInfo().IsEnum ||
                 type == typeof(DateTime))
             {
-                var value = GetParameter(propertyInfo.PropertyType, vars);
+                var value = GetParameter(propertyType, vars);
 
                 Type[] genericTypes;
                 if (type == typeof(string) || type == typeof(double)) // we support direct conversion to these types
                     genericTypes = EmptyTypes;
                 else
-                    genericTypes = new[] { propertyInfo.PropertyType };
+                    genericTypes = new[] { propertyType };
 
-                var tryGet = Expression.Call(json, nameof(BlittableJsonReaderObject.TryGet), genericTypes, Expression.Constant(propertyInfo.Name), value);
-                return Expression.Condition(tryGet, value, Expression.Default(propertyInfo.PropertyType));
+                var tryGet = Expression.Call(json, nameof(BlittableJsonReaderObject.TryGet), genericTypes, Expression.Constant(propertyName), value);
+                return Expression.Condition(tryGet, value, Expression.Default(propertyType));
             }
 
-            if (propertyInfo.PropertyType.Name == "Dictionary`2")
+            if (propertyType.Name == "Dictionary`2")
             {
-                var valueType = propertyInfo.PropertyType.GenericTypeArguments[1];
+                var valueType = propertyType.GenericTypeArguments[1];
                 if (valueType == typeof(string))
                 {
                     var methodToCall = typeof(JsonDeserialization).GetMethod(nameof(ToDictionaryOfString));
-                    return Expression.Call(methodToCall, json, Expression.Constant(propertyInfo.Name));
+                    return Expression.Call(methodToCall, json, Expression.Constant(propertyName));
                 }
                 else
                 {
@@ -89,7 +93,7 @@ namespace Raven.Client.Json
 
                     var constantExpression = Expression.Constant(convert);
                     var methodToCall = typeof(JsonDeserialization).GetMethod(nameof(ToDictionary)).MakeGenericMethod(valueType);
-                    return Expression.Call(methodToCall, json, Expression.Constant(propertyInfo.Name), constantExpression);
+                    return Expression.Call(methodToCall, json, Expression.Constant(propertyName), constantExpression);
                 }
             }
 
@@ -103,24 +107,24 @@ namespace Raven.Client.Json
                 return Expression.Call(typeof(JsonDeserialization).GetMethod(nameof(ToListReplicationDestination)), json, Expression.Constant(propertyInfo.Name));
             }*/
 
-            if (propertyInfo.PropertyType == typeof(HashSet<string>))
+            if (propertyType == typeof(HashSet<string>))
             {
-                return Expression.Call(typeof(JsonDeserialization).GetMethod(nameof(ToHashSetOfString)), json, Expression.Constant(propertyInfo.Name));
+                return Expression.Call(typeof(JsonDeserialization).GetMethod(nameof(ToHashSetOfString)), json, Expression.Constant(propertyName));
             }
 
             // TODO: Do not duplicate, use the same as #1
-            var converterField = typeof(JsonDeserialization).GetField(propertyInfo.PropertyType.Name, BindingFlags.Static | BindingFlags.Public);
+            var converterField = typeof(JsonDeserialization).GetField(propertyType.Name, BindingFlags.Static | BindingFlags.Public);
             if (converterField != null)
             {
                 var converter = (Delegate)converterField.GetValue(null);
                 if (converter == null)
-                    throw new InvalidOperationException($"{propertyInfo.PropertyType.Name} field is not initialized yet.");
-                var methodToCall = typeof(JsonDeserialization).GetMethod(nameof(ToObject)).MakeGenericMethod(propertyInfo.PropertyType);
+                    throw new InvalidOperationException($"{propertyType.Name} field is not initialized yet.");
+                var methodToCall = typeof(JsonDeserialization).GetMethod(nameof(ToObject)).MakeGenericMethod(propertyType);
                 var constantExpression = Expression.Constant(converter);
-                return Expression.Call(methodToCall, json, Expression.Constant(propertyInfo.Name), constantExpression);
+                return Expression.Call(methodToCall, json, Expression.Constant(propertyName), constantExpression);
             }
 
-            throw new InvalidOperationException($"We weren't able to convert the property '{propertyInfo.Name}' of type '{type}'.");
+            throw new InvalidOperationException($"We weren't able to convert the property '{propertyName}' of type '{type}'.");
         }
 
         private static ParameterExpression GetParameter(Type type, Dictionary<Type, ParameterExpression> vars)

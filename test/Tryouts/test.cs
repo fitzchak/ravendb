@@ -26,6 +26,8 @@ namespace Tryouts
                 var putCommand = new PutDocumentCommand
                 {
                     Context = context,
+                    Url = store.Url,
+                    Database = store.DefaultDatabase,
                     Id = "users/1",
                     Document = ConvertObjectToBlittable(new { Name = "Fitzchak Yitzchaki" }, context)
                 };
