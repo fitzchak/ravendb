@@ -35,7 +35,6 @@ namespace Raven.Server.Utils
             return sb.ToString();
         }
 
-
         public static unsafe void WriteChangeVectorTo(DocumentsOperationContext context, Dictionary<Guid, long> changeVector, Tree tree)
         {
             Guid dbId;
@@ -58,10 +57,8 @@ namespace Raven.Server.Utils
         {
             Guid dbId;
             long etagBigEndian;
-            Slice keySlice;
-            Slice valSlice;
-            using (Slice.External(context, (byte*)&dbId, sizeof(Guid), out keySlice))
-            using (Slice.External(context, (byte*)&etagBigEndian, sizeof(long), out valSlice))
+            using (Slice.External(context, (byte*)&dbId, sizeof(Guid), out Slice keySlice))
+            using (Slice.External(context, (byte*)&etagBigEndian, sizeof(long), out Slice valSlice))
             {
                 foreach (var kvp in changeVector)
                 {
@@ -95,79 +92,65 @@ namespace Raven.Server.Utils
             return changeVector;
         }
 
-        public static ChangeVectorEntry[] GetChangeVectorForWrite(ChangeVectorEntry[] existingChangeVector, Guid dbid, long etag)
+        public static void UpdateChangeVectorWithNewEtag(DocumentsOperationContext context, Guid dbId, long newEtag, ref ArraySegment<ChangeVectorEntry> changeVector)
         {
-            if (existingChangeVector == null || existingChangeVector.Length == 0)
-            {
-                return new[]
-                {
-                    new ChangeVectorEntry
-                    {
-                        DbId = dbid,
-                        Etag = etag
-                    }
-                };
-            }
-
-            return UpdateChangeVectorWithNewEtag(dbid, etag, existingChangeVector);
-        }
-
-        public static ChangeVectorEntry[] UpdateChangeVectorWithNewEtag(Guid dbId, long newEtag, ChangeVectorEntry[] changeVector)
-        {
-            var length = changeVector.Length;
+            var length = changeVector.Count;
             for (int i = 0; i < length; i++)
             {
-                if (changeVector[i].DbId == dbId)
+                if (changeVector.Array[i].DbId == dbId)
                 {
-                    changeVector[i].Etag = newEtag;
-                    return changeVector;
+                    changeVector.Array[i].Etag = newEtag;
+                    return;
                 }
             }
-            Array.Resize(ref changeVector, length + 1);
+
+            Array.Resize(ref changeVector.Array, length + 1);
             changeVector[length].DbId = dbId;
             changeVector[length].Etag = newEtag;
-            return changeVector;
         }
 
-        public static ChangeVectorEntry[] MergeVectors(ChangeVectorEntry[] vectorA, ChangeVectorEntry[] vectorB)
+        public static ArraySegment<ChangeVectorEntry> MergeVectors(DocumentsOperationContext context, ArraySegment<ChangeVectorEntry> vectorA, ArraySegment<ChangeVectorEntry> vectorB)
         {
-            Array.Sort(vectorA);
-            Array.Sort(vectorB);
+            Array.Sort(vectorA.Array, 0, vectorA.Count);
+            Array.Sort(vectorB.Array, 0, vectorB.Count);
             int ia = 0, ib = 0;
             var merged = new List<ChangeVectorEntry>();
-            while (ia < vectorA.Length && ib < vectorB.Length)
+            while (ia < vectorA.Count && ib < vectorB.Count)
             {
-                int res = vectorA[ia].CompareTo(vectorB[ib]);
+                int res = vectorA.Array[ia].CompareTo(vectorB.Array[ib]);
                 if (res == 0)
                 {
                     merged.Add(new ChangeVectorEntry
                     {
-                        DbId = vectorA[ia].DbId,
-                        Etag = Math.Max(vectorA[ia].Etag, vectorB[ib].Etag)
+                        DbId = vectorA.Array[ia].DbId,
+                        Etag = Math.Max(vectorA.Array[ia].Etag, vectorB.Array[ib].Etag)
                     });
                     ia++;
                     ib++;
                 }
                 else if (res < 0)
                 {
-                    merged.Add(vectorA[ia]);
+                    merged.Add(vectorA.Array[ia]);
                     ia++;
                 }
                 else
                 {
-                    merged.Add(vectorB[ib]);
+                    merged.Add(vectorB.Array[ib]);
                     ib++;
                 }
             }
-            for (; ia < vectorA.Length; ia++)
+            for (; ia < vectorA.Count; ia++)
             {
-                merged.Add(vectorA[ia]);
+                merged.Add(vectorA.Array[ia]);
             }
-            for (; ib < vectorB.Length; ib++)
+            for (; ib < vectorB.Count; ib++)
             {
-                merged.Add(vectorB[ib]);
+                merged.Add(vectorB.Array[ib]);
             }
-            return merged.ToArray();
+
+            var result = context.GetNextChangeVectorBuffer(merged.Count);
+            var a; a = merged.ToArray();
+            return result;
         }
 
         public static ChangeVectorEntry[] MergeVectors(IReadOnlyList<ChangeVectorEntry[]> changeVectors)

@@ -52,9 +52,9 @@ namespace Raven.Server.Documents
             NotificationsStorage.Initialize(Environment, _contextPool);
         }
 
-        public void Initialize(IndexStore indexStore, TransformerStore transformerStore)
+        public void Initialize(DocumentDatabase database)
         {
-            IndexesEtagsStorage.Initialize(Environment, _contextPool, indexStore, transformerStore);
+            IndexesEtagsStorage.Initialize(Environment, _contextPool, database);
             OperationsStorage.Initialize(Environment, _contextPool);
         }
 

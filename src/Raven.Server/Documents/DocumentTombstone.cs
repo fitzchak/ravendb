@@ -21,7 +21,7 @@ namespace Raven.Server.Documents
         public LazyStringValue Collection;
         public DocumentFlags Flags;
 
-        public ChangeVectorEntry[] ChangeVector;
+        public ArraySegment<ChangeVectorEntry> ChangeVector;
         public DateTime LastModified;
 
         #endregion

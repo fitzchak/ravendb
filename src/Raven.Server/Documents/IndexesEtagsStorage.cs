@@ -25,11 +25,10 @@ namespace Raven.Server.Documents
         protected readonly Logger Logger;
 
         private StorageEnvironment _environment;
-
         private TransactionContextPool _contextPool;
+        private DocumentDatabase _database;
 
         private static readonly TableSchema IndexesTableSchema;
-        private static readonly TableSchema ConflictsTableSchema;
         private static readonly Slice EtagIndexName;
         private static readonly Slice NameAndEtagIndexName;
 
@@ -62,24 +61,6 @@ namespace Raven.Server.Documents
                 Name = EtagIndexName
             });
 
-            //Table schema is:
-            //  - name -> string, lowercase
-            //  - etag -> long
-            //  - type -> enum (index / transformer)
-            //  - change vector
-            //  - definition of conflicted index/transformer (blittable json)
-            ConflictsTableSchema = new TableSchema();
-            ConflictsTableSchema.DefineKey(new TableSchema.SchemaIndexDef
-            {
-                StartIndex = 1
-            });
-
-            ConflictsTableSchema.DefineIndex(new TableSchema.SchemaIndexDef
-            {
-                StartIndex = (int)ConflictFields.Name,
-                Count = 2,
-                Name = NameAndEtagIndexName
-            });
         }
 
         public IndexesEtagsStorage(string resourceName)
@@ -89,10 +70,11 @@ namespace Raven.Server.Documents
 
         public TransactionContextPool ContextPool => _contextPool;
 
-        public void Initialize(StorageEnvironment environment, TransactionContextPool contextPool, IndexStore indexStore, TransformerStore transformerStore)
+        public void Initialize(StorageEnvironment environment, TransactionContextPool contextPool, DocumentDatabase database)
         {
             _environment = environment;
             _contextPool = contextPool;
+            _database = database;
 
             TransactionOperationContext context;
             using (contextPool.AllocateOperationContext(out context))
@@ -105,7 +87,7 @@ namespace Raven.Server.Documents
                 tx.InnerTransaction.CreateTree(SchemaNameConstants.LastReplicatedEtagsTree);
 
 
-                DeleteIndexMetadataForRemovedIndexesAndTransformers(tx.InnerTransaction, context, indexStore, transformerStore);
+                DeleteIndexMetadataForRemovedIndexesAndTransformers(tx.InnerTransaction, context, database.IndexStore, database.TransformerStore);
                 tx.Commit();
             }
 
@@ -235,7 +217,7 @@ namespace Raven.Server.Documents
                 table.ReadByKey(nameAsSlice, out tvr);
 
                 //SetIndexTransformerChangeVectorForLocalChange also merges vectors if conflicts exist
-                changeVectorForWrite = SetIndexTransformerChangeVectorForLocalChange(tx, nameAsSlice, ref tvr, newEtag);
+                changeVectorForWrite = _database.DocumentsStorage.DocumentPut.SetDocumentChangeVectorForLocalChange(tx, nameAsSlice, ref tvr, newEtag);
                 if (tvr.Pointer != null)
                 {
                     existing = TableValueToMetadata(ref tvr, context, false);
@@ -325,119 +307,6 @@ namespace Raven.Server.Documents
 
         }
 
-        private ChangeVectorEntry[] SetIndexTransformerChangeVectorForLocalChange(Transaction tx, Slice loweredName, ref TableValueReader oldValue, long newEtag)
-        {
-            if (oldValue.Pointer != null)
-            {
-                var changeVector = DocumentsStorage.GetChangeVectorEntriesFromTableValueReader(ref oldValue, (int)MetadataFields.ChangeVector);
-                return ChangeVectorUtils.UpdateChangeVectorWithNewEtag(_environment.DbId, newEtag, changeVector);
-            }
-
-            return GetMergedConflictChangeVectorsAndDeleteConflicts(tx, loweredName, newEtag);
-        }
-
-
-        private ChangeVectorEntry[] GetMergedConflictChangeVectorsAndDeleteConflicts(Transaction tx, Slice name, long newEtag, ChangeVectorEntry[] existing = null)
-        {
-            var conflictChangeVectors = DeleteConflictsFor(tx, name);
-
-            //no conflicts, no need to merge
-            if (conflictChangeVectors.Count == 0)
-            {
-                if (existing != null)
-                    return ChangeVectorUtils.UpdateChangeVectorWithNewEtag(_environment.DbId, newEtag, existing);
-
-                return new[]
-                {
-                    new ChangeVectorEntry
-                    {
-                        Etag = newEtag,
-                        DbId = _environment.DbId
-                    }
-                };
-            }
-
-            // need to merge the conflict change vectors
-            var maxEtags = new Dictionary<Guid, long>
-            {
-                [_environment.DbId] = newEtag
-            };
-
-            foreach (var conflictChangeVector in conflictChangeVectors)
-                foreach (var entry in conflictChangeVector)
-                {
-                    long etag;
-                    if (maxEtags.TryGetValue(entry.DbId, out etag) == false ||
-                        etag < entry.Etag)
-                    {
-                        maxEtags[entry.DbId] = entry.Etag;
-                    }
-                }
-
-            var changeVector = new ChangeVectorEntry[maxEtags.Count];
-
-            var index = 0;
-            foreach (var maxEtag in maxEtags)
-            {
-                changeVector[index].DbId = maxEtag.Key;
-                changeVector[index].Etag = maxEtag.Value;
-                index++;
-            }
-            return changeVector;
-        }
-
-        public IReadOnlyList<ChangeVectorEntry[]> DeleteConflictsFor(Transaction tx, TransactionOperationContext context, string name)
-        {
-            Slice nameSlice;
-            using (DocumentKeyWorker.GetSliceFromKey(context, name, out nameSlice))
-                return DeleteConflictsFor(tx, nameSlice);
-        }
-
-        private IReadOnlyList<ChangeVectorEntry[]> DeleteConflictsFor(Transaction tx, Slice name)
-        {
-            var table = tx.OpenTable(ConflictsTableSchema, SchemaNameConstants.ConflictMetadataTable);
-
-            Debug.Assert(table != null);
-
-            var list = new List<ChangeVectorEntry[]>();
-
-            while (true)
-            {
-                var more = false;
-                foreach (var tvr in table.SeekForwardFrom(ConflictsTableSchema.Indexes[NameAndEtagIndexName], name, 0, true))
-                {
-                    more = true;
-                    list.Add(DocumentsStorage.GetChangeVectorEntriesFromTableValueReader(ref tvr.Result.Reader, (int)MetadataFields.ChangeVector));
-
-                    table.Delete(tvr.Result.Reader.Id);
-                    break;
-                }
-
-                if (more == false)
-                    break;
-            }
-
-            return list;
-        }
-
-        public IEnumerable<IndexConflictEntry> GetConflictsFor(Transaction tx, TransactionOperationContext context, string name, int start, int take)
-        {
-            var table = tx.OpenTable(ConflictsTableSchema, SchemaNameConstants.ConflictMetadataTable);
-
-            Debug.Assert(table != null);
-
-            Slice nameSlice;
-            using (DocumentKeyWorker.GetSliceFromKey(context, name, out nameSlice))
-            {
-                foreach (var tvr in table.SeekForwardFrom(ConflictsTableSchema.Indexes[NameAndEtagIndexName], nameSlice, start, true))
-                {
-                    if (take-- <= 0)
-                        yield break;
-
-                    yield return TableValueToConflict(ref tvr.Result.Reader, context);
-                }
-            }
-        }
 
         /// <summary>
         /// this method will fetch all metadata entries - tombstones or otherwise
@@ -600,7 +469,7 @@ namespace Raven.Server.Documents
 
             metadata.Name = context.AllocateStringValue(null, tvr.Read((int)MetadataFields.Name, out size), size).ToString();
 
-            metadata.ChangeVector = DocumentsStorage.GetChangeVectorEntriesFromTableValueReader(ref tvr, (int)MetadataFields.ChangeVector);
+            metadata.ChangeVector = DocumentsStorage.TableValueToChangeVector(ref tvr, (int)MetadataFields.ChangeVector);
             metadata.Type = (IndexEntryType)(*tvr.Read((int)MetadataFields.Type, out size));
             metadata.Etag = Bits.SwapBytes(*(long*)tvr.Read((int)MetadataFields.Etag, out size));
             metadata.IsConflicted = *(bool*)tvr.Read((int)MetadataFields.IsConflicted, out size);
@@ -617,7 +486,7 @@ namespace Raven.Server.Documents
 
             data.Name = context.AllocateStringValue(null, tvr.Read((int)ConflictFields.Name, out size), size).ToString();
 
-            data.ChangeVector = DocumentsStorage.GetChangeVectorEntriesFromTableValueReader(ref tvr, (int)ConflictFields.ChangeVector);
+            data.ChangeVector = DocumentsStorage.TableValueToChangeVector(ref tvr, (int)ConflictFields.ChangeVector);
             data.Type = (IndexEntryType)(*tvr.Read((int)ConflictFields.Type, out size));
             data.Etag = Bits.SwapBytes(*(long*)tvr.Read((int)ConflictFields.Etag, out size));
 

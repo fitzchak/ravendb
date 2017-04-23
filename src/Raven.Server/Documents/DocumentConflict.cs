@@ -11,7 +11,7 @@ namespace Raven.Server.Documents
         public LazyStringValue Key;
         public BlittableJsonReaderObject Doc;
         public long StorageId;
-        public ChangeVectorEntry[] ChangeVector;
+        public ArraySegment<ChangeVectorEntry> ChangeVector;
         public LazyStringValue Collection;
         public DateTime LastModified;
         public long Etag; // the etag of the current db when this conflict was added

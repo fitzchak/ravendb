@@ -789,7 +789,7 @@ namespace Raven.Server.Documents
             tx.InnerTransaction.LowLevelTransaction.OnDispose += state => reader.Dispose();
         }
 
-        public static Document ParseDocument(JsonOperationContext context, ref TableValueReader tvr)
+        public static Document ParseDocument(DocumentsOperationContext context, ref TableValueReader tvr)
         {
             var result = new Document
             {
@@ -801,7 +801,7 @@ namespace Raven.Server.Documents
 
             int size;
             result.Data = new BlittableJsonReaderObject(tvr.Read((int)DocumentsTable.Data, out size), size, context);
-            result.ChangeVector = GetChangeVectorEntriesFromTableValueReader(ref tvr, (int)DocumentsTable.ChangeVector);
+            result.ChangeVector = TableValueToChangeVector(context, ref tvr, (int)DocumentsTable.ChangeVector);
             result.LastModified = new DateTime(*(long*)tvr.Read((int)DocumentsTable.LastModified, out size));
             result.Flags = *(DocumentFlags*)tvr.Read((int)DocumentsTable.Flags, out size);
 
@@ -810,14 +810,14 @@ namespace Raven.Server.Documents
             return result;
         }
 
-        public static ChangeVectorEntry[] GetChangeVectorEntriesFromTableValueReader(ref TableValueReader tvr, int index)
+        public static ArraySegment<ChangeVectorEntry> TableValueToChangeVector(DocumentsOperationContext context, ref TableValueReader tvr, int index)
         {
             int size;
             var pChangeVector = (ChangeVectorEntry*)tvr.Read(index, out size);
-            var changeVector = new ChangeVectorEntry[size / sizeof(ChangeVectorEntry)];
-            for (int i = 0; i < changeVector.Length; i++)
+            var changeVector = context.GetNextChangeVectorBuffer(size / sizeof(ChangeVectorEntry));
+            for (int i = 0; i < changeVector.Count; i++)
             {
-                changeVector[i] = pChangeVector[i];
+                changeVector.Array[i] = pChangeVector[i];
             }
             return changeVector;
         }
@@ -843,7 +843,7 @@ namespace Raven.Server.Documents
             {
                 result.Collection = TableValueToString(context, (int)TombstoneTable.Collection, ref tvr);
                 result.Flags = *(DocumentFlags*)tvr.Read((int)TombstoneTable.Flags, out size);
-                result.ChangeVector = GetChangeVectorEntriesFromTableValueReader(ref tvr, (int)TombstoneTable.ChangeVector);
+                result.ChangeVector = TableValueToChangeVector(ref tvr, (int)TombstoneTable.ChangeVector);
                 result.LastModified = new DateTime(*(long*)tvr.Read((int)TombstoneTable.LastModified, out size));
             }
 

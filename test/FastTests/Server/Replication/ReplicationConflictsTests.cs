@@ -7,7 +7,6 @@ using Raven.Client.Documents.Operations;
 using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Replication;
 using Raven.Client.Documents.Replication.Messages;
-using Raven.Server.Documents;
 using Raven.Server.Documents.Indexes.Persistence.Lucene.Analyzers;
 using Raven.Server.NotificationCenter;
 using Raven.Server.Utils;
@@ -25,9 +24,9 @@ namespace FastTests.Server.Replication
             public int Age { get; set; }
         }
 
-        private class New_User: User { }
+        private class New_User : User { }
 
-        private class New_User2: User { }
+        private class New_User2 : User { }
 
         [Fact]
         public void All_remote_etags_lower_than_local_should_return_AlreadyMerged_at_conflict_status()
@@ -48,7 +47,7 @@ namespace FastTests.Server.Replication
                 new ChangeVectorEntry { DbId = dbIds[2], Etag = 3 },
             };
 
-            Assert.Equal(ConflictsStorage.ConflictStatus.AlreadyMerged, ConflictsStorage.GetConflictStatus(remote, local));
+            Assert.Equal(ReplicationUtils.ConflictStatus.AlreadyMerged, ReplicationUtils.GetConflictStatus(new ArraySegment<ChangeVectorEntry>(remote), new ArraySegment<ChangeVectorEntry>(local)));
         }
 
         [Fact]
@@ -70,7 +69,7 @@ namespace FastTests.Server.Replication
                 new ChangeVectorEntry { DbId = dbIds[2], Etag = 30 },
             };
 
-            Assert.Equal(ConflictsStorage.ConflictStatus.Update, ConflictsStorage.GetConflictStatus(remote, local));
+            Assert.Equal(ReplicationUtils.ConflictStatus.Update, ReplicationUtils.GetConflictStatus(new ArraySegment<ChangeVectorEntry>(remote), new ArraySegment<ChangeVectorEntry>(local)));
         }
 
         [Fact]
@@ -92,7 +91,7 @@ namespace FastTests.Server.Replication
                 new ChangeVectorEntry { DbId = dbIds[2], Etag = 2 },
             };
 
-            Assert.Equal(ConflictsStorage.ConflictStatus.Conflict, ConflictsStorage.GetConflictStatus(remote, local));
+            Assert.Equal(ReplicationUtils.ConflictStatus.Conflict, ReplicationUtils.GetConflictStatus(new ArraySegment<ChangeVectorEntry>(remote), new ArraySegment<ChangeVectorEntry>(local)));
         }
 
         [Fact]
@@ -114,7 +113,7 @@ namespace FastTests.Server.Replication
                 new ChangeVectorEntry { DbId = dbIds[0], Etag = 10 },
             };
 
-            Assert.Equal(ConflictsStorage.ConflictStatus.Conflict, ConflictsStorage.GetConflictStatus(remote, local));
+            Assert.Equal(ReplicationUtils.ConflictStatus.Conflict, ReplicationUtils.GetConflictStatus(new ArraySegment<ChangeVectorEntry>(remote), new ArraySegment<ChangeVectorEntry>(local)));
         }
 
         [Fact]
@@ -137,7 +136,7 @@ namespace FastTests.Server.Replication
                 new ChangeVectorEntry { DbId = dbIds[2], Etag = 40 }
             };
 
-            Assert.Equal(ConflictsStorage.ConflictStatus.Update, ConflictsStorage.GetConflictStatus(remote, local));
+            Assert.Equal(ReplicationUtils.ConflictStatus.Update, ReplicationUtils.GetConflictStatus(new ArraySegment<ChangeVectorEntry>(remote), new ArraySegment<ChangeVectorEntry>(local)));
         }
 
         [Fact]
@@ -154,7 +153,7 @@ namespace FastTests.Server.Replication
                 new ChangeVectorEntry { DbId = dbIds[1], Etag = 10 }
             };
 
-            Assert.Equal(ConflictsStorage.ConflictStatus.Conflict, ConflictsStorage.GetConflictStatus(remote, local));
+            Assert.Equal(ReplicationUtils.ConflictStatus.Conflict, ReplicationUtils.GetConflictStatus(new ArraySegment<ChangeVectorEntry>(remote), new ArraySegment<ChangeVectorEntry>(local)));
         }
 
         [Fact]
@@ -177,7 +176,7 @@ namespace FastTests.Server.Replication
                 new ChangeVectorEntry { DbId = dbIds[2], Etag = 3 }
             };
 
-            Assert.Equal(ConflictsStorage.ConflictStatus.AlreadyMerged, ConflictsStorage.GetConflictStatus(remote, local));
+            Assert.Equal(ReplicationUtils.ConflictStatus.AlreadyMerged, ReplicationUtils.GetConflictStatus(new ArraySegment<ChangeVectorEntry>(remote), new ArraySegment<ChangeVectorEntry>(local)));
         }
 
         [Fact]
@@ -200,7 +199,7 @@ namespace FastTests.Server.Replication
                 new ChangeVectorEntry { DbId = dbIds[2], Etag = 300 }
             };
 
-            Assert.Equal(ConflictsStorage.ConflictStatus.Conflict, ConflictsStorage.GetConflictStatus(remote, local));
+            Assert.Equal(ReplicationUtils.ConflictStatus.Conflict, ReplicationUtils.GetConflictStatus(new ArraySegment<ChangeVectorEntry>(remote), new ArraySegment<ChangeVectorEntry>(local)));
         }
 
 
@@ -640,11 +639,11 @@ namespace FastTests.Server.Replication
                 session.SaveChanges();
             }
 
-            SetScriptResolution(store2, "return {Name:docs[0].Name + '123'};","Users");
+            SetScriptResolution(store2, "return {Name:docs[0].Name + '123'};", "Users");
             SetupReplication(store1, store2);
 
             var db2 = GetDocumentDatabaseInstanceFor(store2).Result.NotificationCenter;
-           
+
             Assert.Equal(1, WaitForValue(() => db2.GetAlertCount(), 1));
 
             IEnumerable<NotificationTableValue> alerts;
@@ -655,7 +654,7 @@ namespace FastTests.Server.Replication
                 alertsList[0].Json.TryGet("Message", out msg);
                 Assert.True(msg.Contains("All conflicted documents must have same collection name, but we found conflicted document in Users and an other one in New_Users"));
             }
-            
+
         }
 
         private class UserIndex : AbstractIndexCreationTask<User>
@@ -663,12 +662,12 @@ namespace FastTests.Server.Replication
             public UserIndex()
             {
                 Map = users => from u in users
-                               select new User
-                               {
-                                   Id = u.Id,
-                                   Name = u.Name,
-                                   Age = u.Age
-                               };
+                    select new User
+                    {
+                        Id = u.Id,
+                        Name = u.Name,
+                        Age = u.Age
+                    };
 
                 Index(x => x.Name, FieldIndexing.Analyzed);
 
@@ -678,4 +677,3 @@ namespace FastTests.Server.Replication
         }
     }
 }
-

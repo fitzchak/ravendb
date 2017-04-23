@@ -211,8 +211,7 @@ namespace Raven.Server.Documents
 
             if (changeVector == null)
             {
-                var oldChangeVector = oldValue.Pointer != null ? DocumentsStorage.GetChangeVectorEntriesFromTableValueReader(ref oldValue, (int)DocumentsStorage.DocumentsTable.ChangeVector) : null;
-                changeVector = SetDocumentChangeVectorForLocalChange(context, lowerKey, oldChangeVector, newEtag);
+                changeVector = SetDocumentChangeVectorForLocalChange(context, lowerKey, oldValue, newEtag);
             }
 
             return changeVector;
@@ -349,14 +348,16 @@ namespace Raven.Server.Documents
             }
         }
 
-        private ChangeVectorEntry[] SetDocumentChangeVectorForLocalChange(
+        public ArraySegment<ChangeVectorEntry> SetDocumentChangeVectorForLocalChange(
             DocumentsOperationContext context, Slice loweredKey,
-            ChangeVectorEntry[] oldChangeVector, long newEtag)
+            TableValueReader oldValue, long newEtag)
         {
-            if (oldChangeVector != null)
-                return ChangeVectorUtils.UpdateChangeVectorWithNewEtag(_documentsStorage.Environment.DbId, newEtag, oldChangeVector);
+            if (oldValue.Pointer == null)
+                return _documentsStorage.ConflictsStorage.GetMergedConflictChangeVectorsAndDeleteConflicts(context, loweredKey, newEtag);
 
-            return _documentsStorage.ConflictsStorage.GetMergedConflictChangeVectorsAndDeleteConflicts(context, loweredKey, newEtag);
+            var oldChangeVector = DocumentsStorage.TableValueToChangeVector(context, ref oldValue, (int)DocumentsStorage.DocumentsTable.ChangeVector);
+            ChangeVectorUtils.UpdateChangeVectorWithNewEtag(context, _documentsStorage.Environment.DbId, newEtag, ref oldChangeVector);
+            return oldChangeVector;
         }
     }
 }

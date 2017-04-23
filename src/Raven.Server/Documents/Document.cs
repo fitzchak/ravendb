@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using Raven.Client;
 using Raven.Client.Documents.Replication.Messages;
@@ -22,7 +21,7 @@ namespace Raven.Server.Documents
         public long StorageId;
         public BlittableJsonReaderObject Data;
         public float? IndexScore;
-        public ChangeVectorEntry[] ChangeVector;
+        public ArraySegment<ChangeVectorEntry> ChangeVector;
         public DateTime LastModified;
         public DocumentFlags Flags;
         public NonPersistentDocumentFlags NonPersistentFlags;

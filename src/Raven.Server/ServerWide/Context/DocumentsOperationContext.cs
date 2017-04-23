@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Raven.Client.Documents.Replication.Messages;
 using Raven.Server.Documents;
 using Voron;
 
@@ -7,6 +9,15 @@ namespace Raven.Server.ServerWide.Context
     public class DocumentsOperationContext : TransactionOperationContext<DocumentsTransaction>
     {
         private readonly DocumentDatabase _documentDatabase;
+
+        private readonly List<ChangeVectorEntry[]> _changeVectorsBuffers = new List<ChangeVectorEntry[]>();
+
+        private int _nextChangeVectorPosition;
+
+        public ArraySegment<ChangeVectorEntry> GetNextChangeVectorBuffer(int size)
+        {
+
+        }
 
         public static DocumentsOperationContext ShortTermSingleUse(DocumentDatabase documentDatabase)
         {

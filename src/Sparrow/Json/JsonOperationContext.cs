@@ -2,19 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Sparrow.Binary;
 using Sparrow.Collections;
-using Sparrow.Compression;
 using Sparrow.Json.Parsing;
-using Sparrow.Logging;
-using Sparrow.Platform;
 
 namespace Sparrow.Json
 {

@@ -85,20 +85,20 @@ namespace FastTests.Server.Replication
                 using (var sourceCommands = source.Commands())
                 using (var destinationCommands = destination.Commands())
                 {
-                    sourceCommands.Put("docs/1", null, new {Key = "Value"}, null);
-                    destinationCommands.Put("docs/1", null, new {Key = "Value2"}, null);
+                    sourceCommands.Put("docs/1", null, new { Key = "Value" }, null);
+                    destinationCommands.Put("docs/1", null, new { Key = "Value2" }, null);
 
                     SetupReplication(source, destination);
 
-                    sourceCommands.Put("marker", null, new {Key = "Value"}, null);
+                    sourceCommands.Put("marker", null, new { Key = "Value" }, null);
 
                     Assert.True(WaitForDocument(destination, "marker"));
 
                     var conflicts = destination.Commands().GetConflictsFor("docs/1");
                     Assert.Equal(2, conflicts.Length);
-                    Assert.NotEqual(conflicts[0].ChangeVector[0].DbId, conflicts[1].ChangeVector[0].DbId);
-                    Assert.Equal(1, conflicts[0].ChangeVector[0].Etag);
-                    Assert.Equal(1, conflicts[1].ChangeVector[0].Etag);
+                    Assert.NotEqual(conflicts[0].ChangeVector.Array[0].DbId, conflicts[1].ChangeVector.Array[0].DbId);
+                    Assert.Equal(1, conflicts[0].ChangeVector.Array[0].Etag);
+                    Assert.Equal(1, conflicts[1].ChangeVector.Array[0].Etag);
                 }
             }
         }
@@ -125,9 +125,9 @@ namespace FastTests.Server.Replication
 
                     conflicts = destination.Commands().GetConflictsFor("docs/1");
                     Assert.Equal(2, conflicts.Length);
-                    Assert.NotEqual(conflicts[0].ChangeVector[0].DbId, conflicts[1].ChangeVector[0].DbId);
-                    Assert.Equal(1, conflicts[0].ChangeVector[0].Etag);
-                    Assert.Equal(1, conflicts[1].ChangeVector[0].Etag);
+                    Assert.NotEqual(conflicts[0].ChangeVector.Array[0].DbId, conflicts[1].ChangeVector.Array[0].DbId);
+                    Assert.Equal(1, conflicts[0].ChangeVector.Array[0].Etag);
+                    Assert.Equal(1, conflicts[1].ChangeVector.Array[0].Etag);
                 }
 
                 Assert.Throws<DocumentConflictException>(() => destination.Commands().Get("docs/1"));
@@ -142,7 +142,7 @@ namespace FastTests.Server.Replication
                 var fetchedVal = fetchedDoc["Key"] as LazyStringValue;
 
                 ////not null asserts -> precaution
-                Assert.NotNull(actualVal); 
+                Assert.NotNull(actualVal);
                 Assert.NotNull(fetchedVal);
 
                 Assert.Equal(fetchedVal.ToString(), actualVal.ToString());

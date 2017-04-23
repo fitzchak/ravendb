@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Raven.Server.Documents;
+using Raven.Server.ServerWide.Context;
 using Sparrow.Json;
 using Voron.Data;
 using Voron.Data.RawData;
@@ -76,7 +77,7 @@ namespace Voron.Recovery
             using (var destinationStream = File.OpenWrite(_output))
             using (var logFile = File.CreateText(Path.Combine(Path.GetDirectoryName(_output), LogFileName)))
             using (var gZipStream = new GZipStream(destinationStream, CompressionMode.Compress, true))
-            using (var context = new JsonOperationContext(_initialContextSize, _initialContextLongLivedSize))
+            using (var context = new DocumentsOperationContext(_initialContextSize, _initialContextLongLivedSize))
             using (var writer = new BlittableJsonTextWriter(context, gZipStream))
             {
                 WriteSmugglerHeader(writer);
@@ -245,7 +246,7 @@ namespace Voron.Recovery
             writer.WriteStartArray();
         }
 
-        private bool WriteDocument(byte* mem, int sizeInBytes, BlittableJsonTextWriter writer, StreamWriter logWriter, JsonOperationContext context,long startOffest)
+        private bool WriteDocument(byte* mem, int sizeInBytes, BlittableJsonTextWriter writer, StreamWriter logWriter, DocumentsOperationContext context,long startOffest)
         {
             try
             {
