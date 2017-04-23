@@ -256,7 +256,8 @@ namespace Voron
                 return _activeTransactions.Select(x => new ActiveTransaction()
                 {
                     Id = x.Id,
-                    Flags = x.Flags
+                    Flags = x.Flags,
+                    StackTraceDebug = x.StackTraceDebug
                 }).ToList();
             }
         }

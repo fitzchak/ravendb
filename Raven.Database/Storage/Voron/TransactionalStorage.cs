@@ -549,7 +549,8 @@ namespace Raven.Storage.Voron
                     ActiveTransactions = stats.ActiveTransactions.Select(x => new VoronActiveTransaction
                     {
                         Id = x.Id,
-                        Flags = x.Flags.ToString()
+                        Flags = x.Flags.ToString(),
+                        StackTraceDebug = x.StackTraceDebug
                     }).ToList(),
                     ScratchBufferPoolInfo = Environment.ScratchBufferPool.InfoForDebug(Environment.PossibleOldestReadTransaction)
                 }

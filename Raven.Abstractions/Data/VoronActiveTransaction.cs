@@ -8,6 +8,7 @@ namespace Raven.Abstractions.Data
     public class VoronActiveTransaction
     {
         public long Id;
-        public string Flags; 
+        public string Flags;
+        public string StackTraceDebug;
     }
 }

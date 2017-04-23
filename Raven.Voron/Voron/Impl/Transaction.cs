@@ -95,8 +95,12 @@ namespace Voron.Impl
 
         public bool FlushedToJournal { get; private set; }
 
+        public readonly string StackTraceDebug;
+
         public Transaction(StorageEnvironment env, long id, TransactionFlags flags, IFreeSpaceHandling freeSpaceHandling)
         {
+            StackTraceDebug = System.Environment.StackTrace;
+
             _dataPager = env.Options.DataPager;
             _env = env;
             _journal = env.Journal;
