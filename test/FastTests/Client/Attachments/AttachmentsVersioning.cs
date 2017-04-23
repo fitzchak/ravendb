@@ -205,11 +205,11 @@ namespace FastTests.Client.Attachments
                     if (name == names[0])
                     {
                         if (expectedCount == 1)
-                            Assert.Equal(7, attachment.Etag);
+                            Assert.Equal(6, attachment.Etag);
                         else if (expectedCount == 2)
-                            Assert.Equal(12, attachment.Etag);
+                            Assert.Equal(11, attachment.Etag);
                         else if (expectedCount == 3)
-                            Assert.Equal(18, attachment.Etag);
+                            Assert.Equal(17, attachment.Etag);
                         else
                             throw new ArgumentOutOfRangeException(nameof(i));
                         Assert.Equal(new byte[] {1, 2, 3}, readBuffer.Take(3));
@@ -220,9 +220,9 @@ namespace FastTests.Client.Attachments
                     else if (name == names[1])
                     {
                         if (expectedCount == 2)
-                            Assert.Equal(11, attachment.Etag);
+                            Assert.Equal(10, attachment.Etag);
                         else if (expectedCount == 3)
-                            Assert.Equal(16, attachment.Etag);
+                            Assert.Equal(15, attachment.Etag);
                         else
                             throw new ArgumentOutOfRangeException(nameof(i));
                         Assert.Equal(new byte[] {10, 20, 30, 40, 50}, readBuffer.Take(5));
@@ -233,7 +233,7 @@ namespace FastTests.Client.Attachments
                     else if (name == names[2])
                     {
                         if (expectedCount == 3)
-                            Assert.Equal(17, attachment.Etag);
+                            Assert.Equal(16, attachment.Etag);
                         else
                             throw new ArgumentOutOfRangeException(nameof(i));
                         Assert.Equal(new byte[] {1, 2, 3, 4, 5}, readBuffer.Take(5));
