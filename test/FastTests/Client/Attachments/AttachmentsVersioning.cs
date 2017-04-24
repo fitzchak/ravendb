@@ -134,7 +134,7 @@ namespace FastTests.Client.Attachments
             }
         }
 
-        public static void AssertRevisions(DocumentStore store, string[] names, Action<IDocumentSession, List<User>> assertAction,
+        private static void AssertRevisions(DocumentStore store, string[] names, Action<IDocumentSession, List<User>> assertAction,
             long expectedCountOfAttachments, long expectedCountOfDocuments = 2, long expectedCountOfUniqueAttachments = 3)
         {
             var statistics = store.Admin.Send(new GetStatisticsOperation());
@@ -152,14 +152,14 @@ namespace FastTests.Client.Attachments
             }
         }
 
-        public static void AssertNoRevisionAttachment(User revision, IDocumentSession session)
+        private static void AssertNoRevisionAttachment(User revision, IDocumentSession session)
         {
             var metadata = session.Advanced.GetMetadataFor(revision);
             Assert.Equal((DocumentFlags.Versioned | DocumentFlags.Revision).ToString(), metadata[Constants.Documents.Metadata.Flags]);
             Assert.False(metadata.ContainsKey(Constants.Documents.Metadata.Attachments));
         }
 
-        public static void AssertRevisionAttachments(string[] names, int expectedCount, User revision, IDocumentSession session)
+        private static void AssertRevisionAttachments(string[] names, int expectedCount, User revision, IDocumentSession session)
         {
             var metadata = session.Advanced.GetMetadataFor(revision);
             Assert.Equal((DocumentFlags.Versioned | DocumentFlags.Revision | DocumentFlags.HasAttachments).ToString(), metadata[Constants.Documents.Metadata.Flags]);
@@ -244,7 +244,5 @@ namespace FastTests.Client.Attachments
                 }
             }
         }
-
-        
     }
 }
