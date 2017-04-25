@@ -10,5 +10,6 @@ namespace Raven.Abstractions.Data
         public long Id;
         public string Flags;
         public string StackTraceDebug;
+        public string CreatedAt;
     }
 }

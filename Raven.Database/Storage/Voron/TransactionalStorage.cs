@@ -550,7 +550,8 @@ namespace Raven.Storage.Voron
                     {
                         Id = x.Id,
                         Flags = x.Flags.ToString(),
-                        StackTraceDebug = x.StackTraceDebug
+                        StackTraceDebug = x.StackTraceDebug,
+                        CreatedAt = x.CreatedAt
                     }).ToList(),
                     ScratchBufferPoolInfo = Environment.ScratchBufferPool.InfoForDebug(Environment.PossibleOldestReadTransaction)
                 }

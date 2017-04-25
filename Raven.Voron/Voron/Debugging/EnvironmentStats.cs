@@ -20,5 +20,6 @@ namespace Voron.Debugging
         public long Id;
         public TransactionFlags Flags;
         public string StackTraceDebug;
+        public string CreatedAt;
     }
 }

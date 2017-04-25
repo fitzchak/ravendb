@@ -96,10 +96,12 @@ namespace Voron.Impl
         public bool FlushedToJournal { get; private set; }
 
         public readonly string StackTraceDebug;
+        public readonly string CreatedAt;
 
         public Transaction(StorageEnvironment env, long id, TransactionFlags flags, IFreeSpaceHandling freeSpaceHandling)
         {
             StackTraceDebug = System.Environment.StackTrace;
+            CreatedAt = DateTime.UtcNow.ToString("O");
 
             _dataPager = env.Options.DataPager;
             _env = env;

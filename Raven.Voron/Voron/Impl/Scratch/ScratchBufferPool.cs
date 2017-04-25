@@ -191,6 +191,7 @@ namespace Voron.Impl.Scratch
                 debugInfoBuilder.AppendFormat("Possible oldest active transaction: {0}\r\n", tx.Environment.PossibleOldestReadTransaction);
                 debugInfoBuilder.AppendFormat("Oldest active transaction when flush was forced: {0}\r\n", current.OldestTransactionWhenFlushWasForced);
                 debugInfoBuilder.AppendFormat("DEBUG!!! The stack trace that created this tx: {0}\r\n", tx.StackTraceDebug);
+                debugInfoBuilder.AppendFormat("DEBUG!!! Created at: {0}\r\n", tx.CreatedAt);
                 debugInfoBuilder.AppendFormat("Next write transaction id: {0}\r\n", tx.Environment.NextWriteTransactionId + 1);
 
                 debugInfoBuilder.AppendLine("Active transactions:");

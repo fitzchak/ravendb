@@ -55,7 +55,9 @@ namespace Voron
 
         public SnapshotReader CreateSnapshot()
         {
-            return new SnapshotReader(NewTransaction(TransactionFlags.Read));
+            var newTransaction = NewTransaction(TransactionFlags.Read);
+
+            return new SnapshotReader(newTransaction);
         }
 
 #if DEBUG
@@ -257,7 +259,8 @@ namespace Voron
                 {
                     Id = x.Id,
                     Flags = x.Flags,
-                    StackTraceDebug = x.StackTraceDebug
+                    StackTraceDebug = x.StackTraceDebug,
+                    CreatedAt = x.CreatedAt,
                 }).ToList();
             }
         }
