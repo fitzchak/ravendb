@@ -28,7 +28,7 @@ namespace FastTests.Server.Replication
 
                 using (var session = slave.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "Karmel"
                     }, "users/1");
@@ -37,7 +37,7 @@ namespace FastTests.Server.Replication
 
                 using (var session = master.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "Karmeli"
                     }, "users/1");
@@ -83,7 +83,7 @@ return out;
                 long? etag;
                 using (var session = slave.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "Karmel",
                         Age = 12
@@ -94,7 +94,7 @@ return out;
 
                 using (var session = master.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "Karmel",
                         Age = 123
@@ -102,9 +102,7 @@ return out;
                     session.SaveChanges();
                 }
 
-
-                var update = WaitForBiggerEtag(slave, etag);
-                Assert.True(update);
+                Assert.True(WaitForBiggerEtag(slave, etag));
 
                 using (var session = slave.OpenSession())
                 {
@@ -133,7 +131,7 @@ return out;
                 long? etag;
                 using (var session = slave.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "Karmel1",
                         Age = 1
@@ -144,7 +142,7 @@ return out;
 
                 using (var session = master.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "Karmel2",
                         Age = 2
@@ -206,7 +204,7 @@ return out;
 
                 using (var session = master.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "Karmel"
                     }, "users/1");
@@ -223,7 +221,7 @@ return out;
                 }
                 using (var session = master.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "Karmeli"
                     }, "users/1");
@@ -254,7 +252,7 @@ return out;
                 using (var session = slave.OpenSession())
                 {
                 
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "1st"
                     }, "users/1");
@@ -264,7 +262,7 @@ return out;
 
                 using (var session = master.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "1st"
                     }, "users/2");
@@ -281,7 +279,7 @@ return out;
 
                 using (var session = slave.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "2nd"
                     }, "users/2");
@@ -291,7 +289,7 @@ return out;
 
                 using (var session = master.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "2nd"
                     }, "users/1");
@@ -326,7 +324,7 @@ return out;
             {
                 using (var session = master.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "1st"
                     }, "users/1");
@@ -336,7 +334,7 @@ return out;
 
                 using (var session = slave.OpenSession())
                 {
-                    session.Store(new User()
+                    session.Store(new User
                     {
                         Name = "2nd"
                     }, "users/1");
