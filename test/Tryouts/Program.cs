@@ -3,7 +3,10 @@ using System.Diagnostics;
 using FastTests.Client.Attachments;
 using FastTests.Smuggler;
 using System.Threading.Tasks;
+using FastTests.Client;
+using FastTests.Client.Subscriptions;
 using FastTests.Server.Documents.Indexing;
+using FastTests.Server.Documents.Patching;
 using FastTests.Server.Documents.PeriodicExport;
 using FastTests.Server.OAuth;
 using FastTests.Server.Replication;
@@ -21,9 +24,9 @@ namespace Tryouts
             for (int i = 0; i < 1000; i++)
             {
                 Console.WriteLine(i);
-                using (var a = new FastTests.Sparrow.EncryptionTests())
+                using (var a = new AttachmentsReplication())
                 {
-                    a.WriteAndReadPageUsingCryptoPager();
+                    a.AttachmentsVersioningReplication().Wait();
                 }
             }
         }
