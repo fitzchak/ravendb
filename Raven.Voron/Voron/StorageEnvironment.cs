@@ -26,7 +26,7 @@ namespace Voron
     {
         private readonly StorageEnvironmentOptions _options;
 
-        private readonly ConcurrentSet<Transaction> _activeTransactions = new ConcurrentSet<Transaction>();
+        private readonly ConcurrentSet<WeakReference<Transaction>> _activeTransactions = new ConcurrentSet<WeakReference<Transaction>>();
 
         private readonly IVirtualPager _dataPager;
 
@@ -183,8 +183,8 @@ namespace Voron
                 // ReSharper disable once LoopCanBeConvertedToQuery
                 foreach (var activeTransaction in _activeTransactions)
                 {
-                    if (largestTx > activeTransaction.Id)
-                        largestTx = activeTransaction.Id;
+                    if (activeTransaction.TryGetTarget(out Transaction tx) && largestTx > tx.Id)
+                        largestTx = tx.Id;
                 }
                 if (largestTx == long.MaxValue)
                     return 0;
@@ -255,13 +255,13 @@ namespace Voron
         {
             get
             {
-                return _activeTransactions.Select(x => new ActiveTransaction()
+                return _activeTransactions.Select(x => x.TryGetTarget(out Transaction tx) ? new ActiveTransaction()
                 {
-                    Id = x.Id,
-                    Flags = x.Flags,
-                    StackTraceDebug = x.StackTraceDebug,
-                    CreatedAt = x.CreatedAt,
-                }).ToList();
+                    Id = tx.Id,
+                    Flags = tx.Flags,
+                    StackTraceDebug = tx.StackTraceDebug,
+                    CreatedAt = tx.CreatedAt,
+                } : null).Where(x => x != null).ToList();
             }
         }
 
@@ -449,7 +449,7 @@ namespace Voron
                         tx.RecordTransactionState = RecordTransactionState;
                     }
 
-                    _activeTransactions.Add(tx);
+                    _activeTransactions.Add(new WeakReference<Transaction>(tx));
                 }
                 finally
                 {
@@ -511,7 +511,7 @@ namespace Voron
 
         private void TransactionAfterCommit(Transaction tx)
         {
-            if (_activeTransactions.Contains(tx) == false)
+            if (_activeTransactions.Any(x => x.TryGetTarget(out var txout) && txout == tx) == false)
                 return;
 
             using (PreventNewReadTransactions())
@@ -538,7 +538,8 @@ namespace Voron
 
         internal void TransactionCompleted(Transaction tx)
         {
-            if (_activeTransactions.TryRemove(tx) == false)
+            var first = _activeTransactions.FirstOrDefault(x=> x.TryGetTarget(out var txout) && txout == tx);
+            if (first != null && _activeTransactions.TryRemove(first) == false)
                 return;
 
             if (tx.Flags != (TransactionFlags.ReadWrite))

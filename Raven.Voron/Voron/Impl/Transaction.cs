@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Raven.Abstractions.Logging;
 using Voron.Debugging;
 using Voron.Exceptions;
 using Voron.Impl.FileHeaders;
@@ -544,6 +545,17 @@ namespace Voron.Impl
         public bool IsDisposed
         {
             get { return _disposed; }
+        }
+
+        private static readonly ILog log = LogManager.GetCurrentClassLogger();
+
+        ~Transaction()
+        {
+            log.Warn($"De6813bug-Trasaction: Finalizer of Trasaction was called. Tx: {Id}. {System.Environment.NewLine}" +
+                     $"{CreatedAt} - {StackTraceDebug}{System.Environment.NewLine}" +
+                     $"IsDisposed? {_disposed}");
+            Debug.Assert(false, "Should never be called.");
+            Dispose();
         }
 
         public void Dispose()
