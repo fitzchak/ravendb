@@ -487,7 +487,7 @@ namespace Raven.Client.Document
             
             if (previousTask == null)
             {
-                ReportInternal("Wrote {0:#,#} [{3:#,#;;0} kb] (total {2:#,#;;0}) documents to server gzipped to {1:#,#;;0} kb in {4:#,#.#;;0} sec.",
+                ReportInternal("Wrote {0:#,#} [{3:#,#;;0} kb] (total {2:#,#;;0}) documents to server gzipped to {1:#,#;;0} kb in {4:#,#.#;;0} seconds.",
                     localBatch.Count,
                     bufferedStream.Position / 1024d,
                     Total,
