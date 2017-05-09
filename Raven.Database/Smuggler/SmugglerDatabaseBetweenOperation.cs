@@ -300,6 +300,7 @@ namespace Raven.Smuggler
                 });
 
                 await importOperations.PutDocument(null, -1).ConfigureAwait(false); // force flush 
+                await importOperations.WaitForLastBulkInsertTaskToFinish().ConfigureAwait(false);
 
                 ShowProgress("Done with reading documents, total: {0}, lastEtag: {1}", totalCount, lastEtag);
                 return lastEtag;
@@ -366,7 +367,7 @@ namespace Raven.Smuggler
                 }
                 catch (Exception e)
                 {
-                    ShowProgress("Got Exception during smuggler export. Exception: {0}. ", e.Message);
+                    ShowProgress("Got Exception during smuggler export. Exception: {0}. ", e);
                     ShowProgress("Done with reading attachments, total: {0}", totalCount, lastEtag);
                     throw new SmugglerExportException(e.Message, e)
                     {
