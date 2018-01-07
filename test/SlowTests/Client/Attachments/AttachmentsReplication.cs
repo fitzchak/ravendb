@@ -307,6 +307,8 @@ namespace SlowTests.Client.Attachments
             var statistics = store.Maintenance.Send(new GetStatisticsOperation());
             Assert.Equal(attachmentCount ?? uniqueAttachmentCount, statistics.CountOfAttachments);
             Assert.Equal(uniqueAttachmentCount, statistics.CountOfUniqueAttachments);
+            Assert.Equal(0, statistics.CountOfIdentities);
+            Assert.Equal(0, statistics.CountOfCompareExchange);
 
             if (documentsCount != null)
                 Assert.Equal(documentsCount.Value, statistics.CountOfDocuments);
@@ -602,6 +604,8 @@ namespace SlowTests.Client.Attachments
             Assert.Equal(4, statistics.CountOfRevisionDocuments);
             Assert.Equal(expectedCountOfDocuments, statistics.CountOfDocuments);
             Assert.Equal(0, statistics.CountOfIndexes);
+            Assert.Equal(0, statistics.CountOfIdentities);
+            Assert.Equal(0, statistics.CountOfCompareExchange);
 
             using (var session = store.OpenSession())
             {
